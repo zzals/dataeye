@@ -61,13 +61,7 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <!-- oracle jdbc driver -->
-        <!-- <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc5</artifactId>
-            <version>11.2.0.2.0</version>
-        </dependency> -->
-        
+        <!-- oracle jdbc driver -->        
         <dependency>
 		    <groupId>com.oracle</groupId>
 		    <artifactId>ojdbc7</artifactId>
@@ -441,6 +435,22 @@
 	
     <build>
         <plugins>
+        	<plugin>
+            	<groupId>org.apache.maven.plugins</groupId>
+            	<artifactId>maven-war-plugin</artifactId>
+            	<configuration>
+            		<webResources>
+            			<resource>
+            				<directory>${project.basedir}/lib</directory>
+           				
+	           				<includes>
+	           					<include>ojdbc7.jar</include>	
+	           				</includes>
+	           				<targetPath>WEB-INF/lib</targetPath>
+           				</resource>
+            		</webResources>
+            	</configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -462,6 +472,7 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            
         </plugins>
     </build>
 
