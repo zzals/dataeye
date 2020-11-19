@@ -1,0 +1,121 @@
+##SCRIPT
+$(document).ready(function() {
+	var parentObj = opener || parent;
+	var reqParam = $("input#reqParam").data();
+    
+	var renderGrid = function($grid, $gridPager) {
+	    var colModel = [
+	        DE.jqgrid.colModel.objTypeIcon({ label: '유형'}),
+			{name:'OBJ_NM',index:'OBJ_NM', label:'객체명', width:150, align:'left', 
+		    	formatter: "dynamicLink", 
+		    	formatoptions: {
+		    		onClick: function (rowid, irow, icol, cellvalue, e) {
+		    			var rowData = $(this).jqGrid("getLocalRow", rowid);
+		    			DE.ui.open.popup(
+	    					"view",
+	    					[rowData["OBJ_TYPE_ID"], rowData["OBJ_ID"]],
+	    					{
+	    						viewname:'common/metacore/objectInfoTab',
+	    						objTypeId:rowData["OBJ_TYPE_ID"],
+	    						objId:rowData["OBJ_ID"],
+	    						mode:'R'
+	    					},
+	    					null
+	    				);
+		    		}
+		    	}
+	        },
+			{name:'USG_NM',index:'USG_NM', label:'용도', width:120, align:'left', fixed:true},
+			{name:'QLTY_CHRGR',index:'QLTY_CHRGR', label:'담당자', width:120, align:'left', fixed:true},
+			{name:'OBJ_ID',index:'OBJ_ID', label:'OBJ_ID', hidden:true}
+	   	];
+	
+		var opts = {
+			"url":DE.contextPath+"/metacore/uiview?oper=execQueryByGrid",
+			"colModel":colModel,
+	        pager:"#"+$gridPager.prop("id"),
+	        isPaging:false,
+			loadonce: true,
+			multiselect: false,
+			scroll:-1,
+			autowidth:true,
+			shrinkToFit: true,
+			height:200,
+                        isResize:false,
+	        gridComplete: function() {
+	        	DE.jqgrid.checkedHandler($(this));
+	        }
+		};
+		
+		var navOpts = {
+			navOptions:{
+				cloneToTop:false,
+				add:false,
+				del:false,
+				edit:false,
+				refresh:true,
+				search:false,
+				view:false
+			}
+		};
+		
+		DE.jqgrid.render($grid, opts);
+		DE.jqgrid.navGrid($grid, $gridPager, navOpts);
+	}
+
+	var init = function() {
+		renderGrid($("#jqGrid"), $("#jqGridPager"));
+		
+		var postData = {
+			"mode":reqParam["mode"],
+			"objTypeId":reqParam["objTypeId"],
+			"objId":reqParam["objId"],
+			"uiId":reqParam["uiId"],
+			"confSqlKey":"CONF_SQL1"
+		};
+
+		DE.jqgrid.reload($("#jqGrid"), postData);
+	};
+	init();
+
+	$(this).off("autoResize").on( "autoResize", function( event ) {
+		var winHeight = $(window).height();
+		var winWidth = $(window).width();
+		$("#jqGrid").setGridWidth(winWidth-30);
+		$("#jqGrid").setGridHeight(winHeight-90);
+	}).trigger("autoResize");
+});
+
+##QUERY
+SELECT T103.OBJ_TYPE_ID
+     , T103.OBJ_ID
+     , T103.OBJ_NM
+     , MAX(CASE WHEN T104.ATR_ID_SEQ = 101 THEN T105.CD_NM END) AS USG_NM
+     , MAX(CASE WHEN T104.ATR_ID_SEQ=102 THEN T104.OBJ_ATR_VAL END) AS QLTY_CHRGR
+FROM PEN_OBJ_R T101
+INNER JOIN PEN_REL_TYPE_M T102
+ON (
+    T101.REL_TYPE_ID = T102.REL_TYPE_ID
+    AND T101.REL_OBJ_TYPE_ID = T102.REL_OBJ_TYPE_ID
+    AND T102.META_REL_CD = 'UD'
+)
+INNER JOIN PEN_OBJ_M T103
+ON (
+    T101.OBJ_TYPE_ID = T103.OBJ_TYPE_ID
+    AND T101.OBJ_ID = T103.OBJ_ID
+)
+INNER JOIN PEN_OBJ_D T104
+ON (
+    T103.OBJ_TYPE_ID = T104.OBJ_TYPE_ID
+    AND T103.OBJ_ID = T104.OBJ_ID
+)
+LEFT OUTER JOIN PEN_CD_M T105
+ON ( T104.OBJ_ATR_VAL   = T105.CD_ID
+    AND T104.ATR_ID_SEQ = 101
+    AND T105.CD_GRP_ID  = 'DQ_BREXEGPU' )
+WHERE T101.REL_OBJ_TYPE_ID = #{objTypeId}
+AND T101.REL_OBJ_ID = #{objId}
+GROUP BY  T103.OBJ_TYPE_ID
+     , T103.OBJ_ID
+     , T103.OBJ_NM
+ORDER BY T103.OBJ_NM ASC

@@ -1,0 +1,64 @@
+server:
+  max-http-post-size: 10000000
+  error:
+    whitelabel:
+      enabled: false
+
+application:
+  portal:
+    enabled-integration-menu: false
+    http-header-ajax-request-header: X-Requested-With
+    http-header-ajax-request-value: XMLHttpRequest
+    ui: material
+    default-locale: ko_KR
+    default-error-page-path: common/error
+    #template-view: common/main/portal/main
+    #header-view: common/main/portal/header
+    #left-view: common/main/portal/left
+    #center-view: common/main/portal/center
+    #footer-view: common/main/portal/footer
+    #right-view: common/main/portal/right
+    login-view: common/login/login              #로그인 페이지
+    login-error-view: common/login/loginError   #로그인 오류 페이지
+    logout-view: common/login/logout            #로그아웃 페이지
+    expired-view: common/login/expired          #세션 Expired 페이지
+    portal-main-view: portal/main
+    admin-main-view: admin/main
+    system-main-view: system/main
+    password-init-value: 1234           #초기화 패스워드
+    password-fail-count: 5              #패스워드 오류 잠금 횟수
+    password-change-period: 90          #패스워드 변경주기
+    
+  security:
+    ajax-request-header: X-Requested-With
+    ajax-request-value: XMLHttpRequest
+    provider: dataeyeAuthenticationProvider
+    login-page: /login?evt=login
+    login-processing-url: /login/auth
+    success-handler: loginSuccessHandler
+    failure-handler: loginFailureHandler
+    username-parameter: de_username
+    password-parameter: de_pwd
+    login-success-url: /portal/main
+    logout-url: /login?evt=logout
+    logout-success-handler: logoutSuccessHandler
+    expired-url: /login?evt=sessionExpired
+    logout-success-url: /
+    sso-entry-point: /portal/sso
+    allow-origin: http://localhost:8888
+
+file:
+  upload:
+    path:
+      real: C:\work\upFile\
+      root: d:\file
+      tmpry: d:\file
+
+spring:
+  http:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
+  profiles:
+    active: development
+    include: development-oracle, dataeye-development, search-development, development-mstr

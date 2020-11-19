@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="code">
+    <select id="getCdGrpTree" resultType="kr.co.penta.dataeye.common.entities.CamelMap" >
+        WITH CD_GRP_M (
+            CD_GRP_ID
+            , DEL_YN
+            , CRET_DT
+            , CRETR_ID
+            , CHG_DT
+            , CHGR_ID
+            , CD_GRP_NM
+            , CD_GRP_DESC
+            , UP_CD_GRP_ID
+            , UP_CD_GRP_NM
+            , EFCT_ST_DATE
+            , EFCT_ED_DATE
+            , LVL
+            , SORT_PATH
+         ) AS  (
+            SELECT T101.CD_GRP_ID
+                    , T101.DEL_YN
+                    , T101.CRET_DT
+                    , T101.CRETR_ID
+                    , T101.CHG_DT
+                    , T101.CHGR_ID
+                    , T101.CD_GRP_NM
+                    , T101.CD_GRP_DESC
+                    , T101.UP_CD_GRP_ID
+                    , NULL AS UP_CD_GRP_NM
+                    , T101.EFCT_ST_DATE
+                    , T101.EFCT_ED_DATE
+                    , 1 AS LVL
+                    , CD_GRP_NM AS SORT_PATH
+            FROM PEN_CD_GRP_M T101
+            <where>
+                T101.UP_CD_GRP_ID IS NULL
+                <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(delYn)'>
+                    AND T101.DEL_YN = #{delYn}
+                </if>
+            </where>
+            UNION ALL
+            SELECT T101.CD_GRP_ID
+                    , T101.DEL_YN
+                    , T101.CRET_DT
+                    , T101.CRETR_ID
+                    , T101.CHG_DT
+                    , T101.CHGR_ID
+                    , T101.CD_GRP_NM
+                    , T101.CD_GRP_DESC
+                    , T101.UP_CD_GRP_ID
+                    , T102.CD_GRP_NM AS UP_CD_GRP_NM
+                    , T101.EFCT_ST_DATE
+                    , T101.EFCT_ED_DATE
+                    , 1+T102.LVL AS LVL
+                    , T102.SORT_PATH||'/'||T101.CD_GRP_NM AS SORT_PATH
+            FROM PEN_CD_GRP_M T101
+            INNER JOIN CD_GRP_M T102
+            ON (
+                T101.UP_CD_GRP_ID = T102.CD_GRP_ID
+            )
+            <where>
+                <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(delYn)'>
+                    AND T101.DEL_YN = #{delYn}
+                </if>
+            </where>
+        )
+        SELECT T101.*
+             , CASE 
+                WHEN T101.LVL > LEAD(LVL, 1) OVER (ORDER BY T101.SORT_PATH) 
+                  OR T101.LVL = LEAD(LVL, 1) OVER (ORDER BY T101.SORT_PATH) 
+                  OR LEAD (LVL, 1) OVER (ORDER BY T101.SORT_PATH) IS NULL
+                THEN 'true' 
+                ELSE 'false' 
+             END AS IS_LEAF
+             , 'true' AS IS_EXPENDED
+        FROM CD_GRP_M T101
+        <where>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+                AND T101.${searchKey} LIKE '%'||#{searchValue}||'%'
+            </if>
+        </where>
+        ORDER BY T101.SORT_PATH
+    </select>
+    <select id="getCdGrp" resultType="kr.co.penta.dataeye.common.entities.CamelMap" >
+        SELECT T101.CD_GRP_ID
+            , T101.DEL_YN
+            , T101.CRET_DT
+            , T101.CRETR_ID
+            , T101.CHG_DT
+            , T101.CHGR_ID
+            , T101.CD_GRP_NM
+            , T101.CD_GRP_DESC
+            , T101.UP_CD_GRP_ID
+            , T102.CD_GRP_NM    AS UP_CD_GRP_NM
+            , T101.EFCT_ST_DATE
+            , T101.EFCT_ED_DATE
+        FROM PEN_CD_GRP_M T101
+        LEFT OUTER JOIN PEN_CD_GRP_M T102
+        ON (
+            T101.UP_CD_GRP_ID = T102.CD_GRP_ID
+        )
+        <where>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(cdGrpId)'>
+                AND T101.CD_GRP_ID = #{cdGrpId}
+            </if>
+        </where>
+        ORDER BY T101.CD_GRP_NM
+    </select>
+    <select id="getCd" resultType="kr.co.penta.dataeye.common.entities.CamelMap" >
+        SELECT T101.CD_GRP_ID
+           , T101.CD_ID
+           , T101.DEL_YN
+           , T101.CRET_DT
+           , T101.CRETR_ID
+           , T101.CHG_DT
+           , T101.CHGR_ID
+           , T101.CD_NM
+           , T101.CD_DESC
+           , T101.SORT_NO
+           , T101.USE_YN
+           , T101.UP_CD_GRP_ID
+           , T101.UP_CD_ID
+           , TO_CHAR(T101.EFCT_ST_DATE,'YYYY-MM-DD') AS EFCT_ST_DATE
+           , TO_CHAR(T101.EFCT_ED_DATE,'YYYY-MM-DD') AS EFCT_ED_DATE
+        FROM PEN_CD_M T101
+        <where>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(cdGrpId)'>
+                AND T101.CD_GRP_ID = #{cdGrpId}
+            </if>
+        </where>
+        ORDER BY T101.SORT_NO
+    </select>
+    <select id="getDuplCntByCdGrpId" resultType="int" >
+        SELECT COUNT(1) CNT
+        FROM PEN_CD_GRP_M T101
+        WHERE CD_GRP_ID = #{cdGrpId}
+    </select>
+    <select id="getDuplCntByCdId" resultType="int" >
+        SELECT COUNT(1) CNT
+        FROM PEN_CD_M T101
+        WHERE CD_ID = #{cdId}
+    </select>
+    <select id="getChildCntByCdGrpId" resultType="int" >
+        SELECT COUNT(1) CNT
+        FROM PEN_CD_GRP_M T101
+        WHERE UP_CD_GRP_ID = #{cdGrpId}
+    </select>
+</mapper>

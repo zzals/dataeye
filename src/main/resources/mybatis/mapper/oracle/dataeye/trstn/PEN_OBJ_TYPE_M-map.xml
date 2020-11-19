@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PEN_OBJ_TYPE_M">
+	<insert id="insert" parameterType="hashMap">
+		
+		INSERT INTO PEN_OBJ_TYPE_M (
+			OBJ_TYPE_ID,
+			DEL_YN,
+			CRET_DT,
+			CRETR_ID,
+			CHG_DT,
+			CHGR_ID,
+			OBJ_TYPE_NM,
+			OBJ_TYPE_DESC,		
+			UP_OBJ_TYPE_ID,
+			HIER_LEV_NO,
+			LST_LEV_YN,
+			ATR_ADM_CD
+		)
+		VALUES (
+            #{OBJ_TYPE_ID, jdbcType=VARCHAR},
+            #{DEL_YN, jdbcType=VARCHAR},
+            sysdate,
+            #{sessionInfo.userId, jdbcType=VARCHAR},
+            sysdate,
+            #{sessionInfo.userId, jdbcType=VARCHAR},
+            #{OBJ_TYPE_NM, jdbcType=VARCHAR},
+            #{OBJ_TYPE_DESC, jdbcType=VARCHAR},
+            #{UP_OBJ_TYPE_ID, jdbcType=VARCHAR},
+            #{HIER_LEV_NO, jdbcType=VARCHAR},
+            #{LST_LEV_YN, jdbcType=VARCHAR},
+            #{ATR_ADM_CD, jdbcType=VARCHAR}
+		)
+	</insert>
+	<update id="update" parameterType="hashMap">
+        UPDATE PEN_OBJ_TYPE_M
+        <set>
+            CHG_DT=CURRENT_TIMESTAMP,
+            <if test="DEL_YN != null">DEL_YN=#{DEL_YN, jdbcType=CHAR},</if>
+            <if test="CHGR_ID != null">CHGR_ID=#{sessionInfo.userId, jdbcType=VARCHAR},</if>
+            <if test="OBJ_TYPE_NM != null">OBJ_TYPE_NM=#{OBJ_TYPE_NM, jdbcType=VARCHAR},</if>
+            <if test="OBJ_TYPE_DESC != null">OBJ_TYPE_DESC=#{OBJ_TYPE_DESC, jdbcType=VARCHAR},</if>
+            <if test="UP_OBJ_TYPE_ID != null">UP_OBJ_TYPE_ID=#{UP_OBJ_TYPE_ID, jdbcType=VARCHAR},</if>
+            <if test="HIER_LEV_NO != null">HIER_LEV_NO=#{HIER_LEV_NO, jdbcType=NUMERIC},</if>
+            <if test="LST_LEV_YN != null">LST_LEV_YN=#{LST_LEV_YN, jdbcType=VARCHAR},</if>
+            <if test="ATR_ADM_CD != null">ATR_ADM_CD=#{ATR_ADM_CD, jdbcType=NUMERIC}</if>
+        </set>
+		<where>
+			OBJ_TYPE_ID = #{OBJ_TYPE_ID}
+		</where>
+	</update>	
+	<delete id="delete" parameterType="hashMap">
+		UPDATE PEN_OBJ_TYPE_M SET DEL_YN='Y'
+		WHERE OBJ_TYPE_ID = #{OBJ_TYPE_ID}
+	</delete>
+</mapper>

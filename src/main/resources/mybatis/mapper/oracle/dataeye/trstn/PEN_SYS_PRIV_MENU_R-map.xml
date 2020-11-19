@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PEN_SYS_PRIV_MENU_R">
+	<insert id="insert" parameterType="hashMap">
+		INSERT INTO PEN_SYS_PRIV_MENU_R
+        (
+            APP_ID,    MENU_ID,        PRIV_RCVR_GBN,       PRIV_RCVR_ID,       DEL_YN,         
+            CRET_DT,   CRETR_ID,       CHG_DT,              CHGR_ID,            PRIV_OPER_GBN
+		)
+        VALUES
+        (
+            #{APP_ID, jdbcType=VARCHAR},   #{MENU_ID, jdbcType=VARCHAR},                #{PRIV_RCVR_GBN, jdbcType=VARCHAR},     #{PRIV_RCVR_ID, jdbcType=VARCHAR},          #{DEL_YN, jdbcType=CHAR},             
+            CURRENT_TIMESTAMP,             #{sessionInfo.userId, jdbcType=VARCHAR},     CURRENT_TIMESTAMP,                      #{sessionInfo.userId, jdbcType=VARCHAR},    #{PRIV_OPER_GBN, jdbcType=VARCHAR}
+		)
+	</insert>
+    <update id="update" parameterType="hashMap">
+        UPDATE PEN_SYS_PRIV_MENU_R
+        <set>
+            CHG_DT = CURRENT_TIMESTAMP,
+            CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR},
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(PRIV_OPER_GBN)'>PRIV_OPER_GBN = #{PRIV_OPER_GBN, jdbcType=VARCHAR},</if>
+        </set>
+        WHERE APP_ID = #{APP_ID}
+          AND MENU_ID = #{MENU_ID}
+          AND PRIV_RCVR_GBN = #{PRIV_RCVR_GBN}
+          AND PRIV_RCVR_ID = #{PRIV_RCVR_ID}
+    </update>
+    <delete id="delete" parameterType="hashMap">
+        DELETE FROM PEN_SYS_PRIV_MENU_R
+        WHERE APP_ID = #{appId}
+          AND MENU_ID = #{menuId}
+          AND PRIV_RCVR_GBN = #{privRcvrGbn}
+          AND PRIV_RCVR_ID = #{privRcvrId}
+    </delete>
+</mapper>

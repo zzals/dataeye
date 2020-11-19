@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PEN_REL_TYPE_M">
+	<insert id="insert" parameterType="hashMap">
+		INSERT INTO PEN_REL_TYPE_M
+        (
+            REL_TYPE_ID,    DEL_YN,             CRET_DT,            CRETR_ID,           CHG_DT,
+            CHGR_ID,        REL_TYPE_NM,        DOWN_REL_TYPE_NM,   UP_REL_TYPE_NM,     REL_TYPE_DESC,  
+            OBJ_TYPE_ID,    REL_OBJ_TYPE_ID,    META_REL_CD,        UP_REL_TYPE_ID,     ATR_ADM_CD
+		)
+        VALUES
+        (
+            #{REL_TYPE_ID, jdbcType=VARCHAR},           #{DEL_YN, jdbcType=VARCHAR},            sysdate,                      #{sessionInfo.userId, jdbcType=VARCHAR},    CURRENT_TIMESTAMP,
+            #{sessionInfo.userId, jdbcType=VARCHAR},    #{REL_TYPE_NM, jdbcType=VARCHAR},       #{DOWN_REL_TYPE_NM, jdbcType=VARCHAR},  #{UP_REL_TYPE_NM, jdbcType=VARCHAR},        #{REL_TYPE_DESC, jdbcType=VARCHAR},
+            #{OBJ_TYPE_ID, jdbcType=VARCHAR},           #{REL_OBJ_TYPE_ID, jdbcType=VARCHAR},   #{META_REL_CD, jdbcType=CHAR},          #{UP_REL_TYPE_ID, jdbcType=VARCHAR},        #{ATR_ADM_CD, jdbcType=VARCHAR}
+		)
+	</insert>
+    
+    <delete id="delete" parameterType="hashMap">
+        DELETE FROM PEN_REL_TYPE_M
+        WHERE REL_TYPE_ID = #{relTypeId}
+    </delete>
+</mapper>

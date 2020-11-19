@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="system.log">
+  
+    <select id="getLogUser" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+       SELECT F1.SESS_REQ_UUID AS SESS_REQ_UUID
+			, F1.CRET_DT       AS CRET_DT      
+			, F1.CRETR_ID      AS CRETR_ID   
+			, F1.APP_ID        AS APP_ID
+			, NVL((SELECT DISTINCT APP_NM FROM PEN_APP_M WHERE APP_ID =TRIM(F1.APP_ID) ), '-') AS APP_NM 
+			, F1.USER_ID       AS USER_ID  
+            , NVL((SELECT DISTINCT USER_NM FROM PEN_USER_M WHERE USER_ID =TRIM(F1.USER_ID) ), '-') AS USER_NM   
+			, NVL((SELECT DISTINCT ORG_ID FROM PEN_USER_M WHERE USER_ID =TRIM(F1.USER_ID) ), '-')  AS ORG_ID    
+			, F1.SESS_ID       AS SESS_ID      
+			, F1.USER_IP       AS USER_IP      
+			, F1.SRV_IP        AS SRV_IP       
+			, F1.SRV_PORT      AS SRV_PORT     
+			, F1.REQ_DT        AS REQ_DT       
+			, F1.END_DT        AS END_DT       
+			, F1.REFE_INFO     AS REFE_INFO    
+			, CASE WHEN F1.RSLT_CD='S' THEN '성공' ELSE '실패' END AS RSLT_CD      
+			, F1.RSLT_DESC     AS RSLT_DESC    
+			, F1.CONN_TYPE     AS CONN_TYPE    
+			, F1.LOGIN_TYPE    AS LOGIN_TYPE  
+		FROM PEN_SYS_SESS_L F1
+	    <where>
+	    	<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(fromData)'>
+                   AND TO_CHAR(F1.REQ_DT, 'yyyy-mm-dd') = #{fromData}
+            </if>
+		</where>
+    </select>
+    
+    <select id="getLogObj" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+         SELECT F1.OBJ_REQ_UUID  AS OBJ_REQ_UUID  
+			  , F1.CRET_DT       AS CRET_DT       
+			  , F1.CRETR_ID      AS CRETR_ID      
+			  , F1.APP_ID        AS APP_ID     
+			  , NVL((SELECT DISTINCT APP_NM FROM PEN_APP_M WHERE APP_ID =TRIM(F1.APP_ID) ), '-') AS APP_NM        
+			  , F1.USER_ID       AS USER_ID 
+			  , NVL((SELECT DISTINCT USER_NM FROM PEN_USER_M WHERE USER_ID =TRIM(F1.USER_ID) ), '-') AS USER_NM   
+		      , NVL((SELECT DISTINCT ORG_ID FROM PEN_USER_M WHERE USER_ID =TRIM(F1.USER_ID) ), '-')  AS ORG_ID      
+			  , F1.SESS_ID       AS SESS_ID       
+			  , F1.USER_IP       AS USER_IP       
+			  , F1.SRV_IP        AS SRV_IP        
+			  , F1.SRV_PORT      AS SRV_PORT      
+			  , F1.OBJ_TYPE_ID   AS OBJ_TYPE_ID   
+			  , NVL((SELECT DISTINCT OBJ_TYPE_NM FROM PEN_OBJ_TYPE_M WHERE OBJ_TYPE_ID =TRIM(F1.OBJ_TYPE_ID) ), '-') AS OBJ_TYPE_NM
+			  , F1.OBJ_ID        AS OBJ_ID    
+			  , NVL((SELECT DISTINCT OBJ_NM FROM PEN_OBJ_M WHERE OBJ_ID =TRIM(F1.OBJ_ID) ), '-') AS OBJ_NM      
+			  , F1.REQ_DT        AS REQ_DT        
+			  , F1.END_DT        AS END_DT        
+			  , F1.REFE_INFO     AS REFE_INFO     
+			  , CASE WHEN F1.RSLT_CD='S' THEN '성공' ELSE '실패' END AS RSLT_CD 
+		FROM PEN_SYS_OBJ_L F1
+	    <where>
+	    	<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(fromData)'>
+                   AND TO_CHAR(F1.REQ_DT, 'yyyy-mm-dd') = #{fromData}
+            </if>
+		</where>
+    </select>
+    
+    <select id="getLogMenu" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+       SELECT F1.MENU_REQ_UUID  AS MENU_REQ_UUID 
+			, F1.CRET_DT        AS CRET_DT       
+			, F1.CRETR_ID       AS CRETR_ID      
+			, F1.APP_ID         AS APP_ID    
+			, NVL((SELECT DISTINCT APP_NM FROM PEN_APP_M WHERE APP_ID =TRIM(F1.APP_ID) ), '-') AS APP_NM     
+			, F1.USER_ID        AS USER_ID  
+			, NVL((SELECT DISTINCT USER_NM FROM PEN_USER_M WHERE USER_ID =TRIM(F1.USER_ID) ), '-') AS USER_NM   
+			, NVL((SELECT DISTINCT ORG_ID FROM PEN_USER_M WHERE USER_ID =TRIM(F1.USER_ID) ), '-')  AS ORG_ID      
+			, F1.SESS_ID        AS SESS_ID       
+			, F1.USER_IP        AS USER_IP       
+			, F1.SRV_IP         AS SRV_IP        
+			, F1.SRV_PORT       AS SRV_PORT      
+			, CASE WHEN SUBSTR(F1.MENU_ID,1,9)='undefined' THEN '-' ELSE F1.MENU_ID END AS MENU_ID       
+			, CASE WHEN SUBSTR(F1.MENU_NM,1,9)='undefined' THEN '-' ELSE F1.MENU_NM END AS MENU_NM       
+			, F1.URL            AS URL           
+			, F1.VIEW_ID        AS VIEW_ID       
+			, F1.QUERY_STR      AS QUERY_STR     
+			, F1.REQ_DT         AS REQ_DT        
+			, F1.REFE_INFO      AS REFE_INFO     
+			, CASE WHEN F1.HTTP_STATUS='200' THEN '정상' ELSE TO_CHAR(F1.HTTP_STATUS) END  AS HTTP_STATUS   
+		FROM PEN_SYS_MENU_L F1 
+	    <where>
+	    	<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(fromData)'>
+                   AND TO_CHAR(F1.REQ_DT, 'yyyy-mm-dd') = #{fromData}
+            </if>
+		</where>
+		ORDER BY F1.REQ_DT DESC
+    </select>
+</mapper>

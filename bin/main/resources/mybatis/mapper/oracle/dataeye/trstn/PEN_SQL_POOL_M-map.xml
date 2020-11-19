@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PEN_SQL_POOL_M">
+	<insert id="insert" parameterType="hashMap">
+		INSERT INTO PEN_SQL_POOL_M 
+        (
+            SQL_ID,     DEL_YN,     CRET_DT,        CRETR_ID,   CHG_DT,
+            CHGR_ID,    SQL_NM,     SQL_TYPE_CD,    SQL_SBST,   GRID_OPTS,
+            SQL_SBST2,  GRID_OPTS2, AUTH_CHK_YN,    AUTH_CHK_SBST
+
+		)
+        VALUES
+        (
+            #{SQL_ID, jdbcType=VARCHAR},                #{DEL_YN, jdbcType=VARCHAR},     CURRENT_TIMESTAMP,                 #{sessionInfo.userId, jdbcType=VARCHAR},    CURRENT_TIMESTAMP,
+            #{sessionInfo.userId, jdbcType=VARCHAR},    #{SQL_NM, jdbcType=VARCHAR},     #{SQL_TYPE_CD, jdbcType=VARCHAR},  #{SQL_SBST, jdbcType=VARCHAR},              #{GRID_OPTS, jdbcType=VARCHAR},
+            #{SQL_SBST2, jdbcType=VARCHAR},             #{GRID_OPTS2, jdbcType=VARCHAR}, #{AUTH_CHK_YN, jdbcType=CHAR},     #{AUTH_CHK_SBST, jdbcType=VARCHAR}
+		)
+	</insert>
+    <update id="update" parameterType="hashMap">
+        UPDATE PEN_SQL_POOL_M
+        <set>
+            CHG_DT = CURRENT_TIMESTAMP,
+            CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR},
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(DEL_YN)'>DEL_YN = #{DEL_YN, jdbcType=CHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(SQL_NM)'>SQL_NM = #{SQL_NM, jdbcType=VARCHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(SQL_TYPE_CD)'>SQL_TYPE_CD = #{SQL_TYPE_CD, jdbcType=CHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(SQL_SBST)'>SQL_SBST = #{SQL_SBST, jdbcType=VARCHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(GRID_OPTS)'>GRID_OPTS = #{GRID_OPTS, jdbcType=VARCHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(SQL_SBST2)'>SQL_SBST2 = #{SQL_SBST2, jdbcType=VARCHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(GRID_OPTS2)'>GRID_OPTS2 = #{GRID_OPTS2, jdbcType=VARCHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(AUTH_CHK_YN)'>AUTH_CHK_YN = #{AUTH_CHK_YN, jdbcType=CHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(AUTH_CHK_SBST)'>AUTH_CHK_SBST = #{AUTH_CHK_SBST, jdbcType=VARCHAR},</if>
+        </set>
+        WHERE SQL_ID = #{SQL_ID}
+    </update>
+    <delete id="delete" parameterType="hashMap">
+        DELETE FROM PEN_SQL_POOL_M
+        WHERE SQL_ID = #{sqlId}
+    </delete>
+</mapper>

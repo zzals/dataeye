@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PEN_OBJ_TYPE_UI_D">
+	<insert id="insert" parameterType="hashMap">
+		INSERT INTO PEN_OBJ_TYPE_UI_D 
+        (
+            OBJ_TYPE_ID,    UI_ID_SEQ,      DEL_YN,     CRET_DT,        CRETR_ID,
+            CHG_DT,         CHGR_ID,        UI_ID,      UI_ALIAS_NM,    SORT_NO,
+            USE_YN
+		)
+        VALUES
+        (
+            #{OBJ_TYPE_ID, jdbcType=VARCHAR},           #{UI_ID_SEQ, jdbcType=VARCHAR},             #{DEL_YN, jdbcType=VARCHAR},     sysdate,                 #{sessionInfo.userId, jdbcType=VARCHAR},
+            sysdate,                          #{sessionInfo.userId, jdbcType=VARCHAR},    #{UI_ID, jdbcType=VARCHAR},      #{UI_ALIAS_NM, jdbcType=VARCHAR},  #{SORT_NO, jdbcType=NUMERIC},
+            #{USE_YN, jdbcType=VARCHAR}
+		)
+	</insert>
+    <delete id="delete" parameterType="hashMap">
+        DELETE FROM PEN_OBJ_TYPE_UI_D T101
+        <where>
+            T101.OBJ_TYPE_ID = #{objTypeId}
+            <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(uiIdSeq)">
+                AND T101.UI_ID_SEQ = #{uiIdSeq}
+            </if>
+            <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(uiId)">
+                AND T101.UI_ID = #{uiId}
+            </if>
+        </where>
+    </delete>
+</mapper>

@@ -1,0 +1,6 @@
+## 수정사항 ##
+1.
+	instance.view.wt.wtDom.fastInnerText(TD, '#bad value#'); //this is faster than innerHTML. See: https://github.com/warpech/jquery-handsontable/wiki/JavaScript-&-DOM-performance-tips
+	#변경내용
+	TD.appendChild(INPUT);
+----------------------------------------------------------------------------------------------------------------------------------------------	

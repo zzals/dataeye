@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="portal.dataset"> 	
+  
+    <select id="datasetList" resultType="kr.co.penta.dataeye.common.entities.CamelMap">    
+		 SELECT
+	            T101.OBJ_TYPE_ID AS OBJ_TYPE_ID
+	            , T101.OBJ_ID AS OBJ_ID
+	            , T101.DEL_YN AS DEL_YN
+	            , T101.CRET_DT AS CRET_DT
+	            , T101.CRETR_ID AS CRETR_ID
+	            , T103.USER_NM AS CRETR_NM
+	            , T101.CHG_DT AS CHG_DT
+	            , T101.CHGR_ID AS CHGR_ID
+	            , T104.USER_NM AS CHGR_NM
+	            , T101.ADM_OBJ_ID AS ADM_OBJ_ID
+	            , T101.OBJ_NM AS OBJ_NM
+	            , T101.OBJ_ABBR_NM AS OBJ_ABBR_NM
+	            , T101.OBJ_DESC AS OBJ_DESC
+	            , T101.PATH_OBJ_TYPE_ID AS PATH_OBJ_TYPE_ID
+	            , T101.PATH_OBJ_ID AS PATH_OBJ_ID
+	            , T102.OBJ_NM AS PATH_OBJ_NM
+	        FROM PEN_OBJ_M T101
+	        LEFT OUTER JOIN PEN_OBJ_M T102 ON (T101.PATH_OBJ_TYPE_ID = T102.OBJ_TYPE_ID AND T101.PATH_OBJ_ID = T102.OBJ_ID)
+	        LEFT OUTER JOIN PEN_USER_M T103 ON (T101.CRETR_ID = T103.USER_ID)
+	        LEFT OUTER JOIN PEN_USER_M T104 ON (T101.CHGR_ID = T104.USER_ID)
+         WHERE T101.OBJ_TYPE_ID = '010201L'
+			   AND T101.DEL_YN = 'N'		
+	   <if test=' @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(cateIds)'>
+			AND T101.PATH_OBJ_ID  IN(${cateIds})
+		</if>   
+		
+		<if test=' @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(sessionInfo.userId)'>
+			 AND (T101.OBJ_TYPE_ID,T101.OBJ_ID) NOT IN
+            (
+           		SELECT OBJ_TYPE_ID,OBJ_ID 
+	            FROM  ( 
+	                SELECT A.OBJ_TYPE_ID , A.OBJ_ID , NVL(C.USER_ID,A.PRIV_RCVR_ID) AS USER_ID
+	                      FROM PEN_SYS_PRIV_OBJ_R A
+	                      LEFT OUTER JOIN PEN_SYS_GRP_R B ON(A.PRIV_RCVR_ID = B.USER_GRP_ID AND A.PRIV_RCVR_GBN='G')
+	                      LEFT OUTER JOIN PEN_SYS_GRP_USER_R C  ON(B.REL_USER_GRP_ID = C.USER_GRP_ID )
+	             ) AUTH
+	              WHERE AUTH.USER_ID=#{sessionInfo.userId}
+            )
+		</if>   
+    </select>
+    
+    
+       <select id="mainList" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        SELECT * FROM (      
+		 SELECT
+	            T101.OBJ_TYPE_ID AS OBJ_TYPE_ID
+	            , T101.OBJ_ID AS OBJ_ID
+	            , T101.DEL_YN AS DEL_YN
+	            , T101.CRET_DT AS CRET_DT
+	            , T101.CRETR_ID AS CRETR_ID
+	            , T103.USER_NM AS CRETR_NM
+	            , T101.CHG_DT AS CHG_DT
+	            , T101.CHGR_ID AS CHGR_ID
+	            , T104.USER_NM AS CHGR_NM
+	            , T101.ADM_OBJ_ID AS ADM_OBJ_ID
+	            , T101.OBJ_NM AS OBJ_NM
+	            , T101.OBJ_ABBR_NM AS OBJ_ABBR_NM
+	            , T101.OBJ_DESC AS OBJ_DESC
+	            , T101.PATH_OBJ_TYPE_ID AS PATH_OBJ_TYPE_ID
+	            , T101.PATH_OBJ_ID AS PATH_OBJ_ID
+	            , T102.OBJ_NM AS PATH_OBJ_NM
+	        FROM PEN_OBJ_M T101
+	        LEFT OUTER JOIN PEN_OBJ_M T102 ON (T101.PATH_OBJ_TYPE_ID = T102.OBJ_TYPE_ID AND T101.PATH_OBJ_ID = T102.OBJ_ID)
+	        LEFT OUTER JOIN PEN_USER_M T103 ON (T101.CRETR_ID = T103.USER_ID)
+	        LEFT OUTER JOIN PEN_USER_M T104 ON (T101.CHGR_ID = T104.USER_ID)
+         WHERE T101.OBJ_TYPE_ID = '010201L'
+			   AND T101.DEL_YN = 'N'		
+	       ) WHERE ROWNUM <![CDATA[ <= ]]>5
+    </select>
+    
+    
+    
+      <select id="cateList" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+    
+    	SELECT OBJ_ID,OBJ_NM,OBJ_DESC FROM PEN_OBJ_M 
+           WHERE OBJ_TYPE_ID='010101L'
+             AND OBJ_ID IN (
+               SELECT DISTINCT PATH_OBJ_ID FROM PEN_OBJ_M 
+               WHERE OBJ_TYPE_ID='010201L'  
+             )
+    </select>
+    
+    <select id="getDatasetDetail" resultType="hashmap">      				      	  
+		   SELECT
+	            NVL(T101.OBJ_TYPE_ID,' ') AS OBJ_TYPE_ID
+	            , NVL(T101.OBJ_ID,' ') AS OBJ_ID
+	            , NVL(T101.DEL_YN,' ') AS DEL_YN
+	            , T101.CRET_DT AS CRET_DT
+	            , NVL(T101.CRETR_ID,' ') AS CRETR_ID
+	            , NVL(T103.USER_NM,' ') AS CRETR_NM
+	            , T101.CHG_DT AS CHG_DT
+	            , NVL(T101.CHGR_ID,' ') AS CHGR_ID
+	            , NVL(T104.USER_NM,' ') AS CHGR_NM
+	            , NVL(T101.ADM_OBJ_ID,' ') AS ADM_OBJ_ID
+	            , NVL(T101.OBJ_NM,' ') AS OBJ_NM
+	            , NVL(T101.OBJ_ABBR_NM,' ') AS OBJ_ABBR_NM
+	            , NVL(T101.OBJ_DESC,' ') AS OBJ_DESC
+	            , NVL(T101.PATH_OBJ_TYPE_ID,' ') AS PATH_OBJ_TYPE_ID
+	            , NVL(T101.PATH_OBJ_ID,' ') AS PATH_OBJ_ID
+	            , NVL(T102.OBJ_NM,' ') AS PATH_OBJ_NM
+                , NVL(C1.CD_NM,' ') AS ETL_IFCYCL
+                , NVL(C2.CD_NM,' ') AS DATAKEEPCYCLE
+                , NVL(C3.ORG_NM,' ') AS TEAM_NM
+	        FROM PEN_OBJ_M T101
+	        LEFT OUTER JOIN PEN_OBJ_M T102 ON (T101.PATH_OBJ_TYPE_ID = T102.OBJ_TYPE_ID AND T101.PATH_OBJ_ID = T102.OBJ_ID)
+	        LEFT OUTER JOIN PEN_USER_M T103 ON (T101.CRETR_ID = T103.USER_ID)
+	        LEFT OUTER JOIN PEN_USER_M T104 ON (T101.CHGR_ID = T104.USER_ID)
+            LEFT OUTER JOIN PEN_OBJ_D D1 ON(T101.OBJ_ID = D1.OBJ_ID AND T101.OBJ_TYPE_ID=D1.OBJ_TYPE_ID AND D1.ATR_ID_SEQ=101 AND D1.ATR_VAL_SEQ=101)             
+            LEFT OUTER JOIN PEN_CD_M C1 ON (C1.CD_GRP_ID = 'SYS_ETL_IFCYCL' AND C1.DEL_YN = 'N' AND C1.USE_YN = 'Y' AND C1.CD_ID = D1.OBJ_ATR_VAL)
+            LEFT OUTER JOIN PEN_OBJ_D D2 ON(T101.OBJ_ID = D2.OBJ_ID AND T101.OBJ_TYPE_ID=D2.OBJ_TYPE_ID AND D2.ATR_ID_SEQ=102 AND D2.ATR_VAL_SEQ=101)  
+            LEFT OUTER JOIN PEN_CD_M C2 ON (C2.CD_GRP_ID = 'SYS_DATAKEEPCYCLE' AND C2.DEL_YN = 'N' AND C2.USE_YN = 'Y' AND C2.CD_ID = D2.OBJ_ATR_VAL)
+            LEFT OUTER JOIN PEN_OBJ_D D3 ON(T101.OBJ_ID = D3.OBJ_ID AND T101.OBJ_TYPE_ID=D3.OBJ_TYPE_ID AND D3.ATR_ID_SEQ=103 AND D3.ATR_VAL_SEQ=101)  
+            LEFT OUTER JOIN PEN_ORG_M C3 ON (C3.ORG_ID = D3.OBJ_ATR_VAL)
+         WHERE T101.OBJ_TYPE_ID = '010201L'
+		  AND T101.DEL_YN = 'N'
+		  AND T101.OBJ_ID = #{datasetId}
+          	 
+     </select>
+     
+      <select id="getDatasetSampleSql" resultType="hashmap">      
+  
+		    SELECT  B1.OBJ_ATR_VAL AS TP
+		           ,B2.OBJ_ATR_VAL AS JDBC   
+		           ,B3.OBJ_ATR_VAL AS URL   
+		           ,B4.OBJ_ATR_VAL AS ID   
+		           ,B5.OBJ_ATR_VAL AS PWD
+		           ,D2.OBJ_ATR_VAL AS SQL
+		     FROM PEN_OBJ_M A 
+		     INNER JOIN PEN_OBJ_D B1 ON(A.OBJ_ID = B1.OBJ_ID AND A.OBJ_TYPE_ID=B1.OBJ_TYPE_ID AND B1.ATR_ID_SEQ=101 AND B1.ATR_VAL_SEQ=101)
+		     INNER JOIN PEN_OBJ_D B2 ON(A.OBJ_ID = B2.OBJ_ID AND A.OBJ_TYPE_ID=B2.OBJ_TYPE_ID AND B2.ATR_ID_SEQ=102 AND B2.ATR_VAL_SEQ=101)
+		     INNER JOIN PEN_OBJ_D B3 ON(A.OBJ_ID = B3.OBJ_ID AND A.OBJ_TYPE_ID=B3.OBJ_TYPE_ID AND B3.ATR_ID_SEQ=103 AND B3.ATR_VAL_SEQ=101)
+		     INNER JOIN PEN_OBJ_D B4 ON(A.OBJ_ID = B4.OBJ_ID AND A.OBJ_TYPE_ID=B4.OBJ_TYPE_ID AND B4.ATR_ID_SEQ=104 AND B4.ATR_VAL_SEQ=101)
+		     INNER JOIN PEN_OBJ_D B5 ON(A.OBJ_ID = B5.OBJ_ID AND A.OBJ_TYPE_ID=B5.OBJ_TYPE_ID AND B5.ATR_ID_SEQ=105 AND B5.ATR_VAL_SEQ=101)
+		     INNER JOIN PEN_OBJ_D D1 ON(A.OBJ_ID = D1.OBJ_ATR_VAL AND D1.OBJ_TYPE_ID = '010201L' AND D1.ATR_ID_SEQ=105 AND D1.ATR_VAL_SEQ=101)
+		     INNER JOIN PEN_OBJ_D D2 ON(D1.OBJ_TYPE_ID = D2.OBJ_TYPE_ID AND D1.OBJ_ID = D2.OBJ_ID AND D2.ATR_ID_SEQ=106 AND D2.ATR_VAL_SEQ=101)
+		     WHERE D1.OBJ_ID = #{datasetId} 
+     </select>
+     
+     
+      <select id="getDatasetSampleColumnList" resultType="hashmap">      
+				SELECT T101.*
+       , C1058.CD_NM AS DATA_TYPE_NM
+	    FROM (
+	        SELECT  T101.OBJ_TYPE_ID ,
+			        T101.OBJ_ID ,
+			        T101.ADM_OBJ_ID ,
+			        T101.OBJ_NM ,
+	                T101.OBJ_ABBR_NM,
+			        T101.OBJ_DESC ,
+			        T104.OBJ_TYPE_ID AS TAB_OBJ_TYPE_ID,
+			        T104.OBJ_ID AS TAB_OBJ_ID,
+	                T104.OBJ_NM AS TAB_OBJ_NM,
+			        MAX(CASE WHEN T102.ATR_ID_SEQ = 101 THEN T102.OBJ_ATR_VAL END) AS COL_ORD,
+			        MAX(CASE WHEN T102.ATR_ID_SEQ = 102 THEN T102.OBJ_ATR_VAL END) AS DATA_TYPE,
+			        MAX(CASE WHEN T102.ATR_ID_SEQ = 103 THEN T102.OBJ_ATR_VAL END) AS PK_YN
+			FROM    PEN_OBJ_M T101
+			LEFT OUTER JOIN PEN_OBJ_D T102
+			ON ( 
+			    T102.OBJ_TYPE_ID = T101.OBJ_TYPE_ID
+			    AND T102.OBJ_ID   = T101.OBJ_ID 
+			)
+	        LEFT OUTER JOIN PEN_OBJ_M T104
+	        ON (
+	            T101.PATH_OBJ_TYPE_ID = T104.OBJ_TYPE_ID
+	            AND T101.PATH_OBJ_ID = T104.OBJ_ID
+	        )
+			WHERE T101.DEL_YN = 'N'
+			AND T101.OBJ_TYPE_ID = '010202L'
+			AND T101.PATH_OBJ_TYPE_ID = '010201L'
+			AND T101.PATH_OBJ_ID = #{datasetId}
+			GROUP BY T101.OBJ_TYPE_ID ,
+			        T101.OBJ_ID ,
+			        T101.ADM_OBJ_ID ,
+			        T101.OBJ_NM ,
+	                T101.OBJ_ABBR_NM,
+			        T101.OBJ_DESC,
+	                T104.OBJ_TYPE_ID,
+			        T104.OBJ_ID,
+	                T104.OBJ_NM
+		) T101
+		LEFT OUTER JOIN PEN_CD_M C1058 ON (T101.DATA_TYPE = C1058.CD_ID AND C1058.CD_GRP_ID = 'BM_DSET_COL_DATATYPE')
+	    ORDER BY TO_CHAR(COL_ORD, '0009')	 
+     </select>
+     
+     <select id="getDatasetColumnList" resultType="hashmap">     
+		     SELECT  T101.* 
+		      , C1058.CD_NM AS DATA_TYPE_NM 
+		  FROM (	
+			SELECT   T101.OBJ_TYPE_ID 
+			       , T101.OBJ_ID 
+			       , T101.ADM_OBJ_ID 
+			       , T101.OBJ_NM 
+			       , T101.OBJ_ABBR_NM
+			       , T101.OBJ_DESC 
+			       , T104.OBJ_TYPE_ID AS TAB_OBJ_TYPE_ID
+			       , T104.OBJ_ID AS TAB_OBJ_ID
+			       , T104.OBJ_NM AS TAB_OBJ_NM
+			       , MAX(CASE WHEN T102.ATR_ID_SEQ = 101 THEN T102.OBJ_ATR_VAL END) AS COL_ORD
+			       , MAX(CASE WHEN T102.ATR_ID_SEQ = 102 THEN T102.OBJ_ATR_VAL END) AS DATA_TYPE
+			       , MAX(CASE WHEN T102.ATR_ID_SEQ = 103 THEN T102.OBJ_ATR_VAL END) AS PK_YN 
+			  FROM PEN_OBJ_M T101 
+			  LEFT OUTER JOIN PEN_OBJ_D T102 ON ( T102.OBJ_TYPE_ID = T101.OBJ_TYPE_ID AND T102.OBJ_ID = T101.OBJ_ID ) 
+			  LEFT OUTER JOIN PEN_OBJ_M T104 ON ( T101.PATH_OBJ_TYPE_ID = T104.OBJ_TYPE_ID AND T101.PATH_OBJ_ID = T104.OBJ_ID ) 
+		 	 WHERE T101.DEL_YN = 'N' 
+			   AND T101.OBJ_TYPE_ID = '010202L' 
+			   AND T101.PATH_OBJ_TYPE_ID = '010201L'
+			   AND T101.PATH_OBJ_ID = #{datasetId} 
+			 GROUP  BY T101.OBJ_TYPE_ID 
+			      , T101.OBJ_ID 
+			      , T101.ADM_OBJ_ID 
+			      , T101.OBJ_NM 
+			      , T101.OBJ_ABBR_NM
+			      , T101.OBJ_DESC
+			      , T104.OBJ_TYPE_ID
+			      , T104.OBJ_ID
+			      , T104.OBJ_NM 
+			) T101 
+		  LEFT OUTER JOIN PEN_CD_M C1058 ON (T101.DATA_TYPE = C1058.CD_ID AND C1058.CD_GRP_ID = 'BM_DSET_COL_DATATYPE') 
+		 ORDER BY TO_CHAR(COL_ORD, '0009') 
+     </select>
+      
+     <select id="getDatasetSampleFile" resultType="hashmap">      
+		SELECT 
+		    D01.FILE_NAME, SUBSTR(D02.OBJ_ATR_VAL, INSTR(D02.OBJ_ATR_VAL, '.', -1) + 1) EXT
+		FROM 
+		(
+		    SELECT 
+		        OBJ_ID, ATR_ID_SEQ, SUBSTR(XMLAGG(XMLELEMENT(COL ,'/', OBJ_ATR_VAL) ORDER BY OBJ_ATR_VAL).EXTRACT('//text()').GETSTRINGVAL(), 2) FILE_NAME
+		    FROM PEN_OBJ_D
+		    WHERE OBJ_ID = #{datasetId}
+		    AND ATR_ID_SEQ = 109 
+		    AND ATR_VAL_SEQ IN (105, 101)
+		    GROUP BY OBJ_ID, ATR_ID_SEQ
+		) D01
+		LEFT OUTER JOIN PEN_OBJ_D D02 ON (D01.OBJ_ID = D02.OBJ_ID AND D01.ATR_ID_SEQ = D02.ATR_ID_SEQ AND D02.ATR_VAL_SEQ = 102)
+     </select>
+</mapper>

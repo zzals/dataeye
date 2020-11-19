@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PEN_OBJ_BR_EXE_GRP_ERR_L">
+	<insert id="insert" parameterType="hashMap">
+		INSERT INTO PEN_OBJ_BR_EXE_GRP_ERR_L
+        (
+            OBJ_TYPE_ID,    OBJ_ID,     BR_EXE_GRP_SEQ,     ERR_SEQ,        DEL_YN,
+            CRET_DT,        CRETR_ID,   CHG_DT,             CHGR_ID,        ERR_ID,
+            ERR_NM,         ERR_DESC
+		)
+        VALUES
+        (
+            #{OBJ_TYPE_ID, jdbcType=VARCHAR},    #{OBJ_ID, jdbcType=VARCHAR},     #{BR_EXE_GRP_SEQ, jdbcType=VARCHAR},      #{ERR_SEQ, jdbcType=NUMERIC},        #{DEL_YN, jdbcType=CHAR},
+            CURRENT_TIMESTAMP,                   #{CRETR_ID, jdbcType=VARCHAR},   CURRENT_TIMESTAMP,                        #{CHGR_ID, jdbcType=VARCHAR},        #{ERR_ID, jdbcType=VARCHAR},
+            #{ERR_NM, jdbcType=VARCHAR},         #{ERR_DESC, jdbcType=VARCHAR}
+		)
+	</insert>
+</mapper>

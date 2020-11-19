@@ -1,0 +1,42 @@
+spring:
+  profiles: development
+  product:
+    name: dataeye_dev
+  thymeleaf:
+    cache: false
+  view:
+    tiles-enabled: false
+
+  datasource:
+    mstr-ds:
+      database-type: mssql
+      url: jdbc:sqlserver://192.168.100.73:1433;databaseName=MSTR_Meta;integratedSecurity=false
+      username: sa
+      password: e4mNFdhg0RqpAmd1mFSL4+ag9l3CprYkFFtbieNa5cA=
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      test-while-idle: true
+      test-on-borrow: true
+      validation-query: SELECT 1
+      mybatis:
+        mapper-locations: classpath*:mybatis/mapper/mstr/*.xml 
+        type-handlers-package: kr.co.penta.dataeye.spring.mybatis.typehandler.mstr
+        executor-type: batch
+        configuration:
+          map-underscore-to-camel-case: true
+          lazy-loading-enabled: true
+          call-setters-on-nulls: true
+          
+server:
+  port: 9999
+  context-path: /dataeye
+  session:
+    timeout: 3600
+#    cookie:
+#      http-only: true
+#      secure: false
+  tomcat:
+    max-threads: 10
+    uri-encoding: UTF-8
+#management:
+#  port: 9001
+#  address: 127.0.0.1

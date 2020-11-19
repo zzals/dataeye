@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="portal.biz.std"> 	
+    <select id="wordDuplCount" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		SELECT 
+            COUNT(*) CNT 
+		FROM PEN_OBJ_M
+		WHERE OBJ_TYPE_ID = #{objTypeId}
+        AND ADM_OBJ_ID = #{engNm}
+		AND DEL_YN = 'N'
+        <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isBoolean(wordNmDuplChkEnable)">
+			AND OBJ_NM = #{korNm}
+        </if>
+        <if test='objId != null and !"".equals(objId)'>
+            AND OBJ_ID != #{objId}
+		</if>
+    </select>
+    <select id="similarWords" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        SELECT 
+            OBJ_NM, ADM_OBJ_ID 
+        FROM PEN_OBJ_M 
+        WHERE OBJ_TYPE_ID = #{objTypeId}
+        AND ADM_OBJ_ID = #{engNm}
+        AND DEL_YN = 'N'
+        <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isBoolean(wordNmDuplChkEnable)">
+          	AND OBJ_NM = #{korNm}
+        </if>
+        <if test='objId != null and !"".equals(objId)'>
+            AND OBJ_ID != #{objId}
+		</if>
+    </select>
+    <select id="findStdDmn" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        SELECT T101.DMN_GRP_OBJ_TYPE_ID
+             , T101.DMN_GRP_OBJ_ID
+             , T101.DMN_GRP_OBJ_NM
+             , T101.DMN_OBJ_TYPE_ID
+             , T101.DMN_OBJ_ID
+             , T101.DMN_OBJ_NM
+             , T101.CRETR_ID
+             , T101.CRETR_NM
+             , T101.BAS_DATA_TYPE
+             , DATAEYE_PKG.getDispalyDataType(T101.BAS_DATA_TYPE, T101.COL_LEN, T101.COL_POINT_LEN)  AS BAS_DISP_DATA_TYPE
+             , DATAEYE_PKG.getDispalyDataType(T101.ORACLE_DATA_TYPE, T101.COL_LEN, T101.COL_POINT_LEN)  AS ORACLE_DATA_TYPE
+             , DATAEYE_PKG.getDispalyDataType(T101.PDA_DATA_TYPE, T101.COL_LEN, T101.COL_POINT_LEN)  AS PDA_DATA_TYPE
+             , DATAEYE_PKG.getDispalyDataType(T101.IMPALA_DATA_TYPE, T101.COL_LEN, T101.COL_POINT_LEN)  AS IMPALA_DATA_TYPE
+             , T101.COL_LEN
+             , T101.COL_POINT_LEN
+             , T101.DMN_USED_CNT
+        FROM (
+            SELECT T102.OBJ_TYPE_ID    AS DMN_GRP_OBJ_TYPE_ID
+                 , T102.OBJ_ID        AS DMN_GRP_OBJ_ID
+                 , T102.OBJ_NM        AS DMN_GRP_OBJ_NM
+                 , T101.OBJ_TYPE_ID   AS DMN_OBJ_TYPE_ID
+                 , T101.OBJ_ID        AS DMN_OBJ_ID
+                 , T101.OBJ_NM        AS DMN_OBJ_NM
+                 , T101.CRETR_ID
+                 , T105.DISP_USER_NM AS CRETR_NM
+                 , MAX(CASE WHEN T103.ATR_ID_SEQ = 101 THEN T103.OBJ_ATR_VAL END)    AS BAS_DATA_TYPE
+                 , MAX(CASE WHEN T103.ATR_ID_SEQ = 111 THEN T103.OBJ_ATR_VAL END)    AS ORACLE_DATA_TYPE
+                 , MAX(CASE WHEN T103.ATR_ID_SEQ = 112 THEN T103.OBJ_ATR_VAL END)    AS PDA_DATA_TYPE
+                 , MAX(CASE WHEN T103.ATR_ID_SEQ = 113 THEN T103.OBJ_ATR_VAL END)    AS IMPALA_DATA_TYPE
+                 , MAX(CASE WHEN T103.ATR_ID_SEQ = 102 THEN T103.OBJ_ATR_VAL END)    AS COL_LEN
+                 , MAX(CASE WHEN T103.ATR_ID_SEQ = 103 THEN T103.OBJ_ATR_VAL END)    AS COL_POINT_LEN
+                 , T104.DMN_USED_CNT
+            FROM PEN_OBJ_M T101
+            LEFT OUTER JOIN PEN_OBJ_M T102 ON (T102.OBJ_TYPE_ID = T101.PATH_OBJ_TYPE_ID AND T102.OBJ_ID = T101.PATH_OBJ_ID)
+            LEFT OUTER JOIN PEN_OBJ_D T103 ON (
+                    T103.OBJ_TYPE_ID = T101.OBJ_TYPE_ID
+                    AND T103.OBJ_ID = T101.OBJ_ID
+            )
+            LEFT OUTER JOIN (
+                SELECT 
+		            OBJ_ATR_VAL, COUNT(*) DMN_USED_CNT
+                FROM PEN_OBJ_D 
+               WHERE OBJ_TYPE_ID = '010302L'
+                     AND ATR_ID_SEQ = 101
+                     AND ATR_VAL_SEQ = 101
+               GROUP BY OBJ_ATR_VAL
+            ) T104
+            ON (
+                T101.OBJ_ID = T104.OBJ_ATR_VAL
+            )
+            LEFT OUTER JOIN V_PEN_USER_INFO T105
+            ON (
+                T101.CRETR_ID = T105.USER_ID
+            )
+            <where> 
+                T101.OBJ_TYPE_ID = '010303L'
+                AND T101.DEL_YN = 'N'
+                AND T102.DEL_YN = 'N'
+            </where>
+            GROUP BY T102.OBJ_TYPE_ID
+                , T102.OBJ_ID
+                , T102.OBJ_NM
+                , T101.OBJ_TYPE_ID
+                , T101.OBJ_ID
+                , T101.OBJ_NM
+                , T104.DMN_USED_CNT
+                , T101.CRETR_ID
+                , T105.DISP_USER_NM
+        ) T101
+        <where>
+            <if test='"_all".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+            	AND (T101.DMN_OBJ_NM LIKE '%'||UPPER(#{searchValue})||'%' OR T101.DMN_GRP_OBJ_NM LIKE '%'||UPPER(#{searchValue})||'%')
+            </if>
+            <if test='"DMN_OBJ_NM".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+				AND T101.DMN_OBJ_NM LIKE '%'||UPPER(#{searchValue})||'%'
+			</if>
+            <if test='"DMN_GRP_OBJ_NM".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+				AND T101.DMN_GRP_OBJ_NM LIKE '%'||UPPER(#{searchValue})||'%'
+			</if>
+			<if test='!"_all".equals(dmnGrpObjId) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(dmnGrpObjId)'>
+			    AND T101.DMN_GRP_OBJ_ID = #{dmnGrpObjId}
+			</if>
+        </where>
+        ORDER BY T101.DMN_GRP_OBJ_NM, T101.DMN_OBJ_NM
+    </select>
+	<select id="findDomainUsed" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		SELECT
+		   T2.OBJ_TYPE_ID AS TERM_OBJ_TYPE_ID
+		   ,T2.OBJ_ID     AS TERM_OBJ_ID
+		   ,T2.OBJ_NM     AS TERM_OBJ_NM
+		   ,T2.ADM_OBJ_ID AS TERM_ENG_ABBR_NM
+		   ,T2.OBJ_DESC   AS TERM_DESC
+		   ,T2.CRETR_ID   AS CRETR_ID 
+		   ,T3.DISP_USER_NM   AS CRETR_NM 
+		FROM PEN_OBJ_D T1
+		INNER JOIN PEN_OBJ_M T2 ON (T1.OBJ_TYPE_ID = T2.OBJ_TYPE_ID AND T1.OBJ_ID = T2.OBJ_ID)
+		LEFT OUTER JOIN V_PEN_USER_INFO T3 ON (T2.CRETR_ID = T3.USER_ID)
+		WHERE T1.OBJ_TYPE_ID = '010302L'
+		   AND T1.ATR_ID_SEQ = 101
+		   AND T1.ATR_VAL_SEQ = 101
+		   AND T1.OBJ_ATR_VAL = #{dmnObjId}	
+		ORDER BY T2.OBJ_TYPE_ID, T2.OBJ_ID
+	</select>
+	<select id="findStdWord" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		SELECT 
+		   T1.OBJ_TYPE_ID      AS WORD_TYPE_ID
+		   ,T1.OBJ_ID          AS WORD_ID
+		   ,T1.OBJ_NM          AS WORD_NM
+		   ,T1.ADM_OBJ_ID      AS WORD_ENG_ABBR_NM
+		   ,T1.OBJ_ABBR_NM     AS WORD_ENG_NM
+		   ,T2.OBJ_ATR_VAL     AS CLS_YN
+		   ,COALESCE(T3.CNT, 0) AS TERM_USED_CNT
+		   ,T1.OBJ_DESC        AS WORD_DESC
+		   ,T1.CRETR_ID       AS CRETR_ID
+		   ,T4.DISP_USER_NM       AS CRETR_NM
+		FROM PEN_OBJ_M T1
+		   LEFT OUTER JOIN PEN_OBJ_D T2 ON (T1.OBJ_TYPE_ID = T2.OBJ_TYPE_ID AND T1.OBJ_ID = T2.OBJ_ID AND T2.ATR_ID_SEQ = 101)
+		   LEFT OUTER JOIN 
+		   (
+				SELECT 
+				    OBJ_ATR_VAL, COUNT(*) CNT
+				FROM (
+				    SELECT 
+				        OBJ_ATR_VAL
+				    FROM PEN_OBJ_D 
+				    WHERE OBJ_TYPE_ID = '010302L'
+				      AND ATR_ID_SEQ IN (102,103,104,105,106,107,108,109,110)
+				      AND ATR_VAL_SEQ = 101
+				      AND DEL_YN = 'N'
+				    UNION ALL
+				    SELECT 
+				        PATH_OBJ_ID AS OBJ_ATR_VAL
+				    FROM PEN_OBJ_M 
+				    WHERE OBJ_TYPE_ID = '010302L'
+				    AND DEL_YN = 'N'
+				)
+				GROUP BY OBJ_ATR_VAL
+		   ) T3 ON (T1.OBJ_ID = T3.OBJ_ATR_VAL)
+		   LEFT OUTER JOIN V_PEN_USER_INFO T4 ON (T1.CRETR_ID = T4.USER_ID)
+		<where>
+            T1.DEL_YN = 'N'
+			AND T1.OBJ_TYPE_ID = '010301L'
+			<if test='"_all".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+            	AND (
+	            	   UPPER(T1.OBJ_NM) LIKE '%'||UPPER(#{searchValue})||'%'
+	            	OR UPPER(T1.ADM_OBJ_ID) LIKE '%'||UPPER(#{searchValue})||'%'
+	            	OR UPPER(T1.OBJ_ABBR_NM) LIKE '%'||UPPER(#{searchValue})||'%'
+	            )
+            </if>
+            <if test='"WORD_NM".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+				AND UPPER(T1.OBJ_NM) LIKE '%'||UPPER(#{searchValue})||'%'
+			</if>
+            <if test='"WORD_ENG_ABBR_NM".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+				AND UPPER(T1.ADM_OBJ_ID) LIKE '%'||UPPER(#{searchValue})||'%'
+			</if>
+            <if test='"WORD_ENG_NM".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+				AND UPPER(T1.OBJ_ABBR_NM) LIKE '%'||UPPER(#{searchValue})||'%'
+			</if>
+		</where>
+        ORDER BY T1.OBJ_NM
+	</select>
+	<select id="findWordUsed" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        SELECT 
+            *
+        FROM (
+			SELECT
+			   T2.OBJ_TYPE_ID AS TERM_TYPE_ID
+			   ,T2.OBJ_ID     AS TERM_ID
+			   ,T2.OBJ_NM     AS TERM_NM
+			   ,T2.ADM_OBJ_ID AS TERM_ENG_ABBR_NM
+			   ,T2.OBJ_DESC   AS TERM_DESC
+			   ,T2.CRETR_ID   AS CRETR_ID 
+			   ,T3.DISP_USER_NM   AS CRETR_NM 
+			FROM PEN_OBJ_D T1
+			   INNER JOIN PEN_OBJ_M T2 ON (T1.OBJ_TYPE_ID = T2.OBJ_TYPE_ID AND T1.OBJ_ID = T2.OBJ_ID)
+			   LEFT OUTER JOIN V_PEN_USER_INFO T3 ON (T2.CRETR_ID = T3.USER_ID) 
+			WHERE T1.OBJ_TYPE_ID = '010302L'
+			   AND T2.DEL_YN = 'N'
+			   AND T1.ATR_ID_SEQ IN (102,103,104,105,106,107,108,109,110)
+			   AND T1.ATR_VAL_SEQ = 101
+			   AND T1.OBJ_ATR_VAL = #{wordId}
+			UNION ALL
+			SELECT T2.OBJ_TYPE_ID AS OBJ_TYPE_ID ,
+				T2.OBJ_ID AS OBJ_ID ,
+				T2.OBJ_NM AS OBJ_NM ,
+				T2.ADM_OBJ_ID AS OBJ_ENG_ABBR_NM ,
+				T2.OBJ_DESC AS OBJ_DESC ,
+				T2.CRETR_ID AS CRETR_ID ,
+				T3.DISP_USER_NM AS CRETR_NM
+			FROM PEN_OBJ_M T1 
+			INNER JOIN PEN_OBJ_M T2 ON (T1.OBJ_TYPE_ID = T2.OBJ_TYPE_ID AND T1.OBJ_ID = T2.OBJ_ID) 
+			LEFT OUTER JOIN V_PEN_USER_INFO T3 ON (T2.CRETR_ID = T3.USER_ID)
+			WHERE T1.OBJ_TYPE_ID = '010302L'
+			  AND T2.PATH_OBJ_ID = #{wordId}
+			  AND T2.DEL_YN = 'N'
+        ) T101
+		ORDER BY T101.TERM_NM
+	</select>
+	<select id="findStdTerm" resultType="kr.co.penta.dataeye.common.entities.CamelMap">      
+		 SELECT  TERM_TYPE_ID ,
+		        TERM_ID ,
+		        TERM_NM ,
+		        TERM_ENG_ABBR_NM ,
+		        0 AS USED_CNT ,
+		        TERM_DESC ,
+		        CRETR_ID ,
+		        DATAEYE_PKG.getDisplayUserName(T101.CRETR_ID) AS CRETR_NM ,
+		        DMN_TYPE_ID ,
+		        DMN_ID ,
+		        DMN_NM ,
+		        DATAEYE_PKG.getDispalyDataType(BAS_DATA_TYPE, COL_LEN, COL_POINT_LEN)    AS BAS_DISP_DATA_TYPE ,
+		        DATAEYE_PKG.getDispalyDataType(ORACLE_DATA_TYPE, COL_LEN, COL_POINT_LEN) AS ORACLE_DATA_TYPE ,
+		        DATAEYE_PKG.getDispalyDataType(PDA_DATA_TYPE, COL_LEN, COL_POINT_LEN)    AS PDA_DATA_TYPE ,
+		        DATAEYE_PKG.getDispalyDataType(IMPALA_DATA_TYPE, COL_LEN, COL_POINT_LEN) AS IMPALA_DATA_TYPE ,
+		        COL_LEN ,
+		        COL_POINT_LEN
+		FROM
+		        (SELECT T101.OBJ_TYPE_ID AS TERM_TYPE_ID ,
+		                T101.OBJ_ID      AS TERM_ID ,
+		                T101.OBJ_NM      AS TERM_NM ,
+		                T101.ADM_OBJ_ID  AS TERM_ENG_ABBR_NM ,
+		                0                AS USED_CNT ,
+		                T101.OBJ_DESC    AS TERM_DESC ,
+		                T101.CRETR_ID    AS CRETR_ID ,
+		                T104.OBJ_TYPE_ID AS DMN_TYPE_ID ,
+		                T104.OBJ_ID      AS DMN_ID ,
+		                T104.OBJ_NM      AS DMN_NM ,
+		                MAX(
+		                CASE
+		                        WHEN T105.ATR_ID_SEQ = 101
+		                        THEN T105.OBJ_ATR_VAL
+		                END) AS BAS_DATA_TYPE ,
+		                MAX(
+		                CASE
+		                        WHEN T105.ATR_ID_SEQ = 111
+		                        THEN T105.OBJ_ATR_VAL
+		                END) AS ORACLE_DATA_TYPE ,
+		                MAX(
+		                CASE
+		                        WHEN T105.ATR_ID_SEQ = 112
+		                        THEN T105.OBJ_ATR_VAL
+		                END) AS PDA_DATA_TYPE ,
+		                MAX(
+		                CASE
+		                        WHEN T105.ATR_ID_SEQ = 113
+		                        THEN T105.OBJ_ATR_VAL
+		                END) AS IMPALA_DATA_TYPE ,
+		                MAX(
+		                CASE
+		                        WHEN T105.ATR_ID_SEQ = 102
+		                        THEN T105.OBJ_ATR_VAL
+		                END) AS COL_LEN ,
+		                MAX(
+		                CASE
+		                        WHEN T105.ATR_ID_SEQ = 103
+		                        THEN T105.OBJ_ATR_VAL
+		                END) AS COL_POINT_LEN
+		        FROM    PEN_OBJ_M T101
+		        LEFT OUTER JOIN PEN_OBJ_M T102
+		        ON ( T101.PATH_OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+		            AND T101.PATH_OBJ_ID   = T102.OBJ_ID )
+		        LEFT OUTER JOIN PEN_OBJ_D T103
+		        ON ( T101.OBJ_TYPE_ID   = T103.OBJ_TYPE_ID
+		            AND T101.OBJ_ID     = T103.OBJ_ID
+		            AND T103.ATR_ID_SEQ = 101 )
+		        LEFT OUTER JOIN PEN_OBJ_M T104
+		        ON ( T103.OBJ_ATR_VAL    = T104.OBJ_ID
+		            AND T104.OBJ_TYPE_ID = '010303L' )
+		        LEFT OUTER JOIN PEN_OBJ_D T105
+		        ON ( T105.OBJ_TYPE_ID    = T104.OBJ_TYPE_ID
+		            AND T105.OBJ_ID      = T104.OBJ_ID
+		            AND T105.ATR_ID_SEQ IN (101, 102, 103, 111, 112, 113) )
+		        WHERE   T101.DEL_YN      = 'N'
+		            AND T101.OBJ_TYPE_ID = '010302L'
+		                /*표준용어*/
+		          	<if test='"_all".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+		            	AND (
+			            	   UPPER(T101.OBJ_NM) LIKE '%'||UPPER(#{searchValue})||'%'
+			            	OR UPPER(T101.ADM_OBJ_ID) LIKE '%'||UPPER(#{searchValue})||'%'
+			            )
+		            </if>
+		            <if test='"TERM_NM".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+						AND UPPER(T101.OBJ_NM) LIKE '%'||UPPER(#{searchValue})||'%'
+					</if>
+		            <if test='"TERM_ENG_ABBR_NM".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+						AND UPPER(T101.ADM_OBJ_ID) LIKE '%'||UPPER(#{searchValue})||'%'
+					</if>       
+		        GROUP BY T101.OBJ_TYPE_ID ,
+		                T101.OBJ_ID ,
+		                T101.OBJ_NM ,
+		                T101.ADM_OBJ_ID ,
+		                T101.OBJ_DESC ,
+		                T101.CRETR_ID ,
+                		T104.OBJ_TYPE_ID,
+		                T104.OBJ_ID,
+		                T104.OBJ_NM
+		        ) T101
+		ORDER BY T101.TERM_NM ASC
+    </select>
+    <select id="termUsedCount" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        SELECT 
+            COUNT(*) CNT 
+        FROM PEN_OBJ_M
+		WHERE OBJ_TYPE_ID = #{objTypeId}
+		AND OBJ_NM = #{term}
+		AND DEL_YN = 'N'
+		<if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(objId)">
+            AND OBJ_ID != #{objId}
+        </if>
+    </select>
+    
+    <select id="findWordSimpleList" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		SELECT 
+			T101.OBJ_ID			AS TERM_ID
+			,T101.OBJ_NM		AS KOR_TERM
+			,T101.ADM_OBJ_ID	AS ENG_TERM
+			,T102.OBJ_ATR_VAL	AS CLASS_YN
+		FROM PEN_OBJ_M T101
+		INNER JOIN PEN_OBJ_D T102 ON (T102.OBJ_TYPE_ID = T101.OBJ_TYPE_ID AND T102.OBJ_ID = T101.OBJ_ID)
+		WHERE T101.OBJ_TYPE_ID = '010301L'
+		  AND T101.DEL_YN = 'N'
+		ORDER BY T101.OBJ_NM
+	</select>	
+	<select id="findDmnNm" resultType="String">
+		SELECT OBJ_NM FROM PEN_OBJ_M
+		WHERE OBJ_TYPE_ID = '010303L'
+		  AND DEL_YN = 'N'
+	</select>
+	<select id="findTermNms" resultType="String">
+        SELECT OBJ_NM FROM PEN_OBJ_M
+        WHERE OBJ_TYPE_ID = '010302L'
+          AND DEL_YN = 'N'
+    </select>
+    <select id="dmnGrpNm" resultType="String">
+		SELECT 
+            OBJ_NM 
+		FROM PEN_OBJ_M
+		WHERE OBJ_TYPE_ID = '010304L'
+		  AND DEL_YN = 'N'
+	</select>	
+	<select id="dmnNm" resultType="String">
+		SELECT OBJ_NM 
+		FROM PEN_OBJ_M
+		WHERE OBJ_TYPE_ID = '010303L'
+		  AND DEL_YN = 'N'
+	</select>
+	<select id="dmnDataTypeForOracle" resultType="String">
+		SELECT 
+            CD_NM 
+		FROM PEN_CD_M
+		WHERE CD_GRP_ID = 'BM_STD_DMNDATATYPE_ORACLE'	
+	</select>
+	<select id="dmnDataTypeForPda" resultType="String">
+		SELECT 
+            CD_NM 
+		FROM PEN_CD_M
+		WHERE CD_GRP_ID = 'BM_STD_DMNDATATYPE_PDA'	
+	</select>
+	<select id="dmnDataTypeForTibero" resultType="String">
+		SELECT 
+            CD_NM 
+		FROM PEN_CD_M
+		WHERE CD_GRP_ID = 'BM_STD_DMNDATATYPE_TIBERO'	
+	</select>
+	<select id="dmnGrp" resultType="hashmap">
+		SELECT 
+			OBJ_ID
+			,OBJ_NM 
+		FROM PEN_OBJ_M
+		WHERE OBJ_TYPE_ID = '010304L'
+		  AND DEL_YN = 'N'
+	</select>
+	<select id="reqList" resultType="hashmap">
+		SELECT T101.APRV_ID
+		     , T101.APRV_REQ_DT
+		     , T101.LAST_STUS_CD
+		     , CASE WHEN T101.LAST_STUS_CD = '00' THEN '임시저장' 
+		            WHEN T101.LAST_STUS_CD = '10' THEN '요청' 
+		            WHEN T101.LAST_STUS_CD = '11' THEN '재요청' 
+		            WHEN T101.LAST_STUS_CD = '40' THEN '승인' 
+		            WHEN T101.LAST_STUS_CD = '41' THEN '재검토' 
+		            WHEN T101.LAST_STUS_CD = '42' THEN '반려' 
+		            WHEN T101.LAST_STUS_CD = '50' THEN '검토' 
+		     END AS LAST_STUS_CD_NM
+		     , T101.APRV_REQR_ID
+		     , T101.APRV_REQR_CD
+		     , CASE WHEN T101.APRV_REQR_CD = '10' THEN '신규'
+		            WHEN T101.APRV_REQR_CD = '10' THEN '변경'
+		            WHEN T101.APRV_REQR_CD = '10' THEN '회수'
+		     END AS APRV_REQR_CD_NM
+		     , T101.APRV_DESC AS APRV_REQ_DESC
+             , T101.OBJ_TYPE_ID
+		     , T102.OBJ_TYPE_NM
+             , T103.APRV_DT
+             , T103.REAL_APRV_USER_ID
+             , T104.DISP_USER_NM AS REAL_APRV_USER_NM
+             , T103.APRV_DESC
+		FROM PEN_APRV_M T101
+		LEFT OUTER JOIN PEN_OBJ_TYPE_M T102
+		ON (
+		    T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+		)
+        LEFT OUTER JOIN PEN_APRV_D T103
+        ON (
+            T101.APRV_ID = T103.APRV_ID
+            AND APRV_DT IS NOT NULL
+        )
+        LEFT OUTER JOIN V_PEN_USER_INFO T104
+        ON (
+            T103.REAL_APRV_USER_ID = T104.USER_ID
+        )
+		WHERE T101.OBJ_TYPE_ID IN ('010301L', '010302L', '010303L')
+		AND T101.APRV_REQR_ID = #{sessionInfo.userId}
+        <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(lastStusCd) and !"_all".equals(lastStusCd)'>
+			AND T101.LAST_STUS_CD = #{lastStusCd}
+		</if>
+		<if test='"_all".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+           	AND T101.APRV_DESC LIKE '%'||UPPER(#{searchValue})||'%'
+        </if>
+        <if test='"APRV_REQ_DESC".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+			AND T101.APRV_DESC LIKE '%'||UPPER(#{searchValue})||'%'
+		</if>
+		ORDER BY T101.APRV_REQ_DT DESC
+	</select>
+	<select id="todoList" resultType="hashmap">
+		SELECT T101.APRV_ID
+		     , T101.APRV_REQ_DT
+		     , T101.LAST_STUS_CD
+		     , CASE WHEN T101.LAST_STUS_CD = '00' THEN '임시저장' 
+		            WHEN T101.LAST_STUS_CD = '10' THEN '요청' 
+		            WHEN T101.LAST_STUS_CD = '11' THEN '재요청' 
+		            WHEN T101.LAST_STUS_CD = '40' THEN '승인' 
+		            WHEN T101.LAST_STUS_CD = '41' THEN '재검토' 
+		            WHEN T101.LAST_STUS_CD = '42' THEN '반려' 
+		            WHEN T101.LAST_STUS_CD = '50' THEN '검토' 
+		     END AS LAST_STUS_CD_NM
+		     , T101.APRV_REQR_ID
+		     , T101.APRV_REQR_CD
+		     , CASE WHEN T101.APRV_REQR_CD = '10' THEN '신규'
+		            WHEN T101.APRV_REQR_CD = '10' THEN '변경'
+		            WHEN T101.APRV_REQR_CD = '10' THEN '회수'
+		     END AS APRV_REQR_CD_NM
+		     , T101.APRV_DESC AS APRV_REQ_DESC
+		     , T102.OBJ_TYPE_ID
+             , T102.OBJ_TYPE_NM
+             , T101.APRV_REQR_ID
+             , T105.DISP_USER_NM AS APRV_REQR_NM
+             , T103.APRV_DT
+             , T103.APRV_RSLT_CD
+             , T103.APRV_USER_ID
+             , T106.DISP_USER_NM AS APRV_USER_NM
+             , T103.REAL_APRV_USER_ID
+             , T107.DISP_USER_NM AS REAL_APRV_USER_NM
+             , T103.APRV_DESC AS APRV_DESC
+             , T103.APRV_DETL_ID
+             , T104.REQ_CNT
+		FROM PEN_APRV_M T101
+		LEFT OUTER JOIN PEN_OBJ_TYPE_M T102
+		ON (
+		    T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+		)
+        INNER JOIN PEN_APRV_D T103
+        ON (
+            T101.APRV_ID = T103.APRV_ID
+        )
+        LEFT OUTER JOIN (
+            SELECT ST101.APRV_ID
+                 , COUNT(1) AS REQ_CNT 
+            FROM PEN_OBJ_M_T ST101
+            GROUP BY ST101.APRV_ID
+        ) T104
+        ON (
+            T101.APRV_ID = T104.APRV_ID
+        )
+        LEFT OUTER JOIN V_PEN_USER_INFO T105
+        ON (
+            T101.APRV_REQR_ID = T105.USER_ID
+        )
+        LEFT OUTER JOIN V_PEN_USER_INFO T106
+        ON (
+            T103.APRV_USER_ID = T106.USER_ID
+        )
+        LEFT OUTER JOIN V_PEN_USER_INFO T107
+        ON (
+            T103.REAL_APRV_USER_ID = T107.USER_ID
+        )
+        WHERE T101.LAST_STUS_CD != '00'
+        AND T101.OBJ_TYPE_ID IN ('010301L', '010302L', '010303L')
+        AND T103.APRV_USER_ID = #{sessionInfo.userId}
+        <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(lastStusCd) and !"_all".equals(lastStusCd)'>
+			AND T101.LAST_STUS_CD = #{lastStusCd}
+		</if>
+		<if test='"_all".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+           	AND T101.APRV_DESC LIKE '%'||UPPER(#{searchValue})||'%' OR T103.APRV_DESC LIKE '%'||UPPER(#{searchValue})||'%'
+        </if>
+        <if test='"APRV_REQ_DESC".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+			AND T101.APRV_DESC LIKE '%'||UPPER(#{searchValue})||'%'
+		</if>
+        <if test='"APRV_DESC".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+			AND T103.APRV_DESC LIKE '%'||UPPER(#{searchValue})||'%'
+		</if>
+        ORDER BY T101.APRV_REQ_DT DESC
+	</select>
+	<select id="reqListForStdWord" resultType="hashmap">
+		SELECT T101.OBJ_NM
+		     , T101.ADM_OBJ_ID
+		     , T101.OBJ_ABBR_NM
+		     , T101.OBJ_TYPE_ID
+		     , T101.OBJ_ID
+		     , T102.OBJ_ATR_VAL AS OBJ_ATR_VAL_101
+		FROM PEN_OBJ_M_T T101
+		LEFT OUTER JOIN PEN_OBJ_D_T T102
+		ON (
+			T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+			AND T101.OBJ_ID = T102.OBJ_ID
+			AND T101.APRV_ID = T102.APRV_ID
+			AND T102.ATR_ID_SEQ = 101
+		)
+		WHERE T101.APRV_ID = #{aprvId}		
+	</select>
+	<select id="reqListForStdDmn" resultType="hashmap">
+        SELECT T101.OBJ_NM
+		     , T101.ADM_OBJ_ID
+		     , T101.OBJ_ABBR_NM
+		     , T101.OBJ_TYPE_ID
+		     , T101.OBJ_ID
+		     , T101.PATH_OBJ_TYPE_ID
+		     , T101.PATH_OBJ_ID
+             , T103.OBJ_NM AS PATH_OBJ_NM
+		     , MAX(CASE WHEN T102.ATR_ID_SEQ = 102 THEN T102.OBJ_ATR_VAL END) AS DATA_LEN
+		     , MAX(CASE WHEN T102.ATR_ID_SEQ = 103 THEN T102.OBJ_ATR_VAL END) AS DATA_SACLE
+		     , MAX(CASE WHEN T102.ATR_ID_SEQ = 111 THEN T102.OBJ_ATR_VAL END) AS ORACLE_DATA_TYPE
+		     , MAX(CASE WHEN T102.ATR_ID_SEQ = 112 THEN T102.OBJ_ATR_VAL END) AS PDA_DATA_TYPE
+		     , MAX(CASE WHEN T102.ATR_ID_SEQ = 113 THEN T102.OBJ_ATR_VAL END) AS TIBERO_DATA_TYPE
+		     , MAX(CASE WHEN T102.ATR_ID_SEQ = 114 THEN T102.OBJ_ATR_VAL END) AS SYBASE_DATA_TYPE
+		FROM PEN_OBJ_M_T T101
+		LEFT OUTER JOIN PEN_OBJ_D_T T102
+		ON (
+			T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+			AND T101.OBJ_ID = T102.OBJ_ID
+			AND T101.APRV_ID = T102.APRV_ID
+		)
+        LEFT OUTER JOIN PEN_OBJ_M T103
+		ON (
+			T101.PATH_OBJ_TYPE_ID = T103.OBJ_TYPE_ID
+			AND T101.PATH_OBJ_ID = T103.OBJ_ID
+		)
+		WHERE T101.APRV_ID = #{aprvId}		
+        GROUP BY T101.OBJ_NM
+		     , T101.ADM_OBJ_ID
+		     , T101.OBJ_ABBR_NM
+		     , T101.OBJ_TYPE_ID
+		     , T101.OBJ_ID
+		     , T101.PATH_OBJ_TYPE_ID
+		     , T101.PATH_OBJ_ID
+             , T103.OBJ_NM
+	</select>
+	<select id="reqListForStdTerm" resultType="hashmap">
+        SELECT T101.OBJ_NM
+		     , T101.ADM_OBJ_ID
+		     , T101.OBJ_ABBR_NM
+		     , T101.OBJ_TYPE_ID
+		     , T101.OBJ_ID
+		     , T101.PATH_OBJ_TYPE_ID
+		     , T101.PATH_OBJ_ID
+             , MAX(CASE WHEN T102.ATR_ID_SEQ = 101 THEN T102.OBJ_ATR_VAL END) AS DMN_ID
+             , MAX(CASE WHEN T102.ATR_ID_SEQ = 101 THEN T103.OBJ_NM END) AS DMN_NM
+		     , MAX(CASE WHEN T102.ATR_ID_SEQ = 102 THEN T102.OBJ_ATR_VAL END) AS WORD_ID_01
+		     , MAX(CASE WHEN T102.ATR_ID_SEQ = 103 THEN T102.OBJ_ATR_VAL END) AS WORD_ID_02
+		     , MAX(CASE WHEN T102.ATR_ID_SEQ = 104 THEN T102.OBJ_ATR_VAL END) AS WORD_ID_03
+		     , MAX(CASE WHEN T102.ATR_ID_SEQ = 105 THEN T102.OBJ_ATR_VAL END) AS WORD_ID_04
+		     , MAX(CASE WHEN T102.ATR_ID_SEQ = 106 THEN T102.OBJ_ATR_VAL END) AS WORD_ID_05
+		     , MAX(CASE WHEN T102.ATR_ID_SEQ = 107 THEN T102.OBJ_ATR_VAL END) AS WORD_ID_06
+		     , MAX(CASE WHEN T102.ATR_ID_SEQ = 108 THEN T102.OBJ_ATR_VAL END) AS WORD_ID_07
+		     , MAX(CASE WHEN T102.ATR_ID_SEQ = 109 THEN T102.OBJ_ATR_VAL END) AS WORD_ID_08
+		     , MAX(CASE WHEN T102.ATR_ID_SEQ = 110 THEN T102.OBJ_ATR_VAL END) AS WORD_ID_09
+		FROM PEN_OBJ_M_T T101
+		LEFT OUTER JOIN PEN_OBJ_D_T T102
+		ON (
+			T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+			AND T101.OBJ_ID = T102.OBJ_ID
+			AND T101.APRV_ID = T102.APRV_ID
+		)
+        LEFT OUTER JOIN PEN_OBJ_M T103
+		ON (
+			T102.ATR_ID_SEQ = 101
+            AND T103.OBJ_TYPE_ID = '010303L'
+			AND T102.OBJ_ATR_VAL = T103.OBJ_ID
+		)
+		WHERE T101.APRV_ID = #{aprvId}
+        GROUP BY T101.OBJ_NM
+		     , T101.ADM_OBJ_ID
+		     , T101.OBJ_ABBR_NM
+		     , T101.OBJ_TYPE_ID
+		     , T101.OBJ_ID
+		     , T101.PATH_OBJ_TYPE_ID
+		     , T101.PATH_OBJ_ID
+	</select>
+</mapper>

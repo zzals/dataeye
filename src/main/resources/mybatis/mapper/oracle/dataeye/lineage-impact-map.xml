@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="leneageandimpact"> 
+	<select id="termImpactStep1" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		SELECT T103.OBJ_TYPE_ID AS FROM_OBJ_TYPE_ID
+		     , T103.OBJ_ID      AS FROM_OBJ_ID
+		     , T103.OBJ_NM      AS FROM_OBJ_NM
+		     , T103.ADM_OBJ_ID  AS FROM_OBJ_NM2
+		     , T101.OBJ_TYPE_ID AS TO_OBJ_TYPE_ID
+		     , T101.OBJ_ID      AS TO_OBJ_ID
+		     , T101.OBJ_NM      AS TO_OBJ_NM
+		     , T101.ADM_OBJ_ID  AS TO_OBJ_NM2
+		     , NULL AS USED_CNT
+		FROM PEN_OBJ_M T101
+		INNER JOIN PEN_OBJ_D T102
+		ON (
+		    T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+		    AND T101.OBJ_ID = T102.OBJ_ID
+		)
+		INNER JOIN PEN_OBJ_M T103
+		ON (
+		    T102.OBJ_ATR_VAL = T103.OBJ_ID
+		)
+		WHERE T101.OBJ_TYPE_ID = #{objTypeId}
+		AND T101.OBJ_ID = #{objId}
+		AND T102.OBJ_ATR_VAL IS NOT NULL
+		UNION ALL
+		SELECT T102.OBJ_TYPE_ID AS FROM_OBJ_TYPE_ID
+		     , T102.OBJ_ID      AS FROM_OBJ_ID
+		     , T102.OBJ_NM      AS FROM_OBJ_NM
+		     , T102.ADM_OBJ_ID  AS FROM_OBJ_NM2
+		     , T101.OBJ_TYPE_ID AS TO_OBJ_TYPE_ID
+		     , T101.OBJ_ID      AS TO_OBJ_ID
+		     , T101.OBJ_NM      AS TO_OBJ_NM
+		     , T101.ADM_OBJ_ID  AS TO_OBJ_NM2
+		     , NULL AS USED_CNT
+		FROM PEN_OBJ_M T101
+		INNER JOIN PEN_OBJ_M T102
+		ON (
+		    T101.PATH_OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+		    AND T101.PATH_OBJ_ID = T102.OBJ_ID
+		)
+		WHERE T101.OBJ_TYPE_ID = #{objTypeId}
+		AND T101.OBJ_ID = #{objId}
+		UNION ALL
+		SELECT T104.OBJ_TYPE_ID AS FROM_OBJ_TYPE_ID
+		     , T104.OBJ_ID AS FROM_OBJ_ID
+		     , T104.OBJ_NM AS FROM_OBJ_NM
+		     , T104.ADM_OBJ_ID AS FROM_OBJ_NM2
+		     , T103.OBJ_TYPE_ID AS TO_OBJ_TYPE_ID
+		     , T103.OBJ_ID AS TO_OBJ_ID
+		     , T103.OBJ_NM AS TO_OBJ_NM
+		     , T103.ADM_OBJ_ID AS TO_OBJ_NM
+		     , COUNT(1) AS USED_CNT
+		FROM PEN_OBJ_M T101
+		INNER JOIN PEN_OBJ_M T102
+		ON (
+		    T101.PATH_OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+		    AND T101.PATH_OBJ_ID = T102.OBJ_ID
+		)
+		INNER JOIN PEN_OBJ_M T103
+		ON (
+		    T102.PATH_OBJ_TYPE_ID = T103.OBJ_TYPE_ID
+		    AND T102.PATH_OBJ_ID = T103.OBJ_ID
+		)
+		LEFT OUTER JOIN (
+		    SELECT T101.OBJ_TYPE_ID
+		         , T101.OBJ_ID
+		         , T101.ADM_OBJ_ID
+		         , T101.OBJ_NM
+		         , T101.OBJ_ABBR_NM
+		    FROM PEN_OBJ_M T101
+		    WHERE T101.OBJ_TYPE_ID = #{objTypeId}
+		    AND T101.OBJ_ID = #{objId}
+		) T104
+		ON (
+		    1=1
+		)
+		WHERE T101.OBJ_TYPE_ID IN ('020104L', '020105L')
+		AND T101.OBJ_NM = 'OBJ_TYPE_ID'
+		GROUP BY T104.OBJ_TYPE_ID
+		     , T104.OBJ_ID
+		     , T104.OBJ_NM
+		     , T104.ADM_OBJ_ID
+		     , T103.OBJ_TYPE_ID
+		     , T103.OBJ_ID
+		     , T103.OBJ_NM
+		     , T103.ADM_OBJ_ID
+	</select>
+	<select id="termImpactStep2" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		SELECT T101.OBJ_TYPE_ID AS FROM_OBJ_TYPE_ID
+		     , T101.OBJ_ID      AS FROM_OBJ_ID
+		     , T101.OBJ_NM      AS FROM_OBJ_NM
+		     , T101.ADM_OBJ_ID  AS FROM_OBJ_NM2
+		     , T102.OBJ_TYPE_ID AS TO_OBJ_TYPE_ID
+		     , T102.OBJ_ID      AS TO_OBJ_ID
+		     , T102.OBJ_NM      AS TO_OBJ_NM
+		     , T102.OBJ_ABBR_NM AS TO_OBJ_NM2
+		     , NULL AS USED_CNT
+		FROM PEN_OBJ_M T101
+		INNER JOIN PEN_OBJ_M T102
+		ON (
+		    T101.OBJ_TYPE_ID = T102.PATH_OBJ_TYPE_ID
+		    AND T101.OBJ_ID = T102.PATH_OBJ_ID
+		)
+		INNER JOIN PEN_OBJ_M T103
+		ON (
+		    T102.OBJ_TYPE_ID = T103.PATH_OBJ_TYPE_ID
+		    AND T102.OBJ_ID = T103.PATH_OBJ_ID
+		)
+		WHERE T101.OBJ_TYPE_ID = #{dbObjTypeId}
+		AND T101.OBJ_ID = #{dbObjId}
+		AND T103.OBJ_NM = #{termEngNm}
+    </select>
+</mapper>

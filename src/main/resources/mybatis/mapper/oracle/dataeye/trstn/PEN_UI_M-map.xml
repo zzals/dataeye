@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PEN_UI_M">
+	<insert id="insert" parameterType="hashMap">
+		INSERT INTO PEN_UI_M 
+        (
+            UI_ID,      DEL_YN,     CRET_DT,        CRETR_ID,       CHG_DT,
+            CHGR_ID,    UI_NM,      USE_TYPE_CD,    UI_MODE_CD,     UI_TYPE_CD,
+            PGM_ID,     CONF_SBST
+		)
+        VALUES
+        (
+            #{UI_ID, jdbcType=VARCHAR},                 #{DEL_YN, jdbcType=VARCHAR},     CURRENT_TIMESTAMP,                 #{sessionInfo.userId, jdbcType=VARCHAR},    CURRENT_TIMESTAMP,
+            #{sessionInfo.userId, jdbcType=VARCHAR},    #{UI_NM, jdbcType=VARCHAR},      #{USE_TYPE_CD, jdbcType=VARCHAR},  #{UI_MODE_CD, jdbcType=VARCHAR},            #{UI_TYPE_CD, jdbcType=VARCHAR},
+            #{PGM_ID, jdbcType=VARCHAR},                #{CONF_SBST, jdbcType=CLOB}
+		)
+	</insert>
+    <update id="update" parameterType="hashMap">
+        UPDATE PEN_UI_M
+        <set>
+            CHG_DT = CURRENT_TIMESTAMP,
+            CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR},
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(DEL_YN)'>DEL_YN = #{DEL_YN, jdbcType=CHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(UI_NM)'>UI_NM = #{UI_NM, jdbcType=VARCHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(USE_TYPE_CD)'>USE_TYPE_CD = #{USE_TYPE_CD, jdbcType=CHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(UI_MODE_CD)'>UI_MODE_CD = #{UI_MODE_CD, jdbcType=VARCHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(UI_TYPE_CD)'>UI_TYPE_CD = #{UI_TYPE_CD, jdbcType=VARCHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(PGM_ID)'>PGM_ID = #{PGM_ID, jdbcType=VARCHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CONF_SBST)'>CONF_SBST = #{CONF_SBST, jdbcType=CLOB},</if>
+        </set>
+        WHERE UI_ID = #{UI_ID}
+    </update>
+    <delete id="delete" parameterType="hashMap">
+        DELETE FROM PEN_UI_M
+        WHERE UI_ID = #{uiId}
+    </delete>
+    <insert id="copy" parameterType="hashMap">
+        INSERT INTO PEN_UI_M 
+        SELECT #{newUiId}
+             , DEL_YN
+             , CURRENT_TIMESTAMP
+             , #{sessionInfo.userId, jdbcType=VARCHAR}
+             , CURRENT_TIMESTAMP
+             , #{sessionInfo.userId, jdbcType=VARCHAR}
+             , #{uiNm}
+             , USE_TYPE_CD
+             , UI_MODE_CD
+             , UI_TYPE_CD
+             , PGM_ID
+             , CONF_SBST
+        FROM PEN_UI_M
+        WHERE UI_ID = #{uiId}
+    </insert>
+</mapper>

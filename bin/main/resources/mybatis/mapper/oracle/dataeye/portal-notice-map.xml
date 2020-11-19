@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="portal.notice">
+    
+    <insert id="insertPortalNotice" parameterType="hashmap">    
+		INSERT INTO PEN_BBS_NTC_M(NTC_ID, NTC_NM, NTC_SBST, NTC_ST_DATE, NTC_ED_DATE, DEL_YN, CRET_DT, CRETR_ID, CHG_DT, CHGR_ID, READ_CNT, NTC_TYPE_ID)
+		VALUES(#{ntc_id},#{ntc_nm},#{ntc_sbst},#{ntc_st_date},#{ntc_ed_date},'N',sysdate,#{cretr_id},sysdate,#{chgr_id},0,#{ntc_type_id})
+    </insert>
+    
+     <insert id="insertPortalNoticeFile" parameterType="hashmap">    
+	INSERT INTO PEN_BBS_NTC_FILE_D(NTC_ID, FILE_PATH_NM, FILE_NM, FILE_SYS_NM, DOWN_CNT, DEL_YN, CRET_DT, CRETR_ID, CHG_DT, CHGR_ID, NTC_TYPE_ID, FILE_ID, FILE_SIZE)
+		VALUES(#{ntc_id},#{file_path_nm},#{file_nm},#{file_sys_nm},0,'N',sysdate,#{cretr_id},sysdate,#{chgr_id},#{ntc_type_id},#{file_id},#{file_size})	
+    </insert> 
+    
+    <update id="updatePortalNotice" parameterType="hashmap">
+    	UPDATE PEN_BBS_NTC_M
+    	   SET    NTC_NM = #{ntc_nm}
+    	        , NTC_SBST = #{ntc_sbst}
+    	        , NTC_ST_DATE = #{ntc_st_date}
+    	        , NTC_ED_DATE = #{ntc_ed_date}
+    	        , CHG_DT = sysdate
+    	        , CHGR_ID = #{chgr_id}
+    	WHERE NTC_ID = #{ntc_id}
+    			AND NTC_TYPE_ID = #{ntc_type_id}	
+    </update>
+    
+    <update id="updatePortalNoticeFile" parameterType="hashmap">        
+    	UPDATE PEN_BBS_NTC_FILE_D
+    	   SET   file_path_nm = #{file_path_nm}
+    	       , FILE_NM = #{file_nm}
+    	       , FILE_SYS_NM = #{file_sys_nm}
+    	       , FILE_SIZE = #{file_size}
+    	       , DOWN_CNT = 0
+        WHERE  FILE_ID = #{file_id} 	
+    </update>
+    
+    <update id="deletePortalNotice" parameterType="hashmap">
+    	UPDATE PEN_BBS_NTC_M
+    	   SET    DEL_YN = 'Y'
+    	   		, CHG_DT = sysdate
+    	   		, CHGR_ID = #{chgr_id}
+    	WHERE NTC_ID = #{ntc_id}
+    			AND NTC_TYPE_ID = #{ntc_type_id} 
+    </update>
+    
+    <update id="deletePortalNoticeFile" parameterType="hashmap">
+    	UPDATE PEN_BBS_NTC_FILE_D
+    	   SET    DEL_YN = 'Y'
+    	   		, CHG_DT = sysdate
+    	   		, CHGR_ID = #{chgr_id}
+    	WHERE NTC_ID = #{ntc_id}
+    			AND NTC_TYPE_ID = #{ntc_type_id}   
+    </update> 
+    
+    <update id="updateNoticeReadCnt" parameterType="hashmap">
+    	UPDATE PEN_BBS_NTC_M SET READ_CNT = READ_CNT + 1     	   
+    	WHERE NTC_ID = #{ntc_id}
+    			AND NTC_TYPE_ID = #{ntc_type_id}        		
+    </update>
+    
+    <select id="getNoticeList" resultType="kr.co.penta.dataeye.common.entities.CamelMap">      
+	SELECT * FROM (
+	        SELECT * FROM (
+	        		 SELECT  ROWNUM RNUM
+		                ,NTC_ID
+				        , NTC_NM
+				        , CRETR_ID 
+				        , CRET_DT
+				        , CHGR_ID
+				        , CHG_DT
+				        , READ_CNT
+                        , ATTFILE_CNT
+                FROM (
+				        SELECT NTC_ID
+						       ,NTC_NM
+						       ,(SELECT U.USER_NM FROM PEN_USER_M U WHERE A.CRETR_ID = U.USER_ID ) AS CRETR_ID
+						       ,TO_CHAR(CRET_DT,'YYYY-MM-DD HH24:MI:SS') CRET_DT
+						       ,(SELECT U.USER_NM FROM PEN_USER_M U WHERE A.CHGR_ID = U.USER_ID ) AS CHGR_ID
+						       ,TO_CHAR(CHG_DT,'YYYY-MM-DD HH24:MI:SS') CHG_DT
+						       ,READ_CNT
+						       ,(SELECT COUNT(*) FROM PEN_BBS_NTC_FILE_D B WHERE B.NTC_ID = A.NTC_ID) AS ATTFILE_CNT
+						FROM  PEN_BBS_NTC_M A
+						WHERE 
+							DEL_YN = 'N' 
+							AND NTC_TYPE_ID = #{ntc_type_id} 				
+			            <if test='"_all".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+			            	AND (A.NTC_NM LIKE '%'||UPPER(#{searchValue})||'%' OR A.NTC_SBST LIKE '%'||UPPER(#{searchValue})||'%')
+			            </if>
+			            <if test='"TITLE".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+							AND A.NTC_NM LIKE '%'||UPPER(#{searchValue})||'%'
+						</if>
+			            <if test='"CONT".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+							AND A.NTC_SBST LIKE '%'||UPPER(#{searchValue})||'%'
+						</if>			                
+						ORDER BY CRET_DT DESC       
+				) 
+          ) PAGETABLE 
+          WHERE RNUM <![CDATA[ <= ]]> #{endNum}
+    ) WHERE RNUM <![CDATA[ >= ]]>  #{startNum}    
+    </select>  
+    
+    <select id="getMainBoardList" resultType="kr.co.penta.dataeye.common.entities.CamelMap">    	
+		SELECT * FROM (
+			    SELECT  A.NTC_ID 
+			           ,A.NTC_NM 
+			           ,A.NTC_SBST 
+			           ,TO_CHAR(A.NTC_ST_DATE ,'YYYY-MM-DD') AS NTC_ST_DATE
+			           ,TO_CHAR(A.NTC_ED_DATE ,'YYYY-MM-DD') AS NTC_ED_DATE
+			           ,(SELECT U.USER_NM FROM PEN_USER_M U WHERE A.CRETR_ID = U.USER_ID ) AS CRETR_ID
+			           ,B.FILE_ID 
+			           ,B.FILE_NM 
+			           ,B.FILE_SIZE 
+			    FROM PEN_BBS_NTC_M A
+			    LEFT OUTER JOIN PEN_BBS_NTC_FILE_D B ON(A.NTC_ID = B.NTC_ID AND A.NTC_TYPE_ID = B.NTC_TYPE_ID)
+			    WHERE SYSDATE BETWEEN A.NTC_ST_DATE AND A.NTC_ED_DATE
+			      AND A.NTC_TYPE_ID='notice' AND A.DEL_YN = 'N'
+			    ORDER BY A.CRET_DT DESC
+		) WHERE ROWNUM <![CDATA[ <= ]]>1
+    </select>
+    
+    <select id="getNoticeTotalCnt" resultType="kr.co.penta.dataeye.common.entities.CamelMap">      	
+        SELECT  COUNT(*) as TOTAL_CNT
+		FROM  PEN_BBS_NTC_M A
+ 	    WHERE NTC_TYPE_ID = #{ntc_type_id} AND A.DEL_YN = 'N'	
+           <if test='"_all".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+           	AND (A.NTC_NM LIKE '%'||UPPER(#{searchValue})||'%' OR A.NTC_SBST LIKE '%'||UPPER(#{searchValue})||'%')
+           </if>
+           <if test='"TITLE".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+			AND A.NTC_NM LIKE '%'||UPPER(#{searchValue})||'%'
+		</if>
+           <if test='"CONT".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+			AND A.NTC_SBST LIKE '%'||UPPER(#{searchValue})||'%'
+		</if>                    
+    </select>   
+    
+    <select id="getBoardDetail" resultType="kr.co.penta.dataeye.common.entities.CamelMap">      	
+        SELECT A.NTC_ID
+        	   ,A.NTC_TYPE_ID
+		       ,A.NTC_NM
+               ,A.NTC_SBST
+               ,TO_CHAR(A.NTC_ST_DATE,'YYYY-MM-DD') AS NTC_ST_DATE
+               ,TO_CHAR(A.NTC_ED_DATE,'YYYY-MM-DD') AS NTC_ED_DATE
+		       ,(SELECT U.USER_NM FROM PEN_USER_M U WHERE A.CRETR_ID = U.USER_ID ) AS CRETR_ID
+		       ,A.CRET_DT
+		       ,(SELECT U.USER_NM FROM PEN_USER_M U WHERE A.CHGR_ID = U.USER_ID ) AS CHGR_ID
+		       ,A.CHG_DT
+		       ,A.READ_CNT		       
+               ,NVL(B.FILE_ID,0) AS FILE_ID
+               ,B.FILE_PATH_NM
+               ,B.FILE_NM
+               ,B.FILE_SYS_NM
+               ,B.FILE_SIZE
+               ,B.DOWN_CNT               
+		FROM  PEN_BBS_NTC_M A
+        LEFT OUTER JOIN  PEN_BBS_NTC_FILE_D B ON(A.NTC_ID = B.NTC_ID AND A.NTC_TYPE_ID = B.NTC_TYPE_ID)
+      WHERE A.NTC_ID=#{ntc_id}
+        AND A.NTC_TYPE_ID=#{ntc_type_id}
+        AND A.DEL_YN = 'N'
+    </select> 
+    
+    <select id="getPortalNoticeFileInfo" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+       SELECT * FROM PEN_BBS_NTC_FILE_D WHERE FILE_ID=#{file_id}  
+      </select>      
+        
+      <select id="getPortalNoticeFileInfo2" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+       SELECT * FROM PEN_BBS_NTC_FILE_D WHERE NTC_ID=#{ntc_id}  
+      </select>
+     
+</mapper>

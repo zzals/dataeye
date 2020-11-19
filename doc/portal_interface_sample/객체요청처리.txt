@@ -1,0 +1,60 @@
+1. 요청객체
+reqParam = {
+	reqInfo:{
+		OBJ_TYPE_ID:"020102L",
+		OBJ_ID:"020102L_3889384c-46c6-4ca9-bdd7-0f32a24ce973",
+		REQ_ID:"20170212214052543_72553690-e770-4261-b450-4cdcb32e889b",
+		STUS_ID:"20170212214052546_9ff63ab4-d5db-4d3a-ad43-1a51cd470601",
+		STUS_CD:"01",
+		STUS_DESC:"샌드박스를 요청합니다.",
+		STUS_LINK_ID:""
+	},
+	objInfo:{
+		penObjM:{
+			"OBJ_TYPE_ID":"020102L",
+			"OBJ_ID":"",
+			"ADM_OBJ_ID":"",
+			"OBJ_NM":"교통사고현황",
+			"OBJ_ABBR_NM":"",
+			"OBJ_DESC":"교통사고현황",
+			"PATH_OBJ_TYPE_ID":"",
+			"PATH_OBJ_ID":""
+		},
+		penObjD:[{
+			"OBJ_TYPE_ID":"020102L",
+			"OBJ_ID":"",
+			"ATR_ID_SEQ":"101",
+			"ATR_VAL_SEQ":"101",
+			"OBJ_ATR_VAL":{"filePhyName":"7e4869f7-8d05-4528-8fcf-bbf9cd5421b0", "fileLocName":"Jellyfish.jpg", "fileSize":"757.52 KB", "fileType":"image/jpeg", "path":"C:\DATAEYE_ATTACH_FILE\FILES_TEMP\201702"},
+			"UI_COMP_CD":"FLE"
+		},{
+			"OBJ_TYPE_ID":"020102L",
+			"OBJ_ID":"",
+			"ATR_ID_SEQ":"101",
+			"ATR_VAL_SEQ":"201",
+			"OBJ_ATR_VAL":{"filePhyName":"7e4869f7-8d05-4528-8fcf-bbf9cd5421b0", "fileLocName":"Jellyfish.jpg", "fileSize":"757.52 KB", "fileType":"image/jpeg", "path":"C:\DATAEYE_ATTACH_FILE\FILES_TEMP\201702"},
+			"UI_COMP_CD":"FLE"
+		}],
+		penObjR:[]
+	}
+}
+
+2. 요청처리
+var response = $.ajax({
+	async:false, 
+	type: "POST", 
+	dataType:"json", 
+	contentType: "application/json; charset=utf-8", 
+	url:"/dataeye_dev/metareq/objectInfo/save", 
+	data:JSON.stringify(reqParam)
+});
+
+3. 요청결과
+response.responseJSON
+	=> response.responseJSON.status : SUCCESS, FAIL
+	=> response.responseJSON.data : 결과값
+
+
+** STUS_ID 존재여부에 따라서 추가 등록 인지 업데이트인지 판단한다.
+** FLE(파일) 파입 입력의 경우 String 이 아닌 Object로 등록할것
+

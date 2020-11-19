@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PEN_OBJ_D_H">
+	<insert id="insert" parameterType="hashMap">
+		INSERT INTO PEN_OBJ_D_H
+		(
+			OBJ_TYPE_ID, 			OBJ_ID, 		ATR_ID_SEQ,     ATR_VAL_SEQ,    HST_SEQ,
+            HST_CRET_DT,            HST_CRETR_ID,   REQ_SEQ,        DEL_YN,         CRET_DT,
+            CRETR_ID,               CHG_DT,         CHGR_ID,        OBJ_ATR_VAL
+		)
+        SELECT T101.OBJ_TYPE_ID
+             , T101.OBJ_ID
+             , T101.ATR_ID_SEQ
+             , T101.ATR_VAL_SEQ
+             , #{HST_SEQ, jdbcType=VARCHAR}
+             , CURRENT_TIMESTAMP
+             , #{sessionInfo.userId, jdbcType=VARCHAR}
+             , #{REQ_SEQ, jdbcType=VARCHAR}
+             , T101.DEL_YN
+             , T101.CRET_DT
+             , T101.CRETR_ID
+             , T101.CHG_DT
+             , T101.CHGR_ID
+             , T101.OBJ_ATR_VAL
+		FROM PEN_OBJ_D T101
+        WHERE T101.OBJ_TYPE_ID = #{objTypeId}
+          AND T101.OBJ_ID = #{objId}
+          AND T101.DEL_YN = 'N'
+          <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(atrIdSeq)'>
+              AND T101.ATR_ID_SEQ = #{AtrIdSeq}
+              <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(atrValSeq)'>
+                AND T101.ATR_VAL_SEQ = #{atrValSeq}
+              </if>
+              <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(beginAtrValSeq) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(endAtrValSeq)'>
+                AND T101.ATR_VAL_SEQ BETWEEN #{beginAtrValSeq} AND #{endAtrValSeq}
+              </if>
+          </if>
+	</insert>
+</mapper>

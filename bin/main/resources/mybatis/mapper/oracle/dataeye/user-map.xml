@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="user">
+    <select id="getUser" parameterType="String" resultType="kr.co.penta.dataeye.spring.security.core.User">
+        SELECT T101.USER_ID    AS "userId"
+        , T101.DEL_YN          AS "delYn"
+        , T101.CRET_DT         AS "cretDt"
+        , T101.CRETR_ID        AS "cretrId"
+        , T101.CHG_DT          AS "chgDt"
+        , T101.CHGR_ID         AS "chgrId"
+        , T101.USER_NM         AS "userNm"
+        , T101.USER_PASSWORD   AS "userPassword"
+        , T101.TEL_NO          AS "telNo"
+        , T101.HP_NO           AS "hpNo"
+        , T101.EMAIL_ADDR      AS "emailAddr"
+        , T101.ORG_ID          AS "orgId"
+        , T101.ACCOUNT_NON_EXPIRED         AS "accountNonExpired"
+        , T101.ACCOUNT_NON_LOCKED          AS "accountNonLocked"
+        , T101.CREDENTIALS_NON_EXPIRED     AS "credentialsNonExpired"
+        , T101.ACCOUNT_ENABLED             AS "accountEnabled"
+        , T101.LOGIN_FAIL_CNT              AS "loginFailCnt"
+        , TO_CHAR(T101.PASSWORD_LAST_CHG_DT, 'YYYYMMDDHH24MISS')        AS "passwordLastChgDt"
+        , TO_CHAR(T101.LOGIN_LAST_DT, 'YYYYMMDDHH24MISS')			    AS "loginLastDt"
+        FROM PEN_USER_M T101
+        WHERE T101.USER_ID = #{userId}
+    </select>
+	<select id="findSysUserGrpM" parameterType="String" resultType="kr.co.penta.dataeye.common.entities.meta.PenSysUserGrpM">
+		SELECT T103.*
+		FROM PEN_SYS_GRP_USER_R T101
+		INNER JOIN PEN_SYS_GRP_R T102
+		ON (
+		    T101.USER_GRP_ID = T102.REL_USER_GRP_ID
+		    AND T102.DEL_YN = 'N'
+		)
+		INNER JOIN PEN_SYS_USER_GRP_M T103
+		ON (
+		    T102.USER_GRP_ID = T103.USER_GRP_ID
+		    AND T103.DEL_YN = 'N' AND T103.PRIV_YN = 'Y' AND T103.USE_YN = 'Y'
+		)
+		WHERE USER_ID = #{userId}
+		AND T101.DEL_YN = 'N'
+    </select>
+
+    <select id="getActionAuth" parameterType="string" resultType="hashmap">
+        WITH GRP AS (
+            SELECT
+                USER_GRP_ID,
+                USER_ID
+            FROM PEN_SYS_GRP_USER_R
+            WHERE USER_ID = #{USER_ID}
+        ),
+        MENU_GRP AS (
+            /* 해당 사용자그룹의 그룹 가져오기 */
+            SELECT
+                'G' AS PRIV_RCVR_GBN,
+                T01.USER_GRP_ID
+            FROM PEN_SYS_GRP_R T01
+                JOIN GRP T02
+                ON (T01.REL_USER_GRP_ID = T02.USER_GRP_ID)
+            /* ALL USER GROUP 가져오기 */
+            UNION ALL
+            SELECT
+                'G' AS PRIV_RCVR_GBN,
+                USER_GRP_ID
+            FROM PEN_SYS_GRP_R
+            WHERE REL_USER_GRP_ID = 'ALL'
+            /* 직접 사용자 메뉴 가져오기 */
+            UNION ALL
+            SELECT
+                DISTINCT 'U' AS PRIV_RCVR_GBN,
+                GRP.USER_ID AS ROLE_ID
+            FROM GRP
+        ),
+        MENU_AUTH AS (
+            /* 할당된 메뉴별 권한 가져오기 */
+            SELECT
+                T01.APP_ID AS APP_ID,
+                T01.MENU_ID AS MENU_ID,
+                MAX(SUBSTR (T01.PRIV_OPER_GBN, 1, INSTR (T01.PRIV_OPER_GBN, ':', 1, 1) - 1)) AS C_AUTH,
+                MAX(SUBSTR (T01.PRIV_OPER_GBN, INSTR (T01.PRIV_OPER_GBN, ':', 1, 1) + 1, INSTR (T01.PRIV_OPER_GBN, ':', 1, 2) - INSTR (T01.PRIV_OPER_GBN, ':', 1, 1) - 1)) AS R_AUTH,
+                MAX(SUBSTR (T01.PRIV_OPER_GBN, INSTR (T01.PRIV_OPER_GBN, ':', 1, 2) + 1, INSTR (T01.PRIV_OPER_GBN, ':', 1, 3) - INSTR (T01.PRIV_OPER_GBN, ':', 1, 2) - 1)) AS U_AUTH,
+                MAX(SUBSTR (T01.PRIV_OPER_GBN, INSTR (T01.PRIV_OPER_GBN, ':', 1, 3) + 1, INSTR (T01.PRIV_OPER_GBN, ':', 1, 4) - INSTR (T01.PRIV_OPER_GBN, ':', 1, 3) - 1)) AS D_AUTH,
+                MAX(SUBSTR (T01.PRIV_OPER_GBN, INSTR (T01.PRIV_OPER_GBN, ':', 1, 4) + 1)) AS E_AUTH
+            FROM PEN_SYS_PRIV_MENU_R T01
+                JOIN MENU_GRP T02
+                ON (T01.PRIV_RCVR_GBN = T02.PRIV_RCVR_GBN AND T01.PRIV_RCVR_ID = T02.USER_GRP_ID)
+            GROUP BY T01.APP_ID, T01.MENU_ID
+        ),
+        MENU_AUTH_PATH AS (
+            SELECT
+                T01.APP_ID,
+                T01.MENU_ID,
+                T01.MENU_NM,
+                LEVEL AS LEV,
+                T04.C_AUTH,
+                T04.R_AUTH,
+                T04.U_AUTH,
+                T04.D_AUTH,
+                T04.E_AUTH,
+                SUBSTR(SYS_CONNECT_BY_PATH(T01.MENU_ID, '|'), 2) AS PATH
+            FROM PEN_MENU_M T01
+                LEFT OUTER JOIN MENU_AUTH T04
+                ON (T01.MENU_ID = T04.MENU_ID AND T01.APP_ID = T04.APP_ID)
+            WHERE T01.DEL_YN = 'N' AND T01.USE_YN = 'Y'
+            CONNECT BY PRIOR T01.UP_MENU_ID = T01.MENU_ID
+            START WITH T04.MENU_ID IS NOT NULL
+        ),
+        ALL_MENU AS (
+            SELECT
+                T01.APP_ID,
+                T01.MENU_ID,
+                T01.UP_MENU_ID,
+                T01.MENU_NM,
+                LEVEL AS LEV,
+                T01.MENU_TYPE,
+                T01.PGM_ID,
+                T03.PGM_NM,
+                T03.SCREEN_ID,
+                T03.PGM_TYPE,
+                T03.INIT_SQL_STMT,
+                T03.SUB_SQL_STMT,
+                T03.USE_YN AS PGM_USE_YN,
+                T01.ICON_CLASS,
+                T01.SORT_NO,
+                T01.USE_YN AS MENU_USE_YN,
+                SUBSTR(SYS_CONNECT_BY_PATH(T01.MENU_ID, '|'), 2) AS PATH,
+                SUBSTR(SYS_CONNECT_BY_PATH(LPAD(T01.SORT_NO, 3, '0'), '|'), 2) AS CONCAT_SORT_NO,
+                NVL(REGEXP_SUBSTR(SUBSTR(SYS_CONNECT_BY_PATH(LPAD(T01.SORT_NO, 3, '0'), '|'), 2), '[^|]+', 1, 1), '000') AS SORT1,
+                NVL(REGEXP_SUBSTR(SUBSTR(SYS_CONNECT_BY_PATH(LPAD(T01.SORT_NO, 3, '0'), '|'), 2), '[^|]+', 1, 2), '000') AS SORT2,
+                NVL(REGEXP_SUBSTR(SUBSTR(SYS_CONNECT_BY_PATH(LPAD(T01.SORT_NO, 3, '0'), '|'), 2), '[^|]+', 1, 3), '000') AS SORT3,
+                NVL(REGEXP_SUBSTR(SUBSTR(SYS_CONNECT_BY_PATH(LPAD(T01.SORT_NO, 3, '0'), '|'), 2), '[^|]+', 1, 4), '000') AS SORT4,
+                NVL(REGEXP_SUBSTR(SUBSTR(SYS_CONNECT_BY_PATH(LPAD(T01.SORT_NO, 3, '0'), '|'), 2), '[^|]+', 1, 5), '000') AS SORT5
+            FROM PEN_MENU_M T01
+                LEFT OUTER JOIN PEN_PGM T03
+                ON (T01.PGM_ID = T03.PGM_ID)
+                /* LEFT OUTER JOIN MENU_AUTH T04 ON (T01.MENU_ID = T04.MENU_ID AND T01.APP_ID = T04.APP_ID) */
+            WHERE T01.DEL_YN = 'N'
+                AND T01.USE_YN = 'Y'
+                AND T01.APP_ID = 'BDP'
+            CONNECT BY PRIOR T01.MENU_ID = T01.UP_MENU_ID
+            START WITH T01.UP_MENU_ID IS NULL
+        )
+        SELECT DISTINCT
+            T01.MENU_ID AS "menuId",
+            T01.MENU_NM AS "menuNm",
+            T01.PGM_ID AS "pgmId",
+            T01.UP_MENU_ID AS "upMenuId",
+            T01.MENU_TYPE AS "menuType",
+            T01.SORT_NO AS "sortNo",
+            T01.SCREEN_ID AS "screenId",
+            'Y' AS MENU_VIEW_YN,
+            T02.C_AUTH,
+            T02.R_AUTH,
+            T02.U_AUTH,
+            T02.D_AUTH,
+            T02.E_AUTH,
+            T01.SORT1,
+            T01.SORT2,
+            T01.SORT3,
+            T01.SORT4
+        FROM ALL_MENU T01
+            JOIN MENU_AUTH_PATH T02
+            ON (T01.APP_ID = T02.APP_ID AND T01.MENU_ID = T02.MENU_ID)
+        ORDER BY T01.SORT1, T01.SORT2, T01.SORT3, T01.SORT4
+    </select>
+
+    <select id="getAuthority" parameterType="String" resultType="kr.co.penta.dataeye.common.entities.meta.PenSysUserGrpM">
+        SELECT T103.*
+		FROM PEN_SYS_GRP_USER_R T101
+		INNER JOIN PEN_SYS_GRP_R T102
+		ON (
+		    T101.USER_GRP_ID = T102.REL_USER_GRP_ID
+		    AND T102.DEL_YN = 'N'
+		)
+		INNER JOIN PEN_SYS_USER_GRP_M T103
+		ON (
+		    T102.USER_GRP_ID = T103.USER_GRP_ID
+		    AND T103.DEL_YN = 'N' AND T103.PRIV_YN = 'Y' AND T103.USE_YN = 'Y'
+		)
+		WHERE USER_ID = #{username}
+		AND T101.DEL_YN = 'N'
+    </select>
+
+    <update id="incrementFailCount" parameterType="String">
+        UPDATE PEN_USER_M T101
+        SET T101.LOGIN_FAIL_CNT = T101.LOGIN_FAIL_CNT+1
+        WHERE T101.USER_ID = #{userId}
+    </update>
+    <update id="setLoginSuccess" parameterType="String">
+        UPDATE PEN_USER_M T101
+        SET T101.LOGIN_LAST_DT = CURRENT_TIMESTAMP
+        , T101.LOGIN_FAIL_CNT = 0
+        WHERE T101.USER_ID = #{userId}
+    </update>
+    <update id="setAccountExpired" parameterType="String">
+        UPDATE PEN_USER_M T101
+        SET T101.ACCOUNT_NON_EXPIRED = 'N'
+        WHERE T101.USER_ID = #{userId}
+    </update>
+    <update id="setcAccountLock" parameterType="String">
+        UPDATE PEN_USER_M T101
+        SET T101.ACCOUNT_NON_LOCKED = 'N'
+        WHERE T101.USER_ID = #{userId}
+    </update>
+    <update id="setCredentialsExpired" parameterType="String">
+        UPDATE PEN_USER_M T101
+        SET T101.CREDENTIALS_NON_EXPIRED = 'N'
+        WHERE T101.USER_ID = #{userId}
+    </update>
+    <update id="setAccountDisabled" parameterType="String">
+        UPDATE PEN_USER_M T101
+        SET T101.ACCOUNT_ENABLED = 'N'
+        WHERE T101.USER_ID = #{userId}
+    </update>
+</mapper>

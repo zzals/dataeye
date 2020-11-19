@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tsearch">
+    <select id="findPathObjArea" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		WITH SUBJ_AREA (OBJ_TYPE_ID, OBJ_ID, ADM_OBJ_ID, OBJ_NM, PATH_OBJ_TYPE_ID, PATH_OBJ_ID, LVL, SORT_PATH)
+		AS (
+		    SELECT T101.OBJ_TYPE_ID
+		         , T101.OBJ_ID
+		         , T101.ADM_OBJ_ID
+		         , T101.OBJ_NM
+		         , T101.PATH_OBJ_TYPE_ID
+		         , T101.PATH_OBJ_ID
+		         , 1 AS LVL
+		         , T101.OBJ_NM SORT_PATH
+		    FROM PEN_OBJ_M T101
+		    WHERE T101.OBJ_TYPE_ID = #{objTypeId}
+		    AND T101.DEL_YN = 'N'
+		    AND T101.PATH_OBJ_TYPE_ID IS NULL
+		    UNION ALL
+		    SELECT T101.OBJ_TYPE_ID
+		         , T101.OBJ_ID
+		         , T101.ADM_OBJ_ID
+		         , T101.OBJ_NM
+		         , T101.PATH_OBJ_TYPE_ID
+		         , T101.PATH_OBJ_ID
+		         , T102.LVL + 1 AS LVL
+		         , T102.SORT_PATH||'@'||T101.OBJ_NM SORT_PATH
+		    FROM PEN_OBJ_M T101
+		    INNER JOIN SUBJ_AREA T102
+		    ON (
+		        T101.PATH_OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+		        AND T101.PATH_OBJ_ID = T102.OBJ_ID
+		    )
+		    WHERE T101.OBJ_TYPE_ID = #{objTypeId}
+		    AND T101.DEL_YN = 'N'    
+		)
+		SELECT T101.OBJ_TYPE_ID
+		     , T102.OBJ_TYPE_NM
+		     , T101.OBJ_ID
+		     , T101.ADM_OBJ_ID
+		     , T101.OBJ_NM
+		     , T101.PATH_OBJ_TYPE_ID
+		     , T103.OBJ_TYPE_NM AS PATH_OBJ_TYPE_NM
+		     , T101.PATH_OBJ_ID
+		     , T101.LVL
+		     , T101.SORT_PATH
+		FROM SUBJ_AREA T101
+		INNER JOIN PEN_OBJ_TYPE_M T102
+		ON (
+		    T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+		)
+		LEFT OUTER JOIN PEN_OBJ_TYPE_M T103
+		ON (
+		    T101.PATH_OBJ_TYPE_ID = T103.OBJ_TYPE_ID
+		)
+		ORDER BY T101.SORT_PATH
+    </select>
+</mapper>

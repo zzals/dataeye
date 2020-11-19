@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PEN_OBJ_TYPE_ATR_D">
+	<insert id="insert" parameterType="hashMap">
+		INSERT INTO PEN_OBJ_TYPE_ATR_D (
+			META_TYPE_CD,
+			OBJ_TYPE_ID,
+			ATR_ID_SEQ,
+			DEL_YN,
+			CRET_DT,
+			CRETR_ID,
+			CHG_DT,
+			CHGR_ID,
+			ATR_ID,
+			ATR_ALIAS_NM,
+			SORT_NO,
+			MULTI_ATR_YN,
+			CNCT_ATR_YN,
+			MAND_YN,
+			ATR_ADM_TGT_YN,
+			DEGR_NO,
+			INDC_YN,
+			FIND_TGT_NO,
+			AVAIL_CHK_PGM_ID
+		)
+		VALUES (
+            #{META_TYPE_CD},
+            #{OBJ_TYPE_ID},
+            #{ATR_ID_SEQ},
+            'N',
+            sysdate,
+            #{sessionInfo.userId},
+            sysdate,
+           #{sessionInfo.userId},
+            #{ATR_ID},
+            #{ATR_ALIAS_NM},
+            #{SORT_NO},
+            #{MULTI_ATR_YN},
+            #{CNCT_ATR_YN},
+            #{MAND_YN},
+            #{ATR_ADM_TGT_YN},
+            #{DEGR_NO},
+            #{INDC_YN},
+            #{FIND_TGT_NO},
+            #{AVAIL_CHK_PGM_ID}
+		)
+	</insert>
+	<delete id="delete" parameterType="hashMap">
+		DELETE FROM PEN_OBJ_TYPE_ATR_D
+		WHERE META_TYPE_CD = #{META_TYPE_CD}
+		  AND OBJ_TYPE_ID = #{OBJ_TYPE_ID}
+		  <if test='ATR_ID_SEQ != null and !"".equals(ATR_ID_SEQ)'>
+		      AND ATR_ID_SEQ = #{ATR_ID_SEQ}
+		  </if>
+	</delete>
+</mapper>

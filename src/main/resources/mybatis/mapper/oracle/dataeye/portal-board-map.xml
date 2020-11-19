@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="portal.board"> 	
+        
+    <insert id="insertPortalBoard" parameterType="hashmap">    
+		INSERT INTO O_DATAEYE_META.PEN_BBS_BRD_M(BRD_TYPE_ID, BRD_ID, DEL_YN, CRET_DT, CRETR_ID, CHG_DT, CHGR_ID, BRD_NM, BRD_SBST, BRD_ST_DATE, BRD_ED_DATE, READ_CNT)
+		VALUES(#{brd_type_id}, #{brd_id}, 'N', sysdate, #{cretr_id}, sysdate, #{cretr_id}, #{brd_nm}, #{brd_sbst}, #{brd_st_date}, #{brd_ed_date}, 0)
+    </insert>
+    
+    <insert id="insertPortalBoardReply" parameterType="hashmap">    
+		INSERT INTO O_DATAEYE_META.PEN_BBS_BRD_RPL_D(BRD_TYPE_ID, BRD_ID, RPL_NO, DEL_YN, CRET_DT, CRETR_ID, CHG_DT, CHGR_ID, RPL_SBST, UP_RPL_NO)
+		VALUES(#{brd_type_id}, #{brd_id}, #{rpl_no}, 'N', sysdate, #{cretr_id}, sysdate, #{cretr_id}, #{rpl_sbst}, #{up_rpl_no})
+    </insert>
+    
+    <insert id="insertPortalBoardFile" parameterType="hashmap">    
+		INSERT INTO O_DATAEYE_META.PEN_BBS_BRD_FILE_D(BRD_TYPE_ID, BRD_ID, FILE_ID, DEL_YN, CRET_DT, CRETR_ID, CHG_DT, CHGR_ID, FILE_NM, FILE_SYS_NM, FILE_PATH_NM, FILE_SIZE, DOWN_CNT)
+		VALUES(#{brd_type_id}, #{brd_id}, #{file_id}, 'N', sysdate, #{cretr_id}, sysdate, #{cretr_id}, #{file_nm}, #{file_sys_nm}, #{file_path_nm}, #{file_size}, 0)
+    </insert>
+    
+    <update id="updatePortalBoard" parameterType="hashmap">
+    	  UPDATE O_DATAEYE_META.PEN_BBS_BRD_M
+			  SET CHG_DT=sysdate
+			, CHGR_ID=#{chgr_id}
+			, BRD_NM=#{brd_nm}
+			, BRD_SBST=#{brd_sbst}
+			<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(brd_st_date)'>, BRD_ST_DATE=#{brd_st_date} </if>
+			<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(brd_ed_date)'>, BRD_ED_DATE=#{brd_ed_date} </if>
+		  WHERE BRD_TYPE_ID=#{brd_type_id} 
+		    AND BRD_ID=#{brd_id}    	     		
+    </update>
+    
+    <update id="updatePortalBoardFile" parameterType="hashmap">        
+        UPDATE O_DATAEYE_META.PEN_BBS_BRD_FILE_D
+		   SET CHG_DT=sysdate
+		     , CHGR_ID=#{chgr_id}
+		     , FILE_NM=#{file_nm}
+		     , FILE_SYS_NM=#{file_sys_nm}
+		     , FILE_PATH_NM=#{file_path_nm}
+		     , FILE_SIZE=#{file_size}
+		     , DOWN_CNT=0
+		 WHERE BRD_TYPE_ID=#{brd_type_id} 
+		   AND BRD_ID=#{brd_id}
+		   AND FILE_ID=#{file_id}
+    </update>
+    
+    <update id="deletePortalBoard" parameterType="hashmap">
+    	UPDATE O_DATAEYE_META.PEN_BBS_BRD_M    	
+    	   SET DEL_YN='Y'
+    	     , CHG_DT=sysdate
+		     , CHGR_ID=#{chgr_id}   
+    	WHERE BRD_TYPE_ID=#{brd_type_id} 
+		   AND BRD_ID=#{brd_id}
+    </update>
+    
+    <update id="deletePortalBoardReply" parameterType="hashmap">
+    	UPDATE O_DATAEYE_META.PEN_BBS_BRD_RPL_D 
+    	   SET DEL_YN='Y'
+    	     , CHG_DT=sysdate
+		     , CHGR_ID=#{chgr_id}    	   
+    	WHERE BRD_TYPE_ID=#{brd_type_id} 
+		   AND BRD_ID=#{brd_id}
+    </update>
+    
+    <update id="deletePortalBoardFile" parameterType="hashmap">
+    	UPDATE  O_DATAEYE_META.PEN_BBS_BRD_FILE_D    
+    	    SET DEL_YN='Y'
+    	      , CHG_DT=sysdate
+		      , CHGR_ID=#{chgr_id} 	   
+    	WHERE BRD_TYPE_ID=#{brd_type_id} 
+		   AND BRD_ID=#{brd_id}            		
+    </update>
+    
+    <update id="updateBoardReadCnt" parameterType="hashmap">
+    	UPDATE O_DATAEYE_META.PEN_BBS_BRD_M SET READ_CNT = READ_CNT + 1     	   
+    	WHERE BRD_TYPE_ID=#{brd_type_id} 
+		   AND BRD_ID=#{brd_id}   		
+    </update>
+    
+    <select id="getBoardList" resultType="kr.co.penta.dataeye.common.entities.CamelMap">      
+	SELECT * FROM (
+	        SELECT * FROM (
+	        		 SELECT  ROWNUM RNUM
+		                ,BRD_ID
+				        , BRD_NM
+				        , CRETR_ID
+				        , CRET_DT
+				        , CHGR_ID
+				        , CHG_DT
+				        , READ_CNT
+				        , REPLY_CNT
+                        , ATTFILE_CNT
+                FROM (
+				        SELECT A.BRD_ID
+						       ,A.BRD_NM 
+						       ,(SELECT U.USER_NM FROM O_DATAEYE_META.PEN_USER_M U WHERE A.CRETR_ID = U.USER_ID ) AS CRETR_ID
+						       ,TO_CHAR(A.CRET_DT,'YYYY-MM-DD HH24:MI:SS') CRET_DT
+						       ,(SELECT U.USER_NM FROM O_DATAEYE_META.PEN_USER_M U WHERE A.CHGR_ID = U.USER_ID ) AS CHGR_ID
+						       ,TO_CHAR(A.CHG_DT,'YYYY-MM-DD HH24:MI:SS') CHG_DT
+						       ,A.READ_CNT
+						       ,(SELECT COUNT(*) FROM O_DATAEYE_META.PEN_BBS_BRD_RPL_D WHERE BRD_ID = A.BRD_ID AND BRD_TYPE_ID = A.BRD_TYPE_ID) AS REPLY_CNT
+						       ,(SELECT COUNT(*) FROM O_DATAEYE_META.PEN_BBS_BRD_FILE_D WHERE BRD_ID = A.BRD_ID AND BRD_TYPE_ID = A.BRD_TYPE_ID) AS ATTFILE_CNT
+						FROM  O_DATAEYE_META.PEN_BBS_BRD_M A
+						WHERE A.DEL_YN = 'N'
+						    AND A.BRD_TYPE_ID = #{brd_type_id}								
+			            <if test='"_all".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+			            	AND (A.BRD_NM LIKE '%'||UPPER(#{searchValue})||'%' OR A.BRD_SBST LIKE '%'||UPPER(#{searchValue})||'%')
+			            </if>
+			            <if test='"TITLE".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+							AND A.BRD_NM LIKE '%'||UPPER(#{searchValue})||'%'
+						</if>
+			            <if test='"CONT".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+							AND A.BRD_SBST LIKE '%'||UPPER(#{searchValue})||'%'
+						</if>			                
+						ORDER BY A.CRET_DT DESC       
+				) 
+          ) PAGETABLE 
+          WHERE RNUM <![CDATA[ <= ]]> #{endNum}
+    ) WHERE RNUM <![CDATA[ >= ]]>  #{startNum}    
+    </select>
+    
+    <select id="getFaqList" resultType="kr.co.penta.dataeye.common.entities.CamelMap">      
+	SELECT * FROM (
+	        SELECT * FROM (
+	        		 SELECT  ROWNUM RNUM
+		                ,BRD_ID
+				        ,BRD_NM
+						,BRD_SBST
+                FROM (
+				        SELECT A.BRD_ID
+						       ,A.BRD_NM 
+						       ,A.BRD_SBST
+						FROM  O_DATAEYE_META.PEN_BBS_BRD_M A
+						WHERE A.DEL_YN = 'N'
+						    AND A.BRD_TYPE_ID = #{brd_type_id}								
+			            <if test='"_all".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+			            	AND (A.BRD_NM LIKE '%'||UPPER(#{searchValue})||'%' OR A.BRD_SBST LIKE '%'||UPPER(#{searchValue})||'%')
+			            </if>
+			            <if test='"TITLE".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+							AND A.BRD_NM LIKE '%'||UPPER(#{searchValue})||'%'
+						</if>
+			            <if test='"CONT".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+							AND A.BRD_SBST LIKE '%'||UPPER(#{searchValue})||'%'
+						</if>			                
+						ORDER BY A.CRET_DT DESC       
+				) 
+          ) PAGETABLE 
+          WHERE RNUM <![CDATA[ <= ]]> #{endNum}
+    ) WHERE RNUM <![CDATA[ >= ]]>  #{startNum}    
+    </select>
+        
+    <select id="getBoardReplyList" resultType="kr.co.penta.dataeye.common.entities.CamelMap">    			
+	    SELECT BRD_TYPE_ID
+	         , BRD_ID
+	         , RPL_NO
+	         , DEL_YN
+	         ,TO_CHAR(CRET_DT,'YYYY-MM-DD HH24:MI:SS') AS CRET_DT
+	         ,(SELECT U.USER_NM FROM O_DATAEYE_META.PEN_USER_M U WHERE A.CRETR_ID = U.USER_ID ) AS CRETR_ID
+	         ,TO_CHAR(CHG_DT,'YYYY-MM-DD HH24:MI:SS') AS CHG_DT
+	         ,(SELECT U.USER_NM FROM O_DATAEYE_META.PEN_USER_M U WHERE A.CHGR_ID = U.USER_ID ) AS CHGR_ID
+	         , RPL_SBST
+	         , UP_RPL_NO
+		FROM O_DATAEYE_META.PEN_BBS_BRD_RPL_D A
+		WHERE BRD_TYPE_ID=#{brd_type_id}
+		  AND BRD_ID=#{brd_id}
+		ORDER BY CRET_DT 
+    </select>
+    
+    <select id="getBoardTotalCnt" resultType="kr.co.penta.dataeye.common.entities.CamelMap">      	
+        SELECT  COUNT(*) as TOTAL_CNT
+		FROM  O_DATAEYE_META.PEN_BBS_BRD_M A
+ 	    WHERE A.DEL_YN = 'N'
+ 	        AND BRD_TYPE_ID = #{brd_type_id}		
+           <if test='"_all".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+           	AND (A.BRD_NM LIKE '%'||UPPER(#{searchValue})||'%' OR A.BRD_SBST LIKE '%'||UPPER(#{searchValue})||'%')
+           </if>
+           <if test='"TITLE".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+			AND A.BRD_NM LIKE '%'||UPPER(#{searchValue})||'%'
+		</if>
+           <if test='"CONT".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+			AND A.BRD_SBST LIKE '%'||UPPER(#{searchValue})||'%'
+		</if>                    
+    </select>   
+    
+    <select id="getBoardDetail" resultType="kr.co.penta.dataeye.common.entities.CamelMap">      	
+        SELECT A.BRD_TYPE_ID
+             , A.BRD_ID
+             , A.CRET_DT
+             ,(SELECT U.USER_NM FROM O_DATAEYE_META.PEN_USER_M U WHERE A.CRETR_ID = U.USER_ID ) AS CRETR_ID
+             , A.CHG_DT
+             ,(SELECT U.USER_NM FROM O_DATAEYE_META.PEN_USER_M U WHERE A.CHGR_ID = U.USER_ID ) AS CHGR_ID
+             , A.BRD_NM
+             , A.BRD_SBST
+             ,TO_CHAR(A.BRD_ST_DATE,'YYYY-MM-DD') AS BRD_ST_DATE
+             ,TO_CHAR(A.BRD_ED_DATE,'YYYY-MM-DD') AS BRD_ED_DATE
+             , A.READ_CNT
+             ,NVL(B.FILE_ID ,0) AS FILE_ID
+             ,B.FILE_PATH_NM 
+             ,B.FILE_NM 
+             ,B.FILE_SYS_NM 
+             ,B.FILE_SIZE 
+             ,B.DOWN_CNT 
+		  FROM O_DATAEYE_META.PEN_BBS_BRD_M A
+		  LEFT OUTER JOIN O_DATAEYE_META.PEN_BBS_BRD_FILE_D B ON(A.BRD_ID = B.BRD_ID AND A.BRD_TYPE_ID = B.BRD_TYPE_ID)
+		  WHERE A.DEL_YN = 'N'
+		    AND A.BRD_ID=#{brd_id}
+		    AND A.BRD_TYPE_ID=#{brd_type_id}
+    </select>
+    
+      <select id="getPortalBoardFileInfo" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+       SELECT * FROM O_DATAEYE_META.PEN_BBS_BRD_FILE_D WHERE FILE_ID=#{file_id}  
+      </select>      
+        
+      <select id="getPortalBoardFileInfo2" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+       SELECT * FROM O_DATAEYE_META.PEN_BBS_BRD_FILE_D WHERE BRD_ID=#{brd_id}  
+      </select>
+    
+</mapper>

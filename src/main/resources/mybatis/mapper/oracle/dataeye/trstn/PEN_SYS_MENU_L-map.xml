@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PEN_SYS_MENU_L">
+	<insert id="insert" parameterType="hashmap">
+		INSERT INTO PEN_SYS_MENU_L
+		(
+            MENU_REQ_UUID,      CRET_DT,            CRETR_ID,       APP_ID,     USER_ID,
+            SESS_ID,            USER_IP,            SRV_IP,         SRV_PORT,   MENU_ID,
+            MENU_NM,            URL,				VIEW_ID, 		QUERY_STR,	REQ_DT,
+            REFE_INFO,          HTTP_STATUS
+		)
+		VALUES
+		(
+			#{MENU_REQ_UUID, jdbcType=VARCHAR},
+			<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRET_DT)'>
+				TO_TIMESTAMP(#{CRET_DT}, '${timestampFormat}'),
+			</if> 
+			<if test='!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRET_DT)'>
+				CURRENT_TIMESTAMP,
+			</if> 
+			<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRETR_ID)'>
+				#{CRETR_ID, jdbcType=VARCHAR},
+			</if> 
+			<if test='!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRETR_ID)'>
+				#{sessionInfo.userId, jdbcType=VARCHAR},
+			</if>
+			#{APP_ID, jdbcType=VARCHAR},              
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(USER_ID)'>
+                #{USER_ID, jdbcType=VARCHAR},
+            </if> 
+            <if test='!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(USER_ID)'>
+                #{sessionInfo.userId, jdbcType=VARCHAR},
+            </if>
+            #{SESS_ID, jdbcType=VARCHAR}, 
+            #{USER_IP, jdbcType=VARCHAR},
+			#{SRV_IP, jdbcType=VARCHAR}, 
+			#{SRV_PORT, jdbcType=VARCHAR},
+			#{MENU_ID, jdbcType=VARCHAR},
+			#{MENU_NM, jdbcType=VARCHAR},
+			#{URL, jdbcType=VARCHAR},
+			#{VIEW_ID, jdbcType=VARCHAR},
+			#{QUERY_STR, jdbcType=VARCHAR},
+			CURRENT_TIMESTAMP,
+            #{REFE_INFO, jdbcType=VARCHAR}, 
+            #{HTTP_STATUS, jdbcType=NUMERIC}
+		)
+	</insert>
+</mapper>

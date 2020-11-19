@@ -1,0 +1,63 @@
+=> export input
+{
+	"COMM_CD" : true,
+	"OBJ_TYPE" : true,
+	"REL_TYPE" : true,
+	"ATR": true,
+	"OBJ" : ["010102L", "010103L"]
+}
+
+
+=> export output
+{
+	"COMM_CD" : {
+		"PEN_CD_GRP_M" : [
+			{"CD_GRP_ID":"sfsdf"}
+		],
+		"PEN_CD_M" : [
+			{"CD_GRP_ID":"sfsdf", "CD_ID":"sfsdf"}
+		]
+	},
+	"OBJ_TYPE" : {
+		"PEN_OBJ_TYPE_M" : [
+			{"OBJ_TYPE_ID":"sfsdf", "CD_ID":"sfsdf"}
+		],
+		"PEN_OBJ_TYPE_ATR_D" : [
+			{"META_TYPE_CD":"sfsdf", "CD_ID":"sfsdf"}
+		]
+	},
+	"REL_TYPE" : {
+		"PEN_REL_TYPE_M" :[
+			{"REL_TYPE_ID":"sfsdf", "CD_ID":"sfsdf"}
+		]
+	},
+	"ATR" : {
+		"PEN_ATR_M" :[
+			{"ATR_ID":"sfsdf", "CD_ID":"sfsdf"}
+		]
+	},
+	"OBJ" : {
+		"010101L":{
+			"PEN_OBJ_M": [
+				{"OBJ_TYPE_ID":"sfdsdf"}
+			],
+			"PEN_OBJ_D": [
+				{"OBJ_TYPE_ID":"sfdsdf"}
+			],
+			"PEN_OBJ_R": [
+				{"OBJ_TYPE_ID":"sfdsdf"}
+			]
+		},
+		"010102L":{
+			"PEN_OBJ_M": [
+				{"OBJ_TYPE_ID":"sfdsdf"}
+			],
+			"PEN_OBJ_D": [
+				{"OBJ_TYPE_ID":"sfdsdf"}
+			],
+			"PEN_OBJ_R": [
+				{"OBJ_TYPE_ID":"sfdsdf"}
+			]
+		}
+	}
+}

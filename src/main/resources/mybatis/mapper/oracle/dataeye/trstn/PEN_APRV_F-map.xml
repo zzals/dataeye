@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PEN_APRV_F">
+    <insert id="insert" parameterType="kr.co.penta.dataeye.common.entities.meta.PenAprvM">
+        INSERT INTO PEN_APRV_F (
+            APRV_ID, APRV_DETL_ID, FILE_NO, DEL_YN, CRET_DT, CRETR_ID, CHG_DT, CHGR_ID
+            , FILE_ID, FILE_NM, FILE_SIZE, FILE_TYPE, FILE_PATH
+        )
+        VALUES (
+            #{APRV_ID, jdbcType=VARCHAR}, #{APRV_DETL_ID, jdbcType=CHAR}, #{FILE_NO, jdbcType=NUMERIC}, #{DEL_YN, jdbcType=CHAR}
+        <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRET_DT)">
+            , TO_TIMESTAMP(#{CRET_DT}, '${timestampFormat}')
+        </if>
+        <if test="!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRET_DT)">
+            , CURRENT_TIMESTAMP
+        </if>
+        <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRETR_ID)">
+            , #{CRETR_ID, jdbcType=VARCHAR}
+        </if>
+        <if test="!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRETR_ID)">
+            , #{userId, jdbcType=VARCHAR}
+        </if>
+            , CURRENT_TIMESTAMP, #{userId, jdbcType=VARCHAR}, #{FILE_ID, jdbcType=VARCHAR}
+            , #{FILE_NM, jdbcType=VARCHAR}, #{FILE_SIZE, jdbcType=VARCHAR}, #{FILE_TYPE, jdbcType=VARCHAR}
+            , #{FILE_PATH, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <delete id="delete" parameterType="hashMap">
+        DELETE FROM PEN_APRV_F
+        WHERE APRV_ID = #{aprvId} AND APRV_DETL_ID = #{aprvDetlId} AND FILE_NO = #{fileNo} AND CRETR_ID = #{userId}
+    </delete>
+    <delete id="deleteByAprvId" parameterType="hashMap">
+        DELETE FROM PEN_APRV_F
+        WHERE APRV_ID = #{aprvId}
+    </delete>
+</mapper>

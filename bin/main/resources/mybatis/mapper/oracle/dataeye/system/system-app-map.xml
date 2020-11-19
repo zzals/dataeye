@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="system.app">
+    <select id="getApp" resultType="kr.co.penta.dataeye.common.entities.CamelMap" >
+        SELECT T101.APP_ID
+             , T101.APP_NM
+             , T101.DEL_YN
+             , T101.APP_DESC
+             , T101.USE_YN
+        FROM PEN_APP_M T101
+        <where>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+                AND T101.${searchKey} LIKE  '%'||#{searchValue}||'%'
+            </if>
+			<if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(appId)">
+				AND T101.APP_ID = #{appId}
+			</if>
+        </where>
+    </select>
+    <select id="getSimpleApp" resultType="kr.co.penta.dataeye.common.entities.CamelMap" >
+        SELECT T101.APP_ID
+             , T101.APP_NM
+        FROM PEN_APP_M T101
+        <where>
+            T101.DEL_YN = 'N'
+            AND T101.USE_YN = 'Y'
+        </where>
+        ORDER BY T101.APP_ID
+    </select>
+    <select id="getAppDuplCnt" resultType="int" >
+        SELECT COUNT(1) CNT
+        FROM PEN_APP_M T101
+        WHERE APP_ID = #{appId}
+    </select>
+</mapper>

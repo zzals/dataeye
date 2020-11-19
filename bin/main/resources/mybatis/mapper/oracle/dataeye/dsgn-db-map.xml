@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dsgn.db">    
+    <select id="findDsgnTab" resultType="hashmap">		
+		SELECT  T101.OBJ_TYPE_ID ,
+		        T101.OBJ_ID ,
+		        T101.ADM_OBJ_ID ,
+		        T101.OBJ_NM ,
+                T101.OBJ_ABBR_NM,
+		        T101.OBJ_DESC ,
+		        T104.OBJ_TYPE_ID AS DB_OBJ_TYPE_ID,
+		        T104.OBJ_ID AS DB_OBJ_ID,
+                T104.OBJ_NM AS DB_OBJ_NM,
+		        MAX(CASE WHEN T102.ATR_ID_SEQ = 103 THEN T103.CD_NM END) AS OBJ_CLS,
+		        MAX(CASE WHEN T102.ATR_ID_SEQ = 104 THEN T103.CD_NM END) AS TYPE_CLS,
+		        MAX(CASE WHEN T102.ATR_ID_SEQ = 105 THEN T102.OBJ_ATR_VAL END) AS MNGR,
+		        MAX(CASE WHEN T102.ATR_ID_SEQ = 191 THEN T102.OBJ_ATR_VAL END) AS DB_NM,
+		        MAX(CASE WHEN T102.ATR_ID_SEQ = 192 THEN T102.OBJ_ATR_VAL END) AS SCHEMA_NM,
+		        MAX(CASE WHEN T102.ATR_ID_SEQ = 121 THEN T102.OBJ_ATR_VAL END) AS DID_YN,
+		        MAX(CASE WHEN T102.ATR_ID_SEQ = 125 THEN T102.OBJ_ATR_VAL END) AS DB_TYPE
+		FROM    PEN_OBJ_M T101
+		LEFT OUTER JOIN PEN_OBJ_D T102
+		ON ( 
+		    T102.OBJ_TYPE_ID = T101.OBJ_TYPE_ID
+		    AND T102.OBJ_ID   = T101.OBJ_ID 
+		)
+        LEFT OUTER JOIN PEN_OBJ_M T104
+        ON (
+            T101.PATH_OBJ_TYPE_ID = T104.OBJ_TYPE_ID
+            AND T101.PATH_OBJ_ID = T104.OBJ_ID
+        )
+		LEFT OUTER JOIN PEN_CD_M T103
+		ON ( 
+		    (
+		        T103.CD_GRP_ID     = 'DSGN_COMM_INFOTYP'
+		        AND T102.ATR_ID_SEQ  = 103
+		        AND T103.CD_ID       = T102.OBJ_ATR_VAL
+		    )
+		    OR (
+		        T103.CD_GRP_ID  = 'DSGN_COMM_CLSTYP'
+		        AND T102.ATR_ID_SEQ = 104
+		        AND T103.CD_ID       = T102.OBJ_ATR_VAL
+		    )
+		)
+		WHERE   T101.DEL_YN      = 'N'
+		AND T101.OBJ_TYPE_ID = #{objTypeId}
+		AND T101.PATH_OBJ_TYPE_ID = #{pathObjTypeId}
+		AND T101.PATH_OBJ_ID = #{pathObjId}
+		<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+			<if test='searchKey.equals("OBJ_NM")'>
+           		AND T101.OBJ_NM LIKE  '%'||#{searchValue}||'%'
+           	</if>
+           	<if test='searchKey.equals("OBJ_ABBR_NM")'>
+           		AND T101.OBJ_ABBR_NM LIKE  '%'||#{searchValue}||'%'
+           	</if>
+       	</if>
+		GROUP BY T101.OBJ_TYPE_ID ,
+		        T101.OBJ_ID ,
+		        T101.ADM_OBJ_ID ,
+		        T101.OBJ_NM ,
+                T101.OBJ_ABBR_NM,
+		        T101.OBJ_DESC,
+                T104.OBJ_TYPE_ID,
+		        T104.OBJ_ID,
+                T104.OBJ_NM
+		ORDER BY T101.OBJ_NM	 
+    </select>    
+    <select id="findTermList" resultType="hashmap">    
+	    SELECT T101.ADM_OBJ_ID AS COL_NM
+		     , T101.OBJ_NM  AS COL_ATR_NM
+		     , MAX(CASE WHEN T104.ATR_ID_SEQ = 111 THEN T104.OBJ_ATR_VAL END)    AS ORACLE_DATA_TYPE
+		     , MAX(CASE WHEN T104.ATR_ID_SEQ = 112 THEN T104.OBJ_ATR_VAL END)    AS PDA_DATA_TYPE
+		     , MAX(CASE WHEN T104.ATR_ID_SEQ = 113 THEN T104.OBJ_ATR_VAL END)    AS TIBERO_DATA_TYPE
+		     , MAX(CASE WHEN T104.ATR_ID_SEQ = 114 THEN T104.OBJ_ATR_VAL END)    AS SYBASE_DATA_TYPE
+		     , MAX(CASE WHEN T104.ATR_ID_SEQ = 102 THEN T104.OBJ_ATR_VAL END)    AS DATA_LEN
+		     , MAX(CASE WHEN T104.ATR_ID_SEQ = 103 THEN T104.OBJ_ATR_VAL END)    AS DATA_SCALE
+		FROM PEN_OBJ_M T101
+		INNER JOIN PEN_OBJ_D T102
+		ON (
+		    T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+		    AND T101.OBJ_ID = T102.OBJ_ID
+		    AND T102.ATR_ID_SEQ = 101
+		)
+		INNER JOIN PEN_OBJ_M T103
+		ON (
+		    T103.OBJ_TYPE_ID = '010303L'
+		    AND T102.OBJ_ATR_VAL = T103.OBJ_ID
+		)
+		LEFT OUTER JOIN PEN_OBJ_D T104
+		ON (
+		    T103.OBJ_TYPE_ID = T104.OBJ_TYPE_ID
+		    AND T103.OBJ_ID = T104.OBJ_ID
+		)
+		WHERE T101.OBJ_TYPE_ID = '010302L'
+		AND T101.DEL_YN = 'N'
+		GROUP BY T101.ADM_OBJ_ID
+		     , T101.OBJ_NM
+	</select>
+	<select id="findDsgnCol" resultType="hashmap">		
+	    SELECT *
+	    FROM (
+	        SELECT  T101.OBJ_TYPE_ID ,
+			        T101.OBJ_ID ,
+			        T101.ADM_OBJ_ID ,
+			        T101.OBJ_NM ,
+	                T101.OBJ_ABBR_NM,
+			        T101.OBJ_DESC ,
+			        T104.OBJ_TYPE_ID AS TAB_OBJ_TYPE_ID,
+			        T104.OBJ_ID AS TAB_OBJ_ID,
+	                T104.OBJ_NM AS TAB_OBJ_NM,
+			        MAX(CASE WHEN T102.ATR_ID_SEQ = 101 THEN T102.OBJ_ATR_VAL END) AS COL_ORD,
+			        MAX(CASE WHEN T102.ATR_ID_SEQ = 102 THEN T102.OBJ_ATR_VAL END) AS DATA_TYPE,
+			        MAX(CASE WHEN T102.ATR_ID_SEQ = 103 THEN T102.OBJ_ATR_VAL END) AS DATA_LEN,
+			        MAX(CASE WHEN T102.ATR_ID_SEQ = 104 THEN T102.OBJ_ATR_VAL END) AS DATA_SCALE,
+			        MAX(CASE WHEN T102.ATR_ID_SEQ = 105 THEN T102.OBJ_ATR_VAL END) AS NOT_NULL_YN,
+			        MAX(CASE WHEN T102.ATR_ID_SEQ = 107 THEN T102.OBJ_ATR_VAL END) AS PK_ORD,
+			        MAX(CASE WHEN T102.ATR_ID_SEQ = 108 THEN T102.OBJ_ATR_VAL END) AS FK_YN,
+			        MAX(CASE WHEN T102.ATR_ID_SEQ = 111 THEN T102.OBJ_ATR_VAL END) AS DISTRIB_KEY_ORD,
+			        MAX(CASE WHEN T102.ATR_ID_SEQ = 112 THEN T102.OBJ_ATR_VAL END) AS DID_YN
+			FROM    PEN_OBJ_M T101
+			LEFT OUTER JOIN PEN_OBJ_D T102
+			ON ( 
+			    T102.OBJ_TYPE_ID = T101.OBJ_TYPE_ID
+			    AND T102.OBJ_ID   = T101.OBJ_ID 
+			)
+	        LEFT OUTER JOIN PEN_OBJ_M T104
+	        ON (
+	            T101.PATH_OBJ_TYPE_ID = T104.OBJ_TYPE_ID
+	            AND T101.PATH_OBJ_ID = T104.OBJ_ID
+	        )
+			LEFT OUTER JOIN PEN_CD_M T103
+			ON ( 
+			    (
+			        T103.CD_GRP_ID     = 'DSGN_COMM_INFOTYP'
+			        AND T102.ATR_ID_SEQ  = 103
+			        AND T103.CD_ID       = T102.OBJ_ATR_VAL
+			    )
+			    OR (
+			        T103.CD_GRP_ID  = 'DSGN_COMM_CLSTYP'
+			        AND T102.ATR_ID_SEQ = 104
+			        AND T103.CD_ID       = T102.OBJ_ATR_VAL
+			    )
+			)
+			WHERE T101.DEL_YN = 'N'
+			AND T101.OBJ_TYPE_ID = #{objTypeId}
+			AND T101.PATH_OBJ_TYPE_ID = #{pathObjTypeId}
+			AND T101.PATH_OBJ_ID = #{pathObjId}
+			GROUP BY T101.OBJ_TYPE_ID ,
+			        T101.OBJ_ID ,
+			        T101.ADM_OBJ_ID ,
+			        T101.OBJ_NM ,
+	                T101.OBJ_ABBR_NM,
+			        T101.OBJ_DESC,
+	                T104.OBJ_TYPE_ID,
+			        T104.OBJ_ID,
+	                T104.OBJ_NM
+		) T101
+	    ORDER BY TO_CHAR(COL_ORD, '0009') 
+    </select>
+	<select id="getDbNmByDbId" resultType="hashmap">   
+		SELECT T101.ADM_OBJ_ID AS DB_NM 
+		FROM PEN_OBJ_M T101
+		WHERE T101.OBJ_ID = #{databaseId}
+	</select>
+	<select id="findDbSchemaByDbId" resultType="hashmap">   
+		SELECT T101.OBJ_ATR_VAL AS SCHEMA_NM 
+		FROM PEN_OBJ_D T101
+		WHERE T101.OBJ_ID = #{databaseId}
+		AND T101.ATR_ID_SEQ = 102
+	</select>
+	<select id="getDbTypeByDbId" resultType="hashmap">   
+		SELECT T102.OBJ_ATR_VAL AS DB_TYPE
+		FROM PEN_OBJ_M T101
+		INNER JOIN PEN_OBJ_D T102
+		ON (
+		    T101.PATH_OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+		    AND T101.PATH_OBJ_ID = T102.OBJ_ID
+		    AND T102.ATR_ID_SEQ = 101
+		)
+		WHERE T101.OBJ_ID = #{databaseId}
+	</select>
+</mapper>

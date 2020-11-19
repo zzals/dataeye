@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bdp_custom">
+    <select id="datasetFlow" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        WITH FULL_PATH AS (
+            SELECT  CASE WHEN G.PATH_OBJ_TYPE_ID = '020201L' THEN 'IMPALA' ELSE J.OBJ_ATR_VAL END AS PDA_HADOOP_GUBUN /* PAD HADOOP 구분 */
+                ,    Z.OBJ_ID || '_' || B.OBJ_ATR_VAL || '_' || B1.OBJ_ABBR_NM || '_' || ROWNUM AS LOOKUP_UNIQUE_KEY
+                ,    G.OBJ_TYPE_ID AS LOOKUP_TYPE_ID
+                ,    G.OBJ_ID AS LOOKUP_ID
+                ,    B.OBJ_ATR_VAL AS LOOKUP_TABLE
+                ,    C.OBJ_ATR_VAL AS LOOKUP_KEY
+                ,    D.OBJ_ATR_VAL AS LOOKUP_TYPE
+                ,    E.OBJ_ATR_VAL AS LOOKUP_VALUE
+                ,    B1.OBJ_NM        AS DATASET_ATTR /* 데이터셋 속성명 */
+                ,    B1.OBJ_ABBR_NM AS DATASET_ATTR_ENG /* 데이터셋 속성명 */
+                ,    B1.OBJ_NM  AS ATR_NM
+                ,    B.OBJ_ATR_VAL || CHR(13) || CHR(10) ||
+                    'Lookup Key: ' || C.OBJ_ATR_VAL || CHR(13) || CHR(10) ||
+                    'Lookup Type: ' ||  D.OBJ_ATR_VAL || CHR(13) || CHR(10) ||
+                    'Lookup Value: ' ||  E.OBJ_ATR_VAL AS LOOKUP_NM
+                ,    A.OBJ_TYPE_ID AS TECH_OBJ_TYPE_ID
+                ,    A.OBJ_ID AS TECH_OBJ_ID
+                ,    F.OBJ_NM AS TECH_OBJ_NM
+                ,    CASE WHEN SUBSTR(A.OBJ_ID, 9, 7) = 'BDP_PDA' THEN 'PDA' ELSE 'IMPALA' END MAIN_DB_GUBUN
+                ,    Z.OBJ_TYPE_ID AS DATASET_TYPE_ID
+                ,    Z.OBJ_ID AS DATASET_ID
+                ,    Z.OBJ_NM AS DATASET_NM
+            FROM    PEN_OBJ_M Z /* 데이터셋(L1) */
+            LEFT JOIN    PEN_OBJ_R A /* 기술 데이터셋(L1) */
+                ON    (Z.OBJ_TYPE_ID = A.REL_OBJ_TYPE_ID
+                AND    Z.OBJ_ID = A.REL_OBJ_ID
+                AND A.REL_OBJ_TYPE_ID IN ('010201L', '010205L', '010207L')
+                AND A.OBJ_TYPE_ID IN ('020102L', '020103L', '020202L', '020203L')
+                AND A.DEL_YN ='N')
+            LEFT JOIN PEN_OBJ_M B1    /* 데이터셋 속성 */
+                ON    (A.REL_OBJ_TYPE_ID = B1.PATH_OBJ_TYPE_ID
+                AND A.REL_OBJ_ID = B1.PATH_OBJ_ID
+                AND B1.OBJ_TYPE_ID IN ('010202L', '010206L')
+                AND B1.DEL_YN ='N')
+            LEFT JOIN PEN_OBJ_D B /* 데이터셋 속성(LOOKUP TABLE) */
+                ON    (B1.OBJ_TYPE_ID = B.OBJ_TYPE_ID
+                AND B1.OBJ_ID = B.OBJ_ID
+                AND B.OBJ_TYPE_ID IN ('010202L', '010206L')
+                AND B.ATR_ID_SEQ = 107
+                AND B.ATR_VAL_SEQ =101
+                AND B.DEL_YN = 'N')
+            LEFT JOIN PEN_OBJ_D C /* 데이터셋 속성(LOOKUP KEY) */
+                ON    (B1.OBJ_TYPE_ID = C.OBJ_TYPE_ID
+                AND B1.OBJ_ID = C.OBJ_ID
+                AND C.OBJ_TYPE_ID IN ('010202L', '010206L')
+                AND C.ATR_ID_SEQ = 108
+                AND C.ATR_VAL_SEQ =101
+                AND C.DEL_YN = 'N')
+            LEFT JOIN PEN_OBJ_D D /* 데이터셋 속성(LOOKUP TYPE) */
+                ON    (B1.OBJ_TYPE_ID = D.OBJ_TYPE_ID
+                AND B1.OBJ_ID = D.OBJ_ID
+                AND D.OBJ_TYPE_ID IN ('010202L', '010206L')
+                AND D.ATR_ID_SEQ = 109
+                AND D.ATR_VAL_SEQ =101
+                AND D.DEL_YN = 'N')
+            LEFT JOIN PEN_OBJ_D E /* 데이터셋 속성(LOOKUP VALUE) */
+                ON    (B1.OBJ_TYPE_ID = E.OBJ_TYPE_ID
+                AND B1.OBJ_ID = E.OBJ_ID
+                AND E.OBJ_TYPE_ID IN ('010202L', '010206L')
+                AND E.ATR_ID_SEQ = 110
+                AND E.ATR_VAL_SEQ =101
+                AND E.DEL_YN = 'N')
+            LEFT JOIN PEN_OBJ_M F /* 기술테이블 */
+                ON    (A.OBJ_TYPE_ID = F.OBJ_TYPE_ID
+                AND A.OBJ_ID = F.OBJ_ID
+                AND F.OBJ_TYPE_ID IN ('020102L', '020103L', '020202L', '020203L')
+                AND F.DEL_YN ='N')
+            LEFT JOIN PEN_OBJ_M G  /* LOOKUP 테이블 조인 */
+                ON    (G.OBJ_TYPE_ID IN ('020102L', '020103L', '020202L', '020203L')
+                AND    B.OBJ_ATR_VAL = UPPER(G.OBJ_NM))
+            LEFT JOIN PEN_OBJ_M H  /* 데이터베이스 */
+                ON    (G.PATH_OBJ_TYPE_ID = H.OBJ_TYPE_ID
+                AND G.PATH_OBJ_ID = H.OBJ_ID
+                AND H.OBJ_TYPE_ID = '020101L'
+                AND H.DEL_YN ='N')
+            LEFT JOIN PEN_OBJ_M I /* DB인스턴스 */
+                ON    (H.PATH_OBJ_TYPE_ID = I.OBJ_TYPE_ID
+                AND H.PATH_OBJ_ID = I.OBJ_ID
+                AND I.OBJ_TYPE_ID = '020100L'
+                AND I.DEL_YN ='N')    
+            LEFT JOIN PEN_OBJ_D J  /* DB인스턴스 DETAIL */
+                ON    (I.OBJ_TYPE_ID = J.OBJ_TYPE_ID
+                AND I.OBJ_ID = J.OBJ_ID
+                AND J.OBJ_TYPE_ID = '020100L'
+                AND J.ATR_ID_SEQ = 101
+                AND J.DEL_YN ='N')
+            WHERE    Z.OBJ_TYPE_ID = #{objTypeId}
+            AND        Z.OBJ_ID = #{objId}
+            AND     Z.DEL_YN ='N'
+            AND     B.OBJ_ATR_VAL IS NOT NULL
+            AND        CASE WHEN G.PATH_OBJ_TYPE_ID = '020201L' THEN 'IMPALA' ELSE J.OBJ_ATR_VAL END 
+                    =
+                    CASE WHEN SUBSTR(A.OBJ_ID, 9, 7) = 'BDP_PDA' THEN 'PDA' ELSE 'IMPALA' END
+            AND        (G.OBJ_ID LIKE '020202L_BDP_HADOOP_PROD%'
+            OR        G.OBJ_ID LIKE '020102L_BDP_PDA_PROD%')
+        )
+        , NON_LOOKUP_DATASET AS (
+            SELECT    A.OBJ_TYPE_ID AS TECH_OBJ_TYPE_ID
+                ,    A.OBJ_ID    AS TECH_OBJ_ID
+                ,    F.OBJ_NM AS TECH_OBJ_NM
+                ,    Z.OBJ_TYPE_ID  AS DATASET_TYPE_ID
+                ,    Z.OBJ_ID AS DATASET_ID
+                ,    Z.OBJ_NM    AS DATASET_NM
+            FROM    PEN_OBJ_M Z
+            LEFT JOIN    PEN_OBJ_R A
+                ON    (Z.OBJ_TYPE_ID = A.REL_OBJ_TYPE_ID
+                AND    Z.OBJ_ID = A.REL_OBJ_ID
+                AND A.REL_OBJ_TYPE_ID IN ('010201L', '010205L', '010207L')
+                AND A.OBJ_TYPE_ID IN ('020102L', '020103L', '020202L', '020203L')
+                AND A.DEL_YN ='N')
+            LEFT JOIN PEN_OBJ_M F 
+                ON    (A.OBJ_TYPE_ID = F.OBJ_TYPE_ID
+                AND A.OBJ_ID = F.OBJ_ID
+                AND F.OBJ_TYPE_ID IN ('020102L', '020103L', '020202L', '020203L')
+                AND F.DEL_YN ='N')
+            LEFT JOIN FULL_PATH G
+                ON    (Z.OBJ_TYPE_ID = G.DATASET_TYPE_ID
+                AND Z.OBJ_ID = G.DATASET_ID)
+            WHERE    Z.OBJ_TYPE_ID = #{objTypeId}
+            AND        Z.OBJ_ID = #{objId}
+            AND        Z.DEL_YN ='N'
+            AND        G.DATASET_TYPE_ID IS NULL
+        )
+        SELECT TB1.OBJ_TYPE_ID
+             , TB1.OBJ_ID
+             , TB1.UNQ_OBJ_ID
+             , TB1.OBJ_NM
+             , TB1.POBJ_TYPE_ID
+             , TB1.POBJ_ID
+             , TB1.POBJ_NM   
+             , TB1.DATASET_ATTR
+             , TB1.DATASET_ATTR_ENG
+             , TB1.LVL
+             , TB1.LEAF_YN
+        FROM
+            (
+            SELECT   LOOKUP_TYPE_ID AS OBJ_TYPE_ID
+                ,    LOOKUP_ID    AS OBJ_ID
+                ,    LOOKUP_UNIQUE_KEY AS UNQ_OBJ_ID
+                ,    LOOKUP_NM    AS OBJ_NM
+                ,    TECH_OBJ_TYPE_ID AS POBJ_TYPE_ID
+                ,    TECH_OBJ_ID AS POBJ_ID
+                ,    TECH_OBJ_NM AS POBJ_NM
+                ,    3 AS LVL
+                ,    'Y' AS LEAF_YN 
+                ,    DATASET_ATTR
+                ,    DATASET_ATTR_ENG
+            FROM    FULL_PATH
+            GROUP BY LOOKUP_TYPE_ID 
+                ,    LOOKUP_ID    
+                ,    LOOKUP_UNIQUE_KEY 
+                ,    LOOKUP_NM    
+                ,    TECH_OBJ_TYPE_ID 
+                ,    TECH_OBJ_ID 
+                ,    TECH_OBJ_NM 
+                ,    DATASET_ATTR
+                ,    DATASET_ATTR_ENG
+            UNION ALL
+            SELECT    TECH_OBJ_TYPE_ID 
+                ,    TECH_OBJ_ID 
+                ,    TECH_OBJ_ID 
+                ,    TECH_OBJ_NM 
+                ,    DATASET_TYPE_ID
+                ,    DATASET_ID
+                ,    DATASET_NM
+                ,    2 AS LVL
+                ,    'N' AS LEAF_YN
+                ,    NULL
+                ,    NULL
+            FROM    FULL_PATH
+            GROUP BY TECH_OBJ_TYPE_ID 
+                ,    TECH_OBJ_ID 
+                ,    TECH_OBJ_ID 
+                ,    TECH_OBJ_NM 
+                ,    DATASET_TYPE_ID
+                ,    DATASET_ID
+                ,    DATASET_NM
+            UNION ALL
+            SELECT    TECH_OBJ_TYPE_ID 
+                ,    TECH_OBJ_ID 
+                ,    TECH_OBJ_ID 
+                ,    TECH_OBJ_NM 
+                ,    DATASET_TYPE_ID
+                ,    DATASET_ID
+                ,    DATASET_NM
+                ,    2 AS LVL
+                ,    'N' AS LEAF_YN
+                ,    NULL
+                ,    NULL
+            FROM    NON_LOOKUP_DATASET
+            GROUP BY TECH_OBJ_TYPE_ID 
+                ,    TECH_OBJ_ID 
+                ,    TECH_OBJ_NM 
+                ,    DATASET_TYPE_ID
+                ,    DATASET_NM
+                ,    DATASET_ID
+            UNION ALL
+            SELECT    DATASET_TYPE_ID
+                ,    DATASET_ID
+                ,    DATASET_ID
+                ,    DATASET_NM
+                ,    '' 
+                ,    '' 
+                ,    '' 
+                ,    1 AS LVL
+                ,    'N' AS LEAF_YN
+                ,    NULL
+                ,    NULL
+            FROM    FULL_PATH
+            GROUP BY DATASET_TYPE_ID
+                ,    DATASET_ID
+                ,    DATASET_NM
+            UNION ALL
+            SELECT    DATASET_TYPE_ID
+                ,    DATASET_ID
+                ,    DATASET_ID
+                ,    DATASET_NM
+                ,    '' 
+                ,    '' 
+                ,    '' 
+                ,    1 AS LVL
+                ,    'N' AS LEAF_YN
+                ,    NULL
+                ,    NULL
+            FROM    NON_LOOKUP_DATASET
+            GROUP BY DATASET_TYPE_ID
+                ,    DATASET_ID
+                ,    DATASET_NM
+        ) TB1
+        ORDER BY LVL
+    </select>
+    <select id="getOrgTree" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        WITH ORG_TREE (ORG_ID, ORG_NM, UP_ORG_ID, ORG_PATH_NM, ORG_PATH_CD, LVL) AS (
+            SELECT T101.CODE AS ORG_ID
+                       , T101.EX_DEPT_NAME AS ORG_NM
+                       , T101.EX_DEPT_PARENT_CD AS UP_ORG_ID
+                       , T101.EX_DEPT_NAME AS ORG_PATH_NM
+                       , T101.CODE AS ORG_PATH_CD
+                       , 1 AS LVL
+            FROM PTL_STAL_COM_ORG T101
+            WHERE T101.EX_DEPT_PARENT_CD = '00000000'
+            UNION ALL
+            SELECT T101.CODE AS ORG_ID
+                       , T101.EX_DEPT_NAME AS ORG_NM
+                       , T101.EX_DEPT_PARENT_CD AS UP_ORG_ID
+                       , T102.ORG_PATH_NM || ' > ' || T101.EX_DEPT_NAME AS ORG_PATH_NM
+                       , T102.ORG_PATH_CD || T101.CODE AS ORG_PATH_CD
+                       , T102.LVL+1 AS LVL
+            FROM PTL_STAL_COM_ORG T101
+            INNER JOIN ORG_TREE T102
+            ON (
+                T101.EX_DEPT_PARENT_CD = T102.ORG_ID
+            )
+        )
+        SELECT T101.* 
+        FROM ORG_TREE T101
+        <where>
+            <if test='"ORG_NM".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+                AND UPPER(T101.ORG_NM) LIKE '%'||UPPER(#{searchValue})||'%'
+            </if>
+        </where>
+        ORDER BY T101.ORG_PATH_CD
+    </select>
+    <select id="getUser" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+          SELECT USER_ID,
+			   USER_NM,
+			   '' AS EX_DEPT_NAME,
+			   '' AS EX_LGT_PSTN_DV_NM,
+			   '' AS EMAIL_ADDR,HP_NO  
+        FROM PEN_USER_M T101
+        <where>         
+            <if test='"USER_ID".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+                AND UPPER(T101.USER_ID) LIKE '%'||UPPER(#{searchValue})||'%'
+            </if>
+            <if test='"USER_NM".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+                AND UPPER(T101.USER_NM) LIKE '%'||UPPER(#{searchValue})||'%'
+            </if>
+           
+        </where>
+        ORDER BY T101.USER_NM
+    </select>
+    <select id="datasetAttr" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        SELECT T101.OBJ_TYPE_ID
+                   , T101.OBJ_ID
+                   , T101.OBJ_NM
+                   , T101.OBJ_ABBR_NM
+                   , T101.OBJ_DESC
+                   , MAX(CASE WHEN T102.ATR_ID_SEQ = 101 THEN T102.OBJ_ATR_VAL END) AS ATR_ID_SEQ_101
+                   , MAX(CASE WHEN T102.ATR_ID_SEQ = 102 THEN T102.OBJ_ATR_VAL END) AS ATR_ID_SEQ_102
+                   , MAX(CASE WHEN T102.ATR_ID_SEQ = 103 THEN T102.OBJ_ATR_VAL END) AS ATR_ID_SEQ_103
+                   , MAX(CASE WHEN T102.ATR_ID_SEQ = 104 THEN T102.OBJ_ATR_VAL END) AS ATR_ID_SEQ_104
+                   , MAX(CASE WHEN T102.ATR_ID_SEQ = 105 THEN T102.OBJ_ATR_VAL END) AS ATR_ID_SEQ_105
+                   , MAX(CASE WHEN T102.ATR_ID_SEQ = 105 THEN T103.OBJ_NM END) AS ATR_ID_SEQ_105NM
+                   , MAX(CASE WHEN T102.ATR_ID_SEQ = 106 THEN T102.OBJ_ATR_VAL END) AS ATR_ID_SEQ_106
+                   , MAX(CASE WHEN T102.ATR_ID_SEQ = 107 THEN T102.OBJ_ATR_VAL END) AS ATR_ID_SEQ_107
+                   , MAX(CASE WHEN T102.ATR_ID_SEQ = 108 THEN T102.OBJ_ATR_VAL END) AS ATR_ID_SEQ_108
+                   , MAX(CASE WHEN T102.ATR_ID_SEQ = 109 THEN T102.OBJ_ATR_VAL END) AS ATR_ID_SEQ_109
+                   , MAX(CASE WHEN T102.ATR_ID_SEQ = 110 THEN T102.OBJ_ATR_VAL END) AS ATR_ID_SEQ_110
+        FROM PEN_OBJ_M T101
+        LEFT OUTER JOIN PEN_OBJ_D T102
+        ON (
+            T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+            AND T101.OBJ_ID = T102.OBJ_ID
+        )
+        LEFT OUTER JOIN PEN_OBJ_M T103
+        ON (
+            T102.OBJ_ATR_VAL = T103.OBJ_ID
+            AND T102.ATR_ID_SEQ = 105
+        )
+        WHERE T101.OBJ_TYPE_ID = #{dsetAtrTypeId}
+        AND T101.PATH_OBJ_TYPE_ID = #{dsetTypeId}
+        AND T101.PATH_OBJ_ID = #{dsetId}
+        AND T101.DEL_YN = 'N'
+        GROUP BY T101.OBJ_TYPE_ID
+                   , T101.OBJ_ID
+                   , T101.OBJ_NM
+                   , T101.OBJ_ABBR_NM
+                   , T101.OBJ_DESC
+        ORDER BY MAX(CASE WHEN T102.ATR_ID_SEQ = 101 THEN TO_CHAR(T102.OBJ_ATR_VAL, '000009') END)    
+    </select>
+    <select id="datasetServiceClass" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        SELECT A.REL_OBJ_TYPE_ID AS DATASET_TYPE_ID
+                   , A.REL_OBJ_ID AS DATASET_ID
+                   , A.OBJ_TYPE_ID AS SERVICE_TYPE_ID
+                   , A.OBJ_ID AS SERVICE_ID
+                   , B.OBJ_NM AS SERVICE_NM
+                   , LPAD(B.OBJ_ABBR_NM, 7, '0') SORT
+        FROM PEN_OBJ_R A
+        LEFT OUTER JOIN PEN_OBJ_M B
+        ON (
+            A.OBJ_TYPE_ID = B.OBJ_TYPE_ID
+            AND A.OBJ_ID = B.OBJ_ID
+            AND B.OBJ_TYPE_ID = '010102L'
+            AND B.DEL_YN = 'N'
+        )
+        WHERE A.REL_OBJ_TYPE_ID = #{dsetTypeId}
+        AND A.REL_OBJ_ID = #{dsetId}
+        AND A.OBJ_TYPE_ID = '010102L'
+        ORDER BY LPAD(B.OBJ_ABBR_NM, 7, '0')
+    </select>        
+    <select id="dsgnTab" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        SELECT T101.OBJ_TYPE_ID
+                  , T101.OBJ_ID
+                  , T101.ADM_OBJ_ID
+                  , T101.OBJ_NM
+                  , T101.OBJ_ABBR_NM
+                  , T101.OBJ_DESC
+                  , T101.PATH_OBJ_TYPE_ID
+                  , T101.PATH_OBJ_ID
+                  , MAX (T103.ADM_OBJ_ID) AS DATA_LAYER
+                  , MAX(CASE WHEN T102.ATR_ID_SEQ = 107 THEN T102.OBJ_ATR_VAL END) AS DBMS_TYPE
+        FROM PEN_OBJ_M T101
+        LEFT OUTER JOIN PEN_OBJ_D T102
+        ON (
+            T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+            AND T101.OBJ_ID = T102.OBJ_ID
+        )
+        LEFT OUTER JOIN PEN_OBJ_M T103
+        ON (
+            T102.OBJ_ATR_VAL = T103.OBJ_ID
+            AND T103.OBJ_TYPE_ID = '010901L'
+            AND T102.ATR_ID_SEQ = 101
+        )
+        WHERE T101.OBJ_TYPE_ID = #{dsgnTabTypeId}
+        AND T101.OBJ_ID = #{dsgnTabId}
+        GROUP BY T101.OBJ_TYPE_ID
+                  , T101.OBJ_ID
+                  , T101.ADM_OBJ_ID
+                  , T101.OBJ_NM
+                  , T101.OBJ_ABBR_NM
+                  , T101.OBJ_DESC
+                  , T101.PATH_OBJ_TYPE_ID
+                  , T101.PATH_OBJ_ID
+    </select> 
+    <select id="dsgnTabCol" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        SELECT T101.OBJ_TYPE_ID
+                  , T101.OBJ_ID
+                  , T101.OBJ_NM
+                  , T101.OBJ_ABBR_NM
+                  , T101.OBJ_DESC 
+                  , MAX(CASE WHEN T102.ATR_ID_SEQ = 101 THEN T102.OBJ_ATR_VAL END) AS ATR_ID_SEQ_101
+                  , MAX(CASE WHEN T102.ATR_ID_SEQ = 102 THEN T102.OBJ_ATR_VAL END) AS ATR_ID_SEQ_102
+                  , MAX(CASE WHEN T102.ATR_ID_SEQ = 103 THEN T102.OBJ_ATR_VAL END) AS ATR_ID_SEQ_103
+                  , MAX(CASE WHEN T102.ATR_ID_SEQ = 104 THEN T102.OBJ_ATR_VAL END) AS ATR_ID_SEQ_104
+                  , MAX(CASE WHEN T102.ATR_ID_SEQ = 105 THEN T102.OBJ_ATR_VAL END) AS ATR_ID_SEQ_105
+                  , MAX(CASE WHEN T102.ATR_ID_SEQ = 107 THEN T102.OBJ_ATR_VAL END) AS ATR_ID_SEQ_107
+                  , MAX(CASE WHEN T102.ATR_ID_SEQ = 108 THEN T102.OBJ_ATR_VAL END) AS ATR_ID_SEQ_108
+                  , MAX(CASE WHEN T102.ATR_ID_SEQ = 111 THEN T102.OBJ_ATR_VAL END) AS ATR_ID_SEQ_111
+                  , MAX(CASE WHEN T102.ATR_ID_SEQ = 112 THEN T102.OBJ_ATR_VAL END) AS ATR_ID_SEQ_112
+                  , MAX(CASE WHEN T102.ATR_ID_SEQ = 113 THEN T102.OBJ_ATR_VAL END) AS ATR_ID_SEQ_113
+                  , MAX(CASE WHEN T102.ATR_ID_SEQ = 115 THEN T102.OBJ_ATR_VAL END) AS ATR_ID_SEQ_115
+        FROM PEN_OBJ_M T101
+        LEFT OUTER JOIN PEN_OBJ_D T102
+        ON (
+            T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+            AND T101.OBJ_ID = T102.OBJ_ID
+        )
+        WHERE T101.OBJ_TYPE_ID = #{dsgnTabColTypeId}
+        AND T101.PATH_OBJ_TYPE_ID = #{dsgnTabTypeId}
+        AND T101.PATH_OBJ_ID = #{dsgnTabId}
+        GROUP BY T101.OBJ_TYPE_ID
+                 , T101.OBJ_ID
+                 , T101.OBJ_NM
+                 , T101.OBJ_ABBR_NM
+                 , T101.OBJ_DESC    
+        ORDER BY MAX(CASE WHEN T102.ATR_ID_SEQ = 101 THEN TO_CHAR(T102.OBJ_ATR_VAL, '000009') END)
+    </select>
+    <select id="dsgnTabColStdValidCheck" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        WITH ATR_SET AS (
+            ${ATR_SET_QUERY}
+        )
+        SELECT T101.ATR_NM
+                   , T102.ADM_OBJ_ID    AS COL_NM
+                   , CASE WHEN #{dbmsType} = 'ORACLE' THEN MAX(CASE WHEN T104.ATR_ID_SEQ = 111 THEN T104.OBJ_ATR_VAL END)
+                          WHEN #{dbmsType} = 'PDA' THEN MAX(CASE WHEN T104.ATR_ID_SEQ = 112 THEN T104.OBJ_ATR_VAL END)
+                          WHEN #{dbmsType} = 'IMPALA' THEN MAX(CASE WHEN T104.ATR_ID_SEQ = 113 THEN T104.OBJ_ATR_VAL END)
+                   END AS DATA_TYPE
+                   , MAX(CASE WHEN T104.ATR_ID_SEQ = 102 THEN T104.OBJ_ATR_VAL END) AS DATA_LEN
+                   , MAX(CASE WHEN T104.ATR_ID_SEQ = 103 THEN T104.OBJ_ATR_VAL END) AS DATA_POINT_LEN
+        FROM ATR_SET T101
+        LEFT OUTER JOIN PEN_OBJ_M T102      /* 표준용어 */
+        ON (
+                T102.OBJ_TYPE_ID = '010302L'
+                AND T102.DEL_YN = 'N'
+                AND T102.OBJ_NM = T101.ATR_NM
+        )
+        LEFT OUTER JOIN PEN_OBJ_D T103      /* 표준도메인 ID */
+        ON (
+                T103.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+                AND T103.OBJ_ID = T102.OBJ_ID
+                AND T103.ATR_ID_SEQ = 101
+        )
+        LEFT OUTER JOIN PEN_OBJ_D T104      /* 표준도메인 상세 */
+        ON (
+                T104.OBJ_TYPE_ID = '010303L'
+                AND T104.OBJ_ID = T103.OBJ_ATR_VAL
+        )
+        GROUP BY T101.ATR_NM
+                   , T102.ADM_OBJ_ID
+    </select>   
+</mapper>

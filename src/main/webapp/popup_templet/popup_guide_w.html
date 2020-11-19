@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+ <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> Big Data Platform </title>
+  <link rel="stylesheet" href="css/popup.css">
+  <script src="js/jquery-3.1.1.min.js"></script>
+  <script type="text/javascript">
+	$(document).ready(function() {
+			
+		resizePopup();
+
+		$(window).resize(function(){
+			resizePopup();
+		});
+	});
+	function resizePopup(){
+		$('.pop_contents').css('height', $(window).height() - $('#header').height() - $('.search_area').height() - 150 + 'px');
+	}
+  </script>
+ </head>
+
+ <body>
+  <div class="pop_container"><!-- pop_container -->
+	<div id="header">
+		<h1>타이틀1</h1>
+	</div>
+	<div class="search_area">
+		<select style="width:200px;">
+			<option value="">셀렉트박스</option>
+			<option value="">셀렉트박스1</option>
+			<option value="">셀렉트박스2</option>
+		</select>
+		<input type="text" class="text" placeholder='검색어입력' style="width:200px;" />
+		<a href="#" class="btn_search"><i class="fa"></i>검색</a>
+		<button type="button" class="btn_default"><i class="fa fa-floppy-o"></i>저장</button>
+		<span class="cont_right"><button type="button" class="btn_default"><i class="fa fa-floppy-o"></i>저장</button></span>
+	</div>
+
+	<div class="pop_contents_wrap"><!-- pop_contents_wrap 여기부터-->
+		<h2 class="stit">타이틀2</h2>
+		<div class="pop_contents">
+			<div class="pop_contents_in">
+				<iframe src="http://www.daum.net" height="100%" width="100%" scrolling="yes">
+
+				</iframe>
+			</div>
+			<h2 class="stit">타이틀2</h2>
+			<div class="pop_contents_in">
+				내용아무거나~
+			</div>
+		</div>
+	</div><!-- //pop_contents_wrap 여기까지-->
+
+	<div class="btn_area">
+		<div class="btn_right">
+			<a href="#" class="btn_default"><i class="fa fa-pencil"></i>수정</a>
+			<a href="#" class="btn_default"><i class="fa fa-trash-o"></i>삭제</a>
+		</div>
+	</div>
+	<span class="pop_close"><button type="button" class="close" onclick="window.close()">x</button></span>
+  </div><!-- //pop_container -->
+ </body>
+</html>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="metareq">
+    <select id="getObjMTCretInfo" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        SELECT CRET_DT, CRETR_ID
+        FROM PEN_OBJ_M_T
+        WHERE OBJ_TYPE_ID = #{objTypeId}
+        AND OBJ_ID = #{objId}
+    </select>
+    <select id="getObjDTCretInfo" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        SELECT CRET_DT, CRETR_ID
+        FROM PEN_OBJ_D_T
+        WHERE OBJ_TYPE_ID = #{objTypeId}
+        AND OBJ_ID = #{objId}
+        AND ROWNUM = 1
+    </select>
+    <select id="getObjRT" resultType="kr.co.penta.dataeye.common.entities.meta.PenObjRT">
+        SELECT *
+        FROM PEN_OBJ_R_T
+        WHERE OBJ_TYPE_ID = #{objTypeId}
+        AND OBJ_ID = #{objId}
+        AND REL_OBJ_TYPE_ID = #{relObjTypeId}
+        <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(relTypeId)"> 
+            AND REL_TYPE_ID = #{relTypeId}
+        </if>
+        <!-- AND DEL_YN = 'N' 관리자 페이지 에서 삭제된 객체 조회시 조회안되서 주석처리함.-->
+    </select>
+    <select id="getAtrValInfo" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        <![CDATA[
+        SELECT
+            T101.OBJ_ID AS OBJ_ID
+            ,T101.ATR_ID AS ATR_ID
+            ,T101.ATR_ID_SEQ AS ATR_ID_SEQ
+            ,T101.ATR_VAL_SEQ AS ATR_VAL_SEQ
+            ,T101.OBJ_ATR_VAL AS OBJ_ATR_VAL
+            ,T101.CRET_DT AS CRET_DT
+            ,T101.CRETR_ID AS CRETR_ID
+            ,${objAtrValSelectStatment} AS EXTEND_OBJ_ATR_VAL
+        FROM (
+            SELECT  
+                T102.OBJ_ID AS OBJ_ID
+                ,T101.ATR_ID AS ATR_ID
+                ,T101.ATR_ID_SEQ AS ATR_ID_SEQ
+                ,T107.ATR_VAL_SEQ  AS ATR_VAL_SEQ
+                ,CASE TO_CHAR(T101.ATR_ID_SEQ)
+                    WHEN '1' THEN TO_CHAR(T102.OBJ_TYPE_ID)
+                    WHEN '2' THEN TO_CHAR(T102.OBJ_ID)
+                    WHEN '3' THEN TO_CHAR(T102.ADM_OBJ_ID)
+                    WHEN '4' THEN TO_CHAR(T102.OBJ_NM)
+                    WHEN '5' THEN TO_CHAR(T102.OBJ_ABBR_NM)
+                    WHEN '6' THEN TO_CHAR(T102.OBJ_DESC)
+                    WHEN '7' THEN TO_CHAR(T102.PATH_OBJ_TYPE_ID)
+                    WHEN '8' THEN TO_CHAR(T102.PATH_OBJ_ID)
+                    WHEN '10' THEN TO_CHAR(T102.DEL_YN)
+                    WHEN '11' THEN TO_CHAR(T102.CRET_DT, 'YYYY-MM-DD HH24:MI:SS')
+                    WHEN '12' THEN TO_CHAR(T102.CRETR_ID)
+                    WHEN '13' THEN TO_CHAR(T102.CHG_DT, 'YYYY-MM-DD HH24:MI:SS')
+                    WHEN '14' THEN TO_CHAR(T102.CHGR_ID)
+                    ELSE TO_CHAR(T107.OBJ_ATR_VAL)
+                END  AS OBJ_ATR_VAL
+                ,T102.CRET_DT
+                ,T102.CRETR_ID
+                ,T101.SORT_NO
+            FROM PEN_OBJ_M_T T102
+                 INNER JOIN PEN_OBJ_TYPE_ATR_D T101 ON T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+                 LEFT OUTER JOIN PEN_OBJ_D_T T107 
+                    ON T107.OBJ_TYPE_ID = T102.OBJ_TYPE_ID 
+                    AND T107.OBJ_ID = T102.OBJ_ID
+                    AND T107.ATR_ID_SEQ = T101.ATR_ID_SEQ
+            ]]>
+            <where>
+                    T102.OBJ_TYPE_ID = #{objTypeId}
+                AND T102.OBJ_ID = #{objId}
+            </where>
+        ) T101
+        ${objAtrValJoinStatment}
+        ORDER BY T101.SORT_NO, T101.ATR_VAL_SEQ
+    </select>
+    <select id="getObjM" resultType="kr.co.penta.dataeye.common.entities.meta.PenObjM">
+        SELECT T101.*
+        FROM PEN_OBJ_M_T T101
+        WHERE T101.OBJ_TYPE_ID = #{objTypeId}
+        <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(objId)"> 
+          AND T101.OBJ_ID = #{objId}
+        </if>
+        <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(pathObjTypeId)"> 
+          AND T101.PATH_OBJ_TYPE_ID = #{pathObjTypeId}
+        </if>
+        <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(pathObjId)"> 
+          AND T101.PATH_OBJ_ID = #{pathObjId}
+        </if>
+    </select>
+</mapper>

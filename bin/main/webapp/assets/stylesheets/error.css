@@ -1,0 +1,37 @@
+
+
+/* default */
+*{margin:0; padding:0; font-family:"Malgun Gothic", '맑은고딕', Tahoma, Gulim, AppleGothic, sans-serif;}
+body {_text-align:center; }
+hr {display:none;}
+img,fieldset {border:0 none;}
+dl,ul,ol,li {list-style: none;}
+h1,h2,h3,h4,h5,dl,dt,dd,ul,li,ol,th,td,p,blockquote,form,fieldset,legend {margin:0; padding:0;}
+legend {display:none;}
+table {border-collapse:collapse;}
+input,select,textarea {font-size:100%;}
+body,td {font-size:12px; color:#666;}
+img {border:0 none; margin:0; padding:0; overflow:hidden;}
+a {text-decoration:none;}
+input,select{border:1px solid #bfbfbf;background-color:#fff}
+select{width:110px;line-height:30px;height:30px}
+
+/* 대체텍스트용 */
+.comment{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden;}
+.clear{display:block; float:none; clear:both; height:0; width:100%; font-size:0 !important; line-height:0 !important; overflow:hidden; margin:0 !important; padding:0 !important;}
+
+.m10 {margin-top:20px;}
+.r20 {margin-right:20px;}
+
+
+
+
+/* error Object */
+.error_wrap { width: 865px; margin: 120px auto 0 auto; }
+.error_wrap h1.logo {margin: 0 0 15px 0; width: 162px; height: 22px; }
+.error_cont { border-top: 1px solid #888; border-bottom: 1px solid #ddd; padding: 20px 0 40px 0; text-align: center; overflow: hidden }
+.error_cont .error_code { font-size: 24px; letter-spacing: 0; color: #1166ca; line-height: 25px; margin-top:20px; font-weight:bold; }
+.error_cont .error_txt {font-size: 32px; margin-top: 10px; font-weight:bold; color:#333; }
+
+.error_button_Area {border:none; margin-top:15px; text-align:center;}
+.error_button_Area .error_btn {display:inline-block; padding:5px 10px; text-align:center;background-color:#006fb8;border:1px solid #005f9e; color:#FFF; font-weight:bold; cursor:pointer; border-radius:3px;}

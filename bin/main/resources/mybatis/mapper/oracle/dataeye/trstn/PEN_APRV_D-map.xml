@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PEN_APRV_D">
+    <insert id="insert" parameterType="kr.co.penta.dataeye.common.entities.meta.PenAprvD">
+        INSERT INTO PEN_APRV_D (
+            APRV_ID, APRV_DETL_ID, DEL_YN, CRET_DT, CRETR_ID, CHG_DT, CHGR_ID, APRV_LINE_ID
+            , APRV_PRCS_SORT_NO, APRV_PRCS_NM, APRV_USER_ID, APRV_DESC, APRV_RSLT_CD, APRV_LINE_OBJ_ID
+            , APRV_ATR01_VAL, APRV_ATR02_VAL, APRV_ATR03_VAL, APRV_ATR04_VAL, APRV_ATR05_VAL
+            , APRV_ATR06_VAL, APRV_ATR07_VAL, APRV_ATR08_VAL, APRV_ATR09_VAL, APRV_ATR10_VAL
+        )
+        VALUES (
+            #{APRV_ID, jdbcType=VARCHAR}, #{APRV_DETL_ID, jdbcType=VARCHAR}, #{DEL_YN, jdbcType=CHAR}
+        <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRET_DT)">
+            , TO_TIMESTAMP(#{CRET_DT}, '${timestampFormat}')
+        </if>
+        <if test="!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRET_DT)">
+            , CURRENT_TIMESTAMP
+        </if>
+        <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRETR_ID)">
+            , #{CRETR_ID, jdbcType=VARCHAR}
+        </if>
+        <if test="!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRETR_ID)">
+            , #{userId, jdbcType=VARCHAR}
+        </if>
+            , CURRENT_TIMESTAMP, #{userId, jdbcType=VARCHAR}, #{APRV_LINE_ID, jdbcType=VARCHAR}, #{APRV_PRCS_SORT_NO, jdbcType=NUMERIC}
+            , #{APRV_PRCS_NM, jdbcType=VARCHAR}, #{APRV_USER_ID, jdbcType=VARCHAR}, #{APRV_DESC, jdbcType=VARCHAR}
+            , #{APRV_RSLT_CD, jdbcType=VARCHAR}, #{APRV_LINE_OBJ_ID, jdbcType=VARCHAR}, #{APRV_ATR01_VAL, jdbcType=VARCHAR}
+            , #{APRV_ATR02_VAL, jdbcType=VARCHAR}, #{APRV_ATR03_VAL, jdbcType=VARCHAR}, #{APRV_ATR04_VAL, jdbcType=VARCHAR}
+            , #{APRV_ATR05_VAL, jdbcType=VARCHAR}, #{APRV_ATR06_VAL, jdbcType=VARCHAR}, #{APRV_ATR07_VAL, jdbcType=VARCHAR}
+            , #{APRV_ATR08_VAL, jdbcType=VARCHAR}, #{APRV_ATR09_VAL, jdbcType=VARCHAR}, #{APRV_ATR10_VAL, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="update" parameterType="kr.co.penta.dataeye.common.entities.meta.PenAprvD">
+        UPDATE PEN_APRV_D
+        <set>
+            CHG_DT = CURRENT_TIMESTAMP
+            , CHGR_ID = #{userId, jdbcType=VARCHAR}
+            , APRV_DESC = #{APRV_DESC, jdbcType=VARCHAR}
+            , REAL_APRV_USER_ID = #{userId, jdbcType=VARCHAR}
+            , APRV_DT = CURRENT_TIMESTAMP
+            , APRV_RSLT_CD = #{APRV_RSLT_CD, jdbcType=VARCHAR}
+        </set>
+        WHERE APRV_ID = #{APRV_ID} AND APRV_DETL_ID = #{APRV_DETL_ID}
+    </update>
+
+    <update id="updateAll" parameterType="kr.co.penta.dataeye.common.entities.meta.PenAprvD">
+        UPDATE PEN_APRV_D
+        <set>
+            CHG_DT = CURRENT_TIMESTAMP
+            , CHGR_ID = #{userId, jdbcType=VARCHAR}
+            , APRV_RSLT_CD = #{APRV_RSLT_CD, jdbcType=VARCHAR}
+        </set>
+        WHERE APRV_ID = #{APRV_ID} AND APRV_LINE_ID = #{APRV_LINE_ID} AND APRV_RSLT_CD = '10'
+    </update>
+
+    <update id="updateNext" parameterType="kr.co.penta.dataeye.common.entities.meta.PenAprvD">
+        UPDATE PEN_APRV_D
+        <set>
+            CHG_DT = CURRENT_TIMESTAMP
+            , CHGR_ID = #{userId, jdbcType=VARCHAR}
+            , APRV_RSLT_CD = '10'
+        </set>
+        WHERE APRV_ID = #{APRV_ID} AND APRV_LINE_ID = #{APRV_LINE_ID}
+        <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(aprvPrcsSortNo)">
+            AND APRV_PRCS_SORT_NO = #{aprvPrcsSortNo}
+        </if>
+    </update>
+
+    <update id="updateNextRty" parameterType="kr.co.penta.dataeye.common.entities.meta.PenAprvD">
+        UPDATE PEN_APRV_D
+        <set>
+            CHG_DT = CURRENT_TIMESTAMP
+            , CHGR_ID = #{userId, jdbcType=VARCHAR}
+            , APRV_RSLT_CD = '10'
+        </set>
+        WHERE APRV_ID = #{APRV_ID} AND APRV_LINE_ID = #{APRV_LINE_ID} AND APRV_RSLT_CD = '41'
+    </update>
+
+    <update id="updateAprvDaInfo" parameterType="kr.co.penta.dataeye.common.entities.meta.PenAprvD">
+        UPDATE PEN_APRV_D
+        <set>
+            CHG_DT = CURRENT_TIMESTAMP
+            , CHGR_ID = #{userId, jdbcType=VARCHAR}
+            , APRV_RSLT_CD = '10'
+        </set>
+        WHERE APRV_ID = #{APRV_ID} AND APRV_RSLT_CD = '50'
+    </update>
+
+    <insert id="approve" parameterType="hashMap">
+        INSERT INTO PEN_OBJ_D (
+            OBJ_TYPE_ID, OBJ_ID, ATR_ID_SEQ, ATR_VAL_SEQ, DEL_YN
+            , CRET_DT, CRETR_ID, CHG_DT, CHGR_ID, OBJ_ATR_VAL
+        )
+        SELECT OBJ_TYPE_ID
+            , OBJ_ID
+            , ATR_ID_SEQ
+            , ATR_VAL_SEQ
+            , DEL_YN
+            , CRET_DT
+            , CRETR_ID
+            , CHG_DT
+            , CHGR_ID
+            , OBJ_ATR_VAL
+        FROM PEN_OBJ_D_T
+        WHERE APRV_ID = #{aprvId}
+    </insert>
+
+    <update id="updateSecDtMvoReject" parameterType="hashMap">
+        UPDATE PEN_APRV_D
+        <set>
+            CHG_DT = CURRENT_TIMESTAMP
+            , CHGR_ID = #{userId, jdbcType=VARCHAR}
+            , APRV_DESC = '시스템 자동반려'
+            , APRV_DT = CURRENT_TIMESTAMP
+            , REAL_APRV_USER_ID = #{userId, jdbcType=VARCHAR}
+            , APRV_RSLT_CD = 'N'
+        </set>
+        WHERE APRV_ID = #{aprvId} AND APRV_RSLT_CD = 'N/A'
+    </update>
+    <delete id="deleteByAprvId" parameterType="hashMap">
+        DELETE FROM PEN_APRV_D
+        WHERE APRV_ID = #{aprvId}
+    </delete>
+</mapper>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="objui">
+    <select id="getObjUI" resultType="kr.co.penta.dataeye.common.entities.CamelMap" >
+        SELECT T101.UI_ID
+             , T101.DEL_YN
+             , T101.CRET_DT
+             , T101.CRETR_ID
+             , T101.CHG_DT
+             , T101.CHGR_ID
+             , T101.UI_NM
+             , T101.USE_TYPE_CD
+             , CASE WHEN T101.USE_TYPE_CD = 'WD' THEN '윈도우'
+                    WHEN T101.USE_TYPE_CD = 'LY' THEN '레이어'
+                    WHEN T101.USE_TYPE_CD = 'SD' THEN '독립형'
+                    ELSE '미정의'
+             END AS USE_TYPE_NM
+             , T101.UI_MODE_CD
+             , T101.UI_TYPE_CD
+             , CASE WHEN T101.UI_TYPE_CD = 'SIMPLE_UI' THEN '기본 샘플(ONE GRID)형'
+                    WHEN T101.UI_TYPE_CD = 'SHUTTLE_LR_UI' THEN '기본 셔틀(LEFT-RIGHT)형'
+                    WHEN T101.UI_TYPE_CD = 'INFLUENCE_UI' THEN '영향도 기본형'
+                    WHEN T101.UI_TYPE_CD = 'CUST_UI' THEN '사용자정의'
+                    WHEN T101.UI_TYPE_CD = 'OBJ_LIST_TYPE1_UI' THEN '객체조회 기본형'
+                    ELSE '미정의'
+             END AS UI_TYPE_NM
+             , T101.PGM_ID
+             , T101.CONF_SBST AS CONF_SBST
+        FROM PEN_UI_M T101
+        <where>
+        	<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(uiId)'>
+                AND T101.UI_ID = #{uiId}
+            </if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(useTypeCd)'>
+                AND T101.USE_TYPE_CD = #{useTypeCd}
+            </if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+                AND T101.${searchKey} LIKE  '%'||#{searchValue}||'%'
+            </if>
+        </where>
+        ORDER BY T101.UI_NM
+    </select>
+    <select id="getObjUIMapping" resultType="kr.co.penta.dataeye.common.entities.CamelMap" >
+        SELECT T101.OBJ_TYPE_ID
+                   , T101.UI_ID_SEQ
+                   , T101.UI_ID
+                   , T101.UI_ALIAS_NM
+                   , T101.SORT_NO
+                   , T101.USE_YN
+                   , T102.UI_NM
+                   , T102.USE_TYPE_CD
+                   , CASE WHEN T102.USE_TYPE_CD = 'WD' THEN '윈도우'
+                            WHEN T102.USE_TYPE_CD = 'LY' THEN '레이어'
+                    	    WHEN T102.USE_TYPE_CD = 'SD' THEN '독립형'
+                            ELSE '미정의'
+                   END AS USE_TYPE_NM
+                   , T102.UI_TYPE_CD
+                   , CASE WHEN T102.UI_TYPE_CD = 'SIMPLE_UI' THEN '기본 샘플(ONE GRID)형'
+                            WHEN T102.UI_TYPE_CD = 'SHUTTLE_LR_UI' THEN '기본 셔틀(LEFT-RIGHT)형'
+                            WHEN T102.UI_TYPE_CD = 'INFLUENCE_UI' THEN '영향도 기본형'
+                            WHEN T102.UI_TYPE_CD = 'CUST_UI' THEN '사용자정의'
+                    		WHEN T102.UI_TYPE_CD = 'OBJ_LIST_TYPE1_UI' THEN '객체조회 기본형'
+                            ELSE '미정의'
+                   END AS UI_TYPE_NM
+                   , T102.PGM_ID
+        FROM PEN_OBJ_TYPE_UI_D T101
+        INNER JOIN PEN_UI_M T102
+        ON (
+            T101.UI_ID = T102.UI_ID
+        )
+        <where>
+            T101.DEL_YN = 'N'
+            AND T102.DEL_YN = 'N'
+            AND T101.OBJ_TYPE_ID = #{objTypeId}
+        </where>
+        ORDER BY T101.SORT_NO
+    </select>    
+</mapper>

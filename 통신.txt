@@ -1,0 +1,268 @@
+DE.ui.open.popup(
+	"view",
+	['030103L', '030103L_000000001'],
+	{
+		viewname:'common/metacore/objectInfoTab',
+		objTypeId:'040201L',
+		objId:'040201L_676dd365-aecb-488e-b607-fcf8ae6d645b',
+		mode:'U'
+	},
+	null
+);
+
+frame("common/metacore/tabContent", top.name, {
+                                        "objTypeId": '040201L',
+                                        "objId": '040201L_000000001',
+                                        "mode": "U"
+});
+
+var popup = function (url, keys, param, options) {
+    var winId = keys;
+    if (options == undefined) {
+        options = "width=1000, height=650, toolbar=no, menubar=no, location=no";
+    }
+    window.open("about:blank", winId, options);
+
+    var $frm = $("#objectInfoForm");
+    var $viewname = $("#viewname");
+    var $data = $("#data");
+
+    if ($frm.length == 0) {
+        $frm =  $("<form id='objectInfoForm' name='objectInfoForm' action='"+url+"' target='"+winId+"' class='objectInfoForm' method='post'></form>").css("display", "none");
+        $frm.appendTo("body");
+    }
+    if ($frm.find("#viewname").length == 0) {
+        $viewname =  $("<input type='hidden' id='viewId' name='viewId'/>");
+        $viewname.appendTo($frm);
+    }
+    $viewname.attr("value", param.viewname);
+    if ($frm.find("#data").length == 0) {
+        $data =  $("<input type='hidden' id='data' name='data'/>");
+        $data.appendTo($frm);
+    }
+    $data.attr("value", JSON.stringify(param));
+
+    $frm.submit();
+    $frm.remove();
+}
+
+frame("common/metacore/tabContent", top.name, {
+                                        "objTypeId": '040201L',
+                                        "objId": '040201L_000000001',
+                                        "mode": "U"
+});
+
+var popup = function (url, keys, param, options) {
+    var winId = keys;
+    if (options == undefined) {
+        options = "width=1000, height=650, toolbar=no, menubar=no, location=no";
+    }
+    window.open("about:blank", winId, options);
+
+    var $frm = $("#objectInfoForm");
+    var $viewname = $("#viewname");
+    var $data = $("#data");
+
+    if ($frm.length == 0) {
+        $frm =  $("<form id='objectInfoForm' name='objectInfoForm' action='"+url+"' target='"+winId+"' class='objectInfoForm' method='post'></form>").css("display", "none");
+        $frm.appendTo("body");
+    }
+    if ($frm.find("#viewname").length == 0) {
+        $viewname =  $("<input type='hidden' id='viewId' name='viewId'/>");
+        $viewname.appendTo($frm);
+    }
+    $viewname.attr("value", param.viewname);
+    if ($frm.find("#data").length == 0) {
+        $data =  $("<input type='hidden' id='data' name='data'/>");
+        $data.appendTo($frm);
+    }
+    $data.attr("value", JSON.stringify(param));
+
+    $frm.submit();
+    $frm.remove();
+}
+
+dummy 객체:990101L, 990101L_000000001
+DE.ui.open.popup(
+	"view",
+	['990101L', '990101L_000000001'],
+	{
+		viewname:'common/metacore/objectInfoTab',
+		objTypeId:'990101L',
+		objId:'990101L_000000001',
+		mode:'U'
+	},
+	null
+);
+
+BR : 030103L, 030103L_c0ee1524-aeb6-4a3e-8245-dc2095449eb0
+DE.ui.open.popup(
+	"view",
+	['030103L', '030103L_c0ee1524-aeb6-4a3e-8245-dc2095449eb0'],
+	{
+		viewname:'common/metacore/objectInfoTab',
+		objTypeId:'030103L',
+		objId:'030103L_c0ee1524-aeb6-4a3e-8245-dc2095449eb0',
+		mode:'U'
+	},
+	null
+);
+
+
+논리삭제
+DE.ajax.call({async:false, url:"../portal/metacore/objectInfo/delete", data:{objTypeId:"030103L", objId:"030103L_000000001"}})
+
+물리삭제
+DE.ajax.call({async:false, url:"../portal/metacore/objectInfo/remove", data:{objTypeId:"030103L", objId:"030103L_000000001"}})
+
+용어적합성검증
+DE.ajax.call({async:false, url:"../portal/biz/std?oper=termVerify", data:{objTypeId:"030102L", objId:"030103L_e69e23e6-d843-429d-b44e-8e6157b16ade", term:"천태진"}})
+
+========================= 요청 테스트 ==============================================================
+1. 요청 테스트
+sample object = {
+	reqInfo:{
+		OBJ_TYPE_ID:"020102L",
+		OBJ_ID:"",
+		REQ_ID:"",
+		STUS_ID:"",
+		STUS_CD:"01",
+		STUS_DESC:"샌드박스를 요청합니다.",
+		STUS_LINK_ID:""
+	},
+	objInfo:{
+		penObjM:{
+			"OBJ_TYPE_ID":"020102L",
+			"OBJ_ID":"",
+			"ADM_OBJ_ID":"",
+			"OBJ_NM":"",
+			"OBJ_ABBR_NM":"",
+			"OBJ_DESC":"",
+			"PATH_OBJ_TYPE_ID":"",
+			"PATH_OBJ_ID":""
+		},
+		penObjD:[{
+			"OBJ_TYPE_ID":"020102L",
+			"OBJ_ID":"",
+			"ATR_ID_SEQ":"101",
+			"ATR_VAL_SEQ":"101",
+			"OBJ_ATR_VAL":"천태진입니다."
+		}],
+		penObjR:[{
+			"OBJ_TYPE_ID":"020102L",
+			"OBJ_ID":"020102L_000000003",
+			"REL_OBJ_TYPE_ID":"010201L",
+			"REL_OBJ_ID":"010201L_8e00e946-8aff-41ab-9c68-460f287eaf3b",
+			"REL_TYPE_ID":"020102L_FT_03",
+			"OBJ_REL_ANALS_CD":"MC"
+		}]
+	}
+}
+
+##최초 요청
+DE.ajax.call({async:false, url:"../portal/metareq/objectInfo/save", data:{
+	reqInfo:{
+		OBJ_TYPE_ID:"020102L",
+		OBJ_ID:"",
+		REQ_ID:"",
+		STUS_ID:"",
+		STUS_CD:"01",
+		STUS_DESC:"샌드박스를 요청합니다.",
+		STUS_LINK_ID:""
+	},
+	objInfo:{
+		penObjM:{
+			"OBJ_TYPE_ID":"020102L",
+			"OBJ_ID":"",
+			"ADM_OBJ_ID":"",
+			"OBJ_NM":"",
+			"OBJ_ABBR_NM":"",
+			"OBJ_DESC":"",
+			"PATH_OBJ_TYPE_ID":"",
+			"PATH_OBJ_ID":""
+		},
+		penObjD:[{
+			"OBJ_TYPE_ID":"020102L",
+			"OBJ_ID":"",
+			"ATR_ID_SEQ":"101",
+			"ATR_VAL_SEQ":"101",
+			"OBJ_ATR_VAL":"천태진입니다."
+		}],
+		penObjR:[]
+	}
+}});
+
+##업데이트 
+DE.ajax.call({async:false, url:"../portal/metareq/objectInfo/save", data:{
+	reqInfo:{
+		OBJ_TYPE_ID:"020102L",
+		OBJ_ID:"020102L_3889384c-46c6-4ca9-bdd7-0f32a24ce973",
+		REQ_ID:"20170212214052543_72553690-e770-4261-b450-4cdcb32e889b",
+		STUS_ID:"20170212214052546_9ff63ab4-d5db-4d3a-ad43-1a51cd470601",
+		STUS_CD:"01",
+		STUS_DESC:"샌드박스를 요청합니다.",
+		STUS_LINK_ID:""
+	},
+	objInfo:{
+		penObjM:{
+			"OBJ_TYPE_ID":"020102L",
+			"OBJ_ID":"",
+			"ADM_OBJ_ID":"",
+			"OBJ_NM":"",
+			"OBJ_ABBR_NM":"",
+			"OBJ_DESC":"",
+			"PATH_OBJ_TYPE_ID":"",
+			"PATH_OBJ_ID":""
+		},
+		penObjD:[{
+			"OBJ_TYPE_ID":"020102L",
+			"OBJ_ID":"",
+			"ATR_ID_SEQ":"101",
+			"ATR_VAL_SEQ":"101",
+			"OBJ_ATR_VAL":"천태진입니다."
+		}],
+		penObjR:[]
+	}
+}});
+
+
+2. get object info
+DE.ajax.call({async:false, url:"../portal/metareq/objectInfo/get", data:{objTypeId:"030103L", objId:"030103L_000000001"}})=======
+);
+
+frame("common/metacore/tabContent", top.name, {
+                                        "objTypeId": '040201L',
+                                        "objId": '040201L_000000001',
+                                        "mode": "U"
+});
+
+var popup = function (url, keys, param, options) {
+    var winId = keys;
+    if (options == undefined) {
+        options = "width=1000, height=650, toolbar=no, menubar=no, location=no";
+    }
+    window.open("about:blank", winId, options);
+
+    var $frm = $("#objectInfoForm");
+    var $viewname = $("#viewname");
+    var $data = $("#data");
+
+    if ($frm.length == 0) {
+        $frm =  $("<form id='objectInfoForm' name='objectInfoForm' action='"+url+"' target='"+winId+"' class='objectInfoForm' method='post'></form>").css("display", "none");
+        $frm.appendTo("body");
+    }
+    if ($frm.find("#viewname").length == 0) {
+        $viewname =  $("<input type='hidden' id='viewId' name='viewId'/>");
+        $viewname.appendTo($frm);
+    }
+    $viewname.attr("value", param.viewname);
+    if ($frm.find("#data").length == 0) {
+        $data =  $("<input type='hidden' id='data' name='data'/>");
+        $data.appendTo($frm);
+    }
+    $data.attr("value", JSON.stringify(param));
+
+    $frm.submit();
+    $frm.remove();
+}
+

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+	"-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+	"http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<definition name="default">
+        <put-list-attribute name="styles">
+			<add-attribute value="/webjars/jquery-ui/1.12.1/themes/flick/jquery-ui.css"/>
+			<add-attribute value="/webjars/jquery-ui/1.12.1/themes/flick/theme.css"/>
+			<add-attribute value="/webjars/bootstrap/3.3.7/css/bootstrap.css"/>
+			<add-attribute value="/webjars/bootstrap/3.3.7/css/bootstrap-theme.css"/>
+			<add-attribute value="/webjars/jqgrid/4.8.2/css/ui.jqgrid.css"/>
+			<add-attribute value="/webjars/jqgrid/4.8.2/css/ui.jqgrid-bootstarp.css"/>
+        </put-list-attribute>
+        <put-list-attribute name="javascript">
+	        <add-attribute value="/webjars/jquery/3.1.1/dist/jquery.min.js"/>
+	        <add-attribute value="/webjars/jquery-i18n-properties/1.2.2/jquery.i18n.properties.min.js"/>
+	        <add-attribute value="/assets/js-lib/jquery-plugin/jquery.dcjqaccordion.2.7.js"/>
+		    <add-attribute value="/assets/js-lib/jquery-plugin/jquery.scrollTo.min.js"/>
+	        <add-attribute value="/assets/js-lib/jquery-plugin/jquery.nicescroll.js"/>
+	        <add-attribute value="/assets/js-lib/jquery-plugin/jquery.sparkline.js"/>
+	        <add-attribute value="/webjars/jquery-ui/1.12.1/jquery-ui.min.js"/>
+		    <add-attribute value="/webjars/jqgrid/4.8.2/js/i18n/grid.locale-kr.js"/>
+		    <add-attribute value="/webjars/jqgrid/4.8.2/js/jquery.jqGrid.js"/>
+		    <add-attribute value="/webjars/bootstrap/3.3.7/js/bootstrap.min.js"/>
+		    
+		    <add-attribute value="/assets/js/common-lib.js"/>
+        </put-list-attribute>
+	</definition>
+	
+	<definition name="layout.portal" template="/WEB-INF/tiles/layout/portalLayout.jsp" extends="default">
+        <put-attribute name="title" expression="${title}" />
+		<put-attribute name="header" value="/WEB-INF/tiles/template/portal/portalHeader.jsp" />
+		<put-attribute name="center" value="/WEB-INF/tiles/template/portal/portalCenter.jsp" />
+		<put-attribute name="left" value="/WEB-INF/tiles/template/portal/portalLeft.jsp" />
+		<put-attribute name="right" value="/WEB-INF/tiles/template/portal/portalRight.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/tiles/template/portal/portalFooter.jsp" />
+		<put-attribute name="script" value="/WEB-INF/tiles/template/portal/commonScript.jsp" />
+	</definition>
+
+	<definition name="tiles/*/*" extends="layout.portal">
+		<put-attribute name="center" value="/WEB-INF/tiles/template/portal/{1}.jsp"></put-attribute>
+		<put-attribute name="script" value="/WEB-INF/tiles/template/portal/{2}Script.jsp"></put-attribute>
+	</definition>
+
+	<definition name="layout.admin" template="/WEB-INF/tiles/layout/adminLayout.jsp" extends="default">
+        <put-attribute name="title" expression="${title}" />
+		<put-attribute name="header" value="/WEB-INF/tiles/template/admin/adminHeader.jsp" />
+		<put-attribute name="center" value="/WEB-INF/tiles/template/admin/adminCenter.jsp" />
+		<put-attribute name="left" value="/WEB-INF/tiles/template/admin/adminLeft.jsp" />
+		<put-attribute name="right" value="/WEB-INF/tiles/template/admin/adminRight.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/tiles/template/admin/adminFooter.jsp" />
+	</definition>
+	<definition name="layout.system" template="/WEB-INF/tiles/layout/systemLayout.jsp" extends="default">
+        <put-attribute name="title" expression="${title}" />
+		<put-attribute name="header" value="/WEB-INF/tiles/template/system/systemHeader.jsp" />
+		<put-attribute name="center" value="/WEB-INF/tiles/template/system/systemCenter.jsp" />
+		<put-attribute name="left" value="/WEB-INF/tiles/template/system/systemLeft.jsp" />
+		<put-attribute name="right" value="/WEB-INF/tiles/template/system/systemRight.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/tiles/template/system/systemFooter.jsp" />
+	</definition>
+</tiles-definitions>

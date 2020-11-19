@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PEN_OBJ_BR_EXE_GRP_L">
+	<insert id="insert" parameterType="hashMap">
+		INSERT INTO PEN_OBJ_BR_EXE_GRP_L
+        (
+            OBJ_TYPE_ID,        OBJ_ID,             BR_EXE_GRP_SEQ,     DEL_YN,             CRET_DT,
+            CRETR_ID,           CHG_DT,             CHGR_ID,            EXE_ST_DT,          EXE_ED_DT,
+            OBJ_NM,             PATH_OBJ_TYPE_ID,   PATH_OBJ_ID,        PATH_OBJ_NM,        EXE_STUS_CD,
+            EXE_DESC,           EXE_GRP_EXER_ID,    EXE_GRP_MNGR_ID,    EXE_GRP_USE_CD,     TOT_BR_CNT,
+            EXE_BR_CNT,         ERR_BR_CNT
+	
+		)
+        VALUES
+        (
+            #{OBJ_TYPE_ID, jdbcType=VARCHAR},        #{OBJ_ID, jdbcType=VARCHAR},             #{BR_EXE_GRP_SEQ, jdbcType=VARCHAR},     #{DEL_YN, jdbcType=CHAR},                CURRENT_TIMESTAMP,
+            #{CRETR_ID, jdbcType=VARCHAR},           CURRENT_TIMESTAMP,                       #{CHGR_ID, jdbcType=VARCHAR},            CURRENT_TIMESTAMP,                       NULL,
+            #{OBJ_NM, jdbcType=VARCHAR},             #{PATH_OBJ_TYPE_ID, jdbcType=VARCHAR},   #{PATH_OBJ_ID, jdbcType=VARCHAR},        #{PATH_OBJ_NM, jdbcType=VARCHAR},        #{EXE_STUS_CD, jdbcType=VARCHAR},
+            #{EXE_DESC, jdbcType=VARCHAR},           #{EXE_GRP_EXER_ID, jdbcType=VARCHAR},    #{EXE_GRP_MNGR_ID, jdbcType=VARCHAR},    #{EXE_GRP_USE_CD, jdbcType=VARCHAR},     #{TOT_BR_CNT, jdbcType=INTEGER},
+            #{EXE_BR_CNT, jdbcType=INTEGER},         #{ERR_BR_CNT, jdbcType=INTEGER}
+		)
+	</insert>
+    <update id="update" parameterType="hashMap">
+        UPDATE PEN_OBJ_BR_EXE_GRP_L
+        <set>
+            CHG_DT = CURRENT_TIMESTAMP,
+            EXE_ED_DT = CURRENT_TIMESTAMP,
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(OBJ_NM)'>OBJ_NM = #{OBJ_NM},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(PATH_OBJ_TYPE_ID)'>PATH_OBJ_TYPE_ID = #{PATH_OBJ_TYPE_ID},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(PATH_OBJ_ID)'>PATH_OBJ_ID = #{PATH_OBJ_ID},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(PATH_OBJ_NM)'>PATH_OBJ_NM = #{PATH_OBJ_NM},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(EXE_GRP_EXER_ID)'>EXE_GRP_EXER_ID = #{EXE_GRP_EXER_ID},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(EXE_GRP_MNGR_ID)'>EXE_GRP_MNGR_ID = #{EXE_GRP_MNGR_ID},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(EXE_GRP_USE_CD)'>EXE_GRP_USE_CD = #{EXE_GRP_USE_CD},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(TOT_BR_CNT)'>TOT_BR_CNT = #{TOT_BR_CNT},</if>
+            
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(EXE_STUS_CD)'>EXE_STUS_CD = #{EXE_STUS_CD},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(EXE_BR_CNT)'>EXE_BR_CNT = #{EXE_BR_CNT},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(ERR_BR_CNT)'>ERR_BR_CNT = #{ERR_BR_CNT},</if>
+        </set>
+        WHERE OBJ_TYPE_ID = #{OBJ_TYPE_ID}
+          AND OBJ_ID = #{OBJ_ID}
+          AND BR_EXE_GRP_SEQ = #{BR_EXE_GRP_SEQ}
+    </update>
+</mapper>

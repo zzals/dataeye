@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="target/classes" path="src/main/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="test" value="true"/>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="target/generated-sources/annotations">
+		<attributes>
+			<attribute name="ignore_optional_problems" value="true"/>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="m2e-apt" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/com.sun.jersey.jersey-core-1.4.0.jar"/>
+	<classpathentry kind="lib" path="lib/db2jcc4.jar"/>
+	<classpathentry kind="lib" path="lib/JavaWebAPI.jar"/>
+	<classpathentry kind="lib" path="lib/javax.ws.rs-api-2.0-m02.jar"/>
+	<classpathentry kind="lib" path="lib/jersey-client-1.19.jar"/>
+	<classpathentry kind="lib" path="lib/jersey-multipart-1.18.jar"/>
+	<classpathentry kind="lib" path="lib/jjwt-0.9.0.jar"/>
+	<classpathentry kind="lib" path="lib/mssql-jdbc-7.2.1.jre8.jar"/>
+	<classpathentry kind="lib" path="lib/nzjdbc.jar"/>
+	<classpathentry kind="lib" path="lib/penta-aria-cipher-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/WebApp.jar"/>
+	<classpathentry kind="lib" path="lib/WebBeans.jar"/>
+	<classpathentry kind="lib" path="lib/WebObjects.jar"/>
+	<classpathentry kind="lib" path="lib/WebPlatform.jar"/>
+	<classpathentry kind="lib" path="lib/WebTransform.jar"/>
+	<classpathentry kind="lib" path="lib/WebUtils.jar"/>
+	<classpathentry kind="lib" path="lib/WebXMLUtils.jar"/>
+	<classpathentry kind="src" output="target/test-classes" path="target/generated-test-sources/test-annotations">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="ignore_optional_problems" value="true"/>
+			<attribute name="m2e-apt" value="true"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

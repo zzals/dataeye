@@ -1,0 +1,12 @@
+search:
+  schema: http
+  host: 192.168.100.75
+  port: 9200
+  config:
+    index-name: dataeye-idx
+    dashboard-obj-types: 010102L, 010104L, 010105L
+    suggest-index-name: es_idx_suggest
+    indexes-obj-type-ids: 010102L, 010104L, 010105L, 010301L, 010302L
+    indexes-obj-type-nms: 보고서, 지표, 관점, 표준단어, 표준용어
+    all-search-size: 5
+    default-search-size: 25

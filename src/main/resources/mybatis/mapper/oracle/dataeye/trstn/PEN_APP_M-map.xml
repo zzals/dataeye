@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PEN_APP_M">
+	<insert id="insert" parameterType="hashMap">
+		INSERT INTO PEN_APP_M
+        (
+            APP_ID,     DEL_YN,     CRET_DT,    CRETR_ID,   CHG_DT,
+            CHGR_ID,    APP_NM,     APP_DESC,   USE_YN
+
+		)
+        VALUES
+        (
+            #{APP_ID, jdbcType=VARCHAR},                #{DEL_YN, jdbcType=CHAR},	      CURRENT_TIMESTAMP,              #{sessionInfo.userId, jdbcType=VARCHAR},	       CURRENT_TIMESTAMP,
+            #{sessionInfo.userId, jdbcType=VARCHAR},    #{APP_NM, jdbcType=VARCHAR},      #{APP_DESC, jdbcType=VARCHAR},  #{USE_YN, jdbcType=CHAR}
+		)
+	</insert>
+    <update id="update" parameterType="hashMap">
+        UPDATE PEN_APP_M
+        <set>
+            CHG_DT = CURRENT_TIMESTAMP,
+            CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR},
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(APP_NM)'>APP_NM = #{APP_NM, jdbcType=VARCHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(APP_DESC)'>APP_DESC = #{APP_DESC, jdbcType=VARCHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(DEL_YN)'>DEL_YN = #{DEL_YN, jdbcType=CHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(USE_YN)'>USE_YN = #{USE_YN, jdbcType=CHAR},</if>
+        </set>
+        WHERE APP_ID = #{APP_ID}
+    </update>
+    <delete id="delete" parameterType="hashMap">
+        DELETE FROM PEN_APP_M
+        WHERE APP_ID = #{appId}
+    </delete>
+</mapper>

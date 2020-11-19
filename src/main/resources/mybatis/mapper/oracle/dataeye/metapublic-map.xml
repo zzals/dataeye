@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="metapublic"> 
+	<select id="getObjTypeTree" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        WITH OBJ_TYPE (OBJ_TYPE_ID, OBJ_TYPE_NM, UP_OBJ_TYPE_ID, SORT_NO, HIER_LEV_NO) AS (
+            SELECT T101.OBJ_TYPE_ID, T101.OBJ_TYPE_NM, T101.UP_OBJ_TYPE_ID, T101.SORT_NO||'' AS SORT_NO, T101.HIER_LEV_NO
+            FROM O_DATAEYE_META.PEN_OBJ_TYPE_M T101
+            WHERE T101.HIER_LEV_NO = 1
+            AND T101.DEL_YN = 'N'
+            UNION ALL
+            SELECT T101.OBJ_TYPE_ID, T101.OBJ_TYPE_NM, T101.UP_OBJ_TYPE_ID, T102.SORT_NO||T101.SORT_NO AS SORT_NO, T101.HIER_LEV_NO
+            FROM O_DATAEYE_META.PEN_OBJ_TYPE_M T101
+            INNER JOIN OBJ_TYPE T102
+            ON (
+                T101.UP_OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+            )
+            WHERE T101.DEL_YN = 'N'
+        )
+        SELECT * 
+        FROM OBJ_TYPE
+        ORDER BY SORT_NO
+    </select>
+    <select id="getAtr" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		SELECT 
+			 T101.ATR_ID_SEQ AS ATR_ID_SEQ
+			,T101.ATR_ID AS ATR_ID
+			,CASE 
+				WHEN T101.ATR_ALIAS_NM = '' THEN T102.ATR_NM 
+				ELSE T101.ATR_ALIAS_NM 
+			END AS ATR_NM
+			,T101.MULTI_ATR_YN AS MULTI_ATR_YN
+			,T101.CNCT_ATR_YN AS CNCT_ATR_YN
+			,T101.ATR_ADM_TGT_YN AS ATR_ADM_TGT_YN
+			,T101.MAND_YN AS MAND_YN
+			,T101.INDC_YN AS INDC_YN
+			,T101.AVAIL_CHK_PGM_ID AS AVAIL_CHK_PGM_ID
+			,T102.ATR_RFRN_CD AS ATR_RFRN_CD
+			,T102.SQL_SBST AS SQL_SBST
+			,T102.DATA_TYPE_CD AS DATA_TYPE_CD 
+			,T102.COL_LEN AS COL_LEN
+			,T102.UI_COMP_CD AS UI_COMP_CD
+		FROM  O_DATAEYE_META.PEN_OBJ_TYPE_ATR_D T101
+		      INNER JOIN O_DATAEYE_META.PEN_ATR_M T102 ON T101.ATR_ID = T102.ATR_ID
+		WHERE T101.OBJ_TYPE_ID = #{objTypeId}  
+	  	  AND T101.META_TYPE_CD = 'O'
+	  	  AND T101.ATR_ID_SEQ = #{atrIdSeq}
+    </select>
+    <select id="getObjUIInfo" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        SELECT T101.UI_ALIAS_NM
+                   , T102.PGM_ID
+                   , T102.UI_ID
+        FROM O_DATAEYE_META.PEN_OBJ_TYPE_UI_D T101
+        INNER JOIN O_DATAEYE_META.PEN_UI_M T102
+        ON (
+            T101.UI_ID = T102.UI_ID
+        )
+        WHERE T101.OBJ_TYPE_ID = #{objTypeId}
+        AND T101.DEL_YN = 'N'
+        AND T101.USE_YN = 'Y'
+        ORDER BY T101.SORT_NO ASC    
+    </select>
+    <select id="findObjSelectBox" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		SELECT T101.OBJ_TYPE_ID
+		     , T101.OBJ_ID
+		     , T101.ADM_OBJ_ID
+		     , T101.OBJ_NM
+		     , T101.OBJ_ABBR_NM
+		     , T101.PATH_OBJ_TYPE_ID
+		     , T101.PATH_OBJ_ID
+		FROM O_DATAEYE_META.PEN_OBJ_M T101
+		WHERE T101.OBJ_TYPE_ID = #{objTypeId}
+		AND T101.DEL_YN = 'N'
+		<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(pathObjTypeId)'>
+			AND T101.PATH_OBJ_TYPE_ID = #{pathObjTypeId}
+		</if>
+		<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(pathObjId)'>
+			AND T101.PATH_OBJ_ID = #{pathObjId}
+		</if>
+		<if test='!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(orderCol)'>
+			ORDER BY T101.OBJ_NM  
+		</if>
+		<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(orderCol)'>
+			ORDER BY T101.${orderCol}  
+		</if>
+    </select>
+    <select id="findObjM" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		SELECT OBJ_TYPE_ID
+		     , OBJ_ID
+		     , ADM_OBJ_ID
+		     , OBJ_NM
+		     , OBJ_ABBR_NM
+		     , PATH_OBJ_TYPE_ID
+		     , PATH_OBJ_ID
+		FROM O_DATAEYE_META.PEN_OBJ_M 
+		WHERE OBJ_TYPE_ID = #{objTypeId}
+		AND DEL_YN = 'N'
+		<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(ord)'>
+			ORDER BY ${ord}
+		</if>
+		<if test='!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(ord)'>
+			ORDER BY OBJ_NM
+		</if>
+    </select>
+	<select id="findCd" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		SELECT T101.CD_GRP_ID
+		     , T101.CD_ID
+		     , T101.CD_NM
+		FROM O_DATAEYE_META.PEN_CD_M T101
+		WHERE T101.CD_GRP_ID = #{cdGrpId}
+		AND T101.DEL_YN = 'N'
+		AND T101.USE_YN = 'Y'
+		ORDER BY T101.SORT_NO
+	</select>
+    <select id="getObjAtrVal" resultType="kr.co.penta.dataeye.common.entities.meta.PenObjD">
+		SELECT T101.OBJ_TYPE_ID
+			 , T101.OBJ_ID
+			 , T101.ATR_ID_SEQ
+			 , T101.ATR_VAL_SEQ
+			 , T101.OBJ_ATR_VAL
+		FROM  O_DATAEYE_META.PEN_OBJ_D T101
+		WHERE T101.OBJ_TYPE_ID = #{objTypeId}  
+	  	  AND T101.OBJ_ID = #{objId}
+	  	  AND T101.ATR_ID_SEQ = #{atrIdSeq}
+		<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(atrValSeq)'>
+			AND T101.ATR_VAL_SEQ = #{atrValSeq}
+		</if>
+		ORDER BY T101.ATR_VAL_SEQ
+    </select>
+    
+    <select id="getObjTypeAtrVal" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		select M.*, D.atr_id_seq, D.obj_atr_val from O_DATAEYE_META.PEN_OBJ_M M
+		left join O_DATAEYE_META.PEN_OBJ_D D
+		on M.obj_id = D.obj_id
+		where M.obj_type_id = #{objTypeId}  
+		    and D.atr_id_seq = #{atrIdSeq}
+    </select>
+</mapper>

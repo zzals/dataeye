@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="portal.common">
+	<select id="findAllMenuByApp" resultType="kr.co.penta.dataeye.common.entities.PortalMenuEntity">
+		WITH MENU1 AS (
+		    SELECT T101.MENU_ID, T101.MENU_NM, T101.ICON_CLASS, T101.PGM_ID, T101.UP_MENU_ID, T101.MENU_TYPE, TO_CHAR(T101.SORT_NO, '0009') AS SORT_ORD, T101.SORT_NO, T101.MENU_GRP_CD, 1 AS LVL
+		    FROM PEN_MENU_M T101
+		    WHERE T101.APP_ID = #{appId}
+		    AND (T101.UP_MENU_ID IS NULL OR T101.UP_MENU_ID = '')
+		    AND T101.DEL_YN = 'N'
+		    AND T101.USE_YN  = 'Y'
+		),
+		MENU2 AS (
+		    SELECT T101.MENU_ID, T101.MENU_NM, T101.ICON_CLASS, T101.PGM_ID, T101.UP_MENU_ID, T101.MENU_TYPE, T102.SORT_ORD||TO_CHAR(T101.SORT_NO, '0009') AS SORT_ORD, T101.SORT_NO, T101.MENU_GRP_CD, T102.LVL+1 AS LVL
+		    FROM PEN_MENU_M T101
+		    INNER JOIN MENU1 T102
+		    ON (
+		        T101.UP_MENU_ID = T102.MENU_ID
+		    )
+		    WHERE T101.APP_ID = #{appId}
+		    AND T101.DEL_YN = 'N'
+		    AND T101.USE_YN  = 'Y'
+		),
+		MENU3 AS (
+		    SELECT T101.MENU_ID, T101.MENU_NM, T101.ICON_CLASS, T101.PGM_ID, T101.UP_MENU_ID, T101.MENU_TYPE, T102.SORT_ORD||TO_CHAR(T101.SORT_NO, '0009') AS SORT_ORD, T101.SORT_NO, T101.MENU_GRP_CD, T102.LVL+1 AS LVL
+		    FROM PEN_MENU_M T101
+		    INNER JOIN MENU2 T102
+		    ON (
+		        T101.UP_MENU_ID = T102.MENU_ID
+		    )
+		    WHERE T101.APP_ID = #{appId}
+		    AND T101.DEL_YN = 'N'
+		    AND T101.USE_YN  = 'Y'
+		),
+		MENU4 AS (
+		    SELECT T101.MENU_ID, T101.MENU_NM, T101.ICON_CLASS, T101.PGM_ID, T101.UP_MENU_ID, T101.MENU_TYPE, T102.SORT_ORD||TO_CHAR(T101.SORT_NO, '0009') AS SORT_ORD, T101.SORT_NO, T101.MENU_GRP_CD, T102.LVL+1 AS LVL
+		    FROM PEN_MENU_M T101
+		    INNER JOIN MENU3 T102
+		    ON (
+		        T101.UP_MENU_ID = T102.MENU_ID
+		    )
+		    WHERE T101.APP_ID = #{appId}
+		    AND T101.DEL_YN = 'N'
+		    AND T101.USE_YN  = 'Y'
+		)
+		SELECT T101.MENU_GRP_CD AS "menuGrpCd",
+		    T101.MENU_ID AS "menuId" ,
+		    T101.ICON_CLASS AS "iconClass" ,
+		    T101.MENU_NM AS "menuNm" ,
+    		T101.MENU_TYPE AS "menuType",
+		    T102.PGM_ID AS "pgmId" ,
+		    T101.UP_MENU_ID AS "upMenuId" ,
+		    T101.SORT_NO AS "sortNo" ,
+		    case when T102.PGM_ID is null then T101.PGM_ID else T102.SCREEN_ID end AS "menuPath" ,
+            T101.LVL as "menuLvl"
+		FROM (
+		    SELECT * FROM MENU1
+		    UNION ALL
+		    SELECT * FROM MENU2
+		    UNION ALL
+		    SELECT * FROM MENU3
+		    UNION ALL
+		    SELECT * FROM MENU4
+		) T101 left join (
+			select * from PEN_PGM_M
+		) T102 on T101.PGM_ID = T102.pgm_id
+		ORDER BY T101.SORT_ORD
+    </select>
+    <select id="findMenuAuthByApp" resultType="kr.co.penta.dataeye.common.entities.BaseAuth">
+		WITH MENU_USER_AUTH AS (
+				SELECT APP_ID 
+				     , MENU_ID 
+				     , PRIV_OPER_GBN 
+				FROM PEN_SYS_PRIV_MENU_R
+				WHERE PRIV_RCVR_GBN = 'U'
+				  AND DEL_YN = 'N'
+				  AND PRIV_RCVR_ID = #{sessionInfo.userId}
+				  AND APP_ID = #{appId}
+		),
+		MENU_GRP_ROLE_AUTH AS (
+			SELECT APP_ID 
+			     , MENU_ID 
+			     , PRIV_OPER_GBN 
+			FROM PEN_SYS_PRIV_MENU_R T101
+			INNER JOIN PEN_SYS_USER_GRP_M T102
+			ON (
+					T101.PRIV_RCVR_ID = T102.USER_GRP_ID 
+			    AND T102.USER_GRP_TYPE = 'FUNC_ACCESS'
+				AND T102.PRIV_YN = 'Y'
+				AND T102.USE_YN = 'Y'
+				AND T102.DEL_YN = 'N'
+			)
+			INNER JOIN PEN_SYS_GRP_R T103
+			ON (
+					T102.USER_GRP_ID = T103.USER_GRP_ID
+				AND T103.DEL_YN = 'N'
+			)
+			INNER JOIN PEN_SYS_GRP_USER_R T104
+			ON (
+					T103.REL_USER_GRP_ID = T104.USER_GRP_ID 
+				AND T104.DEL_YN = 'N'
+				AND T104.USER_ID = #{sessionInfo.userId}
+			)
+			WHERE T101.PRIV_RCVR_GBN = 'G'
+			  AND T101.DEL_YN = 'N'
+			  AND APP_ID = #{appId}
+		),
+		MENU_GRP_USER_AUTH AS (
+			SELECT APP_ID 
+			     , MENU_ID 
+			     , PRIV_OPER_GBN 
+			FROM PEN_SYS_PRIV_MENU_R T101
+			INNER JOIN PEN_SYS_USER_GRP_M T102
+			ON (
+					T101.PRIV_RCVR_ID = T102.USER_GRP_ID 
+			    AND T102.USER_GRP_TYPE = 'FUNC_ACCESS'
+				AND T102.PRIV_YN = 'Y'
+				AND T102.USE_YN = 'Y'
+				AND T102.DEL_YN = 'N'
+			)
+			INNER JOIN PEN_SYS_GRP_USER_R T104
+			ON (
+					T102.USER_GRP_ID = T104.USER_GRP_ID 
+				AND T104.DEL_YN = 'N'
+				AND T104.USER_ID = #{sessionInfo.userId}
+			)
+			WHERE T101.PRIV_RCVR_GBN = 'G'
+			  AND T101.DEL_YN = 'N'
+			  AND APP_ID = #{appId}
+		)
+		SELECT DISTINCT T101.*
+		FROM (
+			SELECT * FROM MENU_USER_AUTH
+			UNION ALL 
+			SELECT * FROM MENU_GRP_ROLE_AUTH
+			UNION ALL 
+			SELECT * FROM MENU_GRP_USER_AUTH
+		) T101
+		ORDER BY MENU_ID 
+     </select>
+  
+    <select id="findMenuAuthByUser" resultType="kr.co.penta.dataeye.common.entities.BaseAuth">
+        SELECT
+			*
+		FROM (
+			WITH GRP AS (
+			    SELECT USER_GRP_ID,
+			           USER_ID
+			      FROM PEN_SYS_GRP_USER_R
+			     WHERE USER_ID = #{sessionInfo.userId}
+			),
+			MENU_GRP AS (
+			    SELECT 'G' AS PRIV_RCVR_GBN,
+			           T01.USER_GRP_ID
+			    FROM PEN_SYS_GRP_R T01 JOIN GRP T02 ON (T01.REL_USER_GRP_ID = T02.USER_GRP_ID)
+			    UNION ALL
+			    SELECT 'G' AS PRIV_RCVR_GBN,
+			           USER_GRP_ID
+			    FROM PEN_SYS_GRP_R
+			    WHERE REL_USER_GRP_ID = 'ALL'
+			    UNION ALL
+			    SELECT DISTINCT 'U' AS PRIV_RCVR_GBN,
+			           GRP.USER_ID AS ROLE_ID
+			    FROM GRP
+			),
+			MENU_AUTH AS (
+			    SELECT T01.APP_ID AS APP_ID,
+			           T01.MENU_ID AS MENU_ID,
+			           MAX(SUBSTR(T01.PRIV_OPER_GBN, 1, INSTR(T01.PRIV_OPER_GBN,':',1,1)-1)) AS C_AUTH,
+			           MAX(SUBSTR(T01.PRIV_OPER_GBN,INSTR(T01.PRIV_OPER_GBN,':',1,1) +1,
+			           INSTR(T01.PRIV_OPER_GBN,':',1,2) - INSTR(T01.PRIV_OPER_GBN,':',1,1)-1)) AS R_AUTH,
+			           MAX(SUBSTR(T01.PRIV_OPER_GBN,INSTR(T01.PRIV_OPER_GBN,':',1,2) + 1,
+			           INSTR(T01.PRIV_OPER_GBN,':',1,3) - INSTR(T01.PRIV_OPER_GBN,':',1,2)-1)) AS U_AUTH,
+			           MAX(SUBSTR(T01.PRIV_OPER_GBN,INSTR(T01.PRIV_OPER_GBN,':',1,3) + 1,
+			           INSTR(T01.PRIV_OPER_GBN,':',1,4) - INSTR(T01.PRIV_OPER_GBN,':',1,3)-1)) AS D_AUTH,
+			           MAX(SUBSTR(T01.PRIV_OPER_GBN,INSTR(T01.PRIV_OPER_GBN,':',1,4) + 1)) AS E_AUTH
+			      FROM PEN_SYS_PRIV_MENU_R T01 
+			      JOIN MENU_GRP T02 ON (
+			            T01.PRIV_RCVR_GBN = T02.PRIV_RCVR_GBN
+			       AND T01.PRIV_RCVR_ID = T02.USER_GRP_ID
+			      )
+	              WHERE T01.APP_ID = #{appId}
+			      GROUP BY T01.APP_ID, T01.MENU_ID
+			)
+	        SELECT * FROM MENU_AUTH
+        	UNION ALL 
+        	SELECT 
+        		APP_ID, MENU_ID,
+        		MAX(SUBSTR(T03.PRIV_OPER_GBN, 1, INSTR(T03.PRIV_OPER_GBN,':',1,1)-1)) AS C_AUTH,
+				MAX(SUBSTR(T03.PRIV_OPER_GBN,INSTR(T03.PRIV_OPER_GBN,':',1,1) +1, INSTR(T03.PRIV_OPER_GBN,':',1,2) - INSTR(T03.PRIV_OPER_GBN,':',1,1)-1)) AS R_AUTH,
+				MAX(SUBSTR(T03.PRIV_OPER_GBN,INSTR(T03.PRIV_OPER_GBN,':',1,2) + 1, INSTR(T03.PRIV_OPER_GBN,':',1,3) - INSTR(T03.PRIV_OPER_GBN,':',1,2)-1)) AS U_AUTH,
+				MAX(SUBSTR(T03.PRIV_OPER_GBN,INSTR(T03.PRIV_OPER_GBN,':',1,3) + 1, INSTR(T03.PRIV_OPER_GBN,':',1,4) - INSTR(T03.PRIV_OPER_GBN,':',1,3)-1)) AS D_AUTH,
+				MAX(SUBSTR(T03.PRIV_OPER_GBN,INSTR(T03.PRIV_OPER_GBN,':',1,4) + 1)) AS E_AUTH
+			FROM 
+			(
+	        	SELECT 
+	        		APP_ID, MENU_ID, 'N:N:N:N:N' AS PRIV_OPER_GBN 
+	        	FROM PEN_MENU_M T03
+        	) T03
+        	WHERE T03.APP_ID = #{appId}
+       		AND T03.MENU_ID NOT IN (SELECT MENU_ID FROM MENU_AUTH) 
+			GROUP BY T03.APP_ID, T03.MENU_ID
+		) WHERE MENU_ID = #{menuId}
+     </select>
+    
+	<select id="findObjM" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		SELECT OBJ_TYPE_ID
+		     , OBJ_ID
+		     , ADM_OBJ_ID
+		     , OBJ_NM
+		     , OBJ_ABBR_NM
+		FROM PEN_OBJ_M 
+		WHERE OBJ_TYPE_ID = #{objTypeId}
+		AND DEL_YN = 'N'
+		<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(ord)'>
+			ORDER BY ${ord}
+		</if>
+		<if test='!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(ord)'>
+			ORDER BY OBJ_NM
+		</if>
+    </select>
+    <select id="findBrType" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		SELECT T102.OBJ_TYPE_ID
+		     , T102.OBJ_TYPE_NM
+		FROM  PEN_REL_TYPE_M T101
+		INNER JOIN PEN_OBJ_TYPE_M T102
+		ON (
+		    T101.REL_OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+		)
+		WHERE T101.OBJ_TYPE_ID = '030103L'
+		AND T101.META_REL_CD = 'IR'
+		AND T101.ATR_ADM_CD = 1
+		AND T101.DEL_YN = 'N'
+		AND T102.DEL_YN = 'N'
+		ORDER BY T102.OBJ_TYPE_ID  
+	</select>  
+	<select id="findBrQltyChrgr" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		SELECT DISTINCT CASE WHEN OBJ_ATR_VAL IS NULL THEN '[담당자없음]' ELSE OBJ_ATR_VAL END AS QLTY_CHRGR
+		FROM PEN_OBJ_D
+		WHERE OBJ_TYPE_ID = '030103L'
+		AND ATR_ID_SEQ = 103
+		ORDER BY CASE WHEN QLTY_CHRGR = '[담당자없음]' THEN NULL ELSE QLTY_CHRGR END
+	</select>  
+	<select id="findBrGrpQltyChrgr" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		SELECT DISTINCT CASE WHEN OBJ_ATR_VAL IS NULL THEN '[담당자없음]' ELSE OBJ_ATR_VAL END AS QLTY_CHRGR
+		FROM PEN_OBJ_D
+		WHERE OBJ_TYPE_ID = '030199L'
+		AND ATR_ID_SEQ = 102
+		ORDER BY CASE WHEN QLTY_CHRGR = '[담당자없음]' THEN NULL ELSE QLTY_CHRGR END
+	</select>
+	<select id="findCd" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		SELECT T101.CD_GRP_ID
+		     , T101.CD_ID
+		     , T101.CD_NM
+		FROM PEN_CD_M T101
+		WHERE T101.CD_GRP_ID = #{cdGrpId}
+		AND T101.DEL_YN = 'N'
+		AND T101.USE_YN = 'Y'
+		ORDER BY T101.SORT_NO
+	</select>
+	
+	<select id="findMenuAccessLoggingMap" resultType="kr.co.penta.dataeye.spring.web.filter.utils.FilterMenuEntity">
+		SELECT MENU_ID AS "menuId"
+		     , MENU_NM AS "menuNm"
+		     , 'portal/view' AS "url"
+		     , PGM_ID AS "viewId"
+		     , '' AS "queryStr"
+		FROM PEN_MENU_M
+	   WHERE DEL_YN = 'N'
+		 AND USE_YN = 'Y'
+		 AND MENU_TYPE != 'FOLDER'
+	</select>
+	
+	<select id="helpMenuList" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		SELECT    OBJ_TYPE_ID
+			    , OBJ_ID
+			    , PATH_OBJ_ID
+			    , OBJ_NM
+			    , LEVEL AS LVL
+			    ,CONNECT_BY_ISLEAF AS LEAF
+			  FROM PEN_OBJ_M 
+			 WHERE OBJ_TYPE_ID IN ('901001L','901002L')
+			 START WITH PATH_OBJ_ID IS NULL 
+			 CONNECT BY PRIOR  OBJ_ID=PATH_OBJ_ID
+	</select>
+	
+	<select id="helpMenuView" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		SELECT  M.OBJ_TYPE_ID
+		        ,M.OBJ_ID
+		        ,M.OBJ_NM
+		        ,D1.OBJ_ATR_VAL AS ATTACH_FILE_NAME
+		        ,D12.OBJ_ATR_VAL AS ATTACH_ORG_NAME
+		        ,D13.OBJ_ATR_VAL AS ATTACH_SIZE
+		        ,D14.OBJ_ATR_VAL AS ATTACH_FILE_TYPE
+		        ,D15.OBJ_ATR_VAL AS ATTACH_FILE_PATH
+		        ,D2.OBJ_ATR_VAL AS HTML_FILE_NAME
+		        ,D22.OBJ_ATR_VAL AS HTML_ORG_NAME
+		        ,D23.OBJ_ATR_VAL AS HTML_SIZE
+		        ,D24.OBJ_ATR_VAL AS HTML_FILE_TYPE
+		        ,D25.OBJ_ATR_VAL AS HTML_FILE_PATH        
+		        ,D3.OBJ_ATR_VAL AS URL_ADDR
+		        ,D4.OBJ_ATR_VAL AS SAVE_LOCATION
+		   FROM PEN_OBJ_M M
+		  LEFT OUTER JOIN PEN_OBJ_D D1 ON(M.OBJ_TYPE_ID = D1.OBJ_TYPE_ID AND M.OBJ_ID=D1.OBJ_ID AND D1.ATR_ID_SEQ=101 AND D1.ATR_VAL_SEQ=101)  
+		  LEFT OUTER JOIN PEN_OBJ_D D12 ON(M.OBJ_TYPE_ID = D12.OBJ_TYPE_ID AND M.OBJ_ID=D12.OBJ_ID AND D12.ATR_ID_SEQ=101 AND D12.ATR_VAL_SEQ=102)  
+		  LEFT OUTER JOIN PEN_OBJ_D D13 ON(M.OBJ_TYPE_ID = D13.OBJ_TYPE_ID AND M.OBJ_ID=D13.OBJ_ID AND D13.ATR_ID_SEQ=101 AND D13.ATR_VAL_SEQ=103)  
+		  LEFT OUTER JOIN PEN_OBJ_D D14 ON(M.OBJ_TYPE_ID = D14.OBJ_TYPE_ID AND M.OBJ_ID=D14.OBJ_ID AND D14.ATR_ID_SEQ=101 AND D14.ATR_VAL_SEQ=104)  
+		  LEFT OUTER JOIN PEN_OBJ_D D15 ON(M.OBJ_TYPE_ID = D15.OBJ_TYPE_ID AND M.OBJ_ID=D15.OBJ_ID AND D15.ATR_ID_SEQ=101 AND D15.ATR_VAL_SEQ=105)  
+		  LEFT OUTER JOIN PEN_OBJ_D D2 ON(M.OBJ_TYPE_ID = D2.OBJ_TYPE_ID AND M.OBJ_ID=D2.OBJ_ID AND D2.ATR_ID_SEQ=102 AND D2.ATR_VAL_SEQ=101)  
+		  LEFT OUTER JOIN PEN_OBJ_D D22 ON(M.OBJ_TYPE_ID = D22.OBJ_TYPE_ID AND M.OBJ_ID=D22.OBJ_ID AND D22.ATR_ID_SEQ=102 AND D22.ATR_VAL_SEQ=102)  
+		  LEFT OUTER JOIN PEN_OBJ_D D23 ON(M.OBJ_TYPE_ID = D23.OBJ_TYPE_ID AND M.OBJ_ID=D23.OBJ_ID AND D23.ATR_ID_SEQ=102 AND D23.ATR_VAL_SEQ=103)  
+		  LEFT OUTER JOIN PEN_OBJ_D D24 ON(M.OBJ_TYPE_ID = D24.OBJ_TYPE_ID AND M.OBJ_ID=D24.OBJ_ID AND D24.ATR_ID_SEQ=102 AND D24.ATR_VAL_SEQ=104)  
+		  LEFT OUTER JOIN PEN_OBJ_D D25 ON(M.OBJ_TYPE_ID = D25.OBJ_TYPE_ID AND M.OBJ_ID=D25.OBJ_ID AND D25.ATR_ID_SEQ=102 AND D25.ATR_VAL_SEQ=105)  
+		  LEFT OUTER JOIN PEN_OBJ_D D3 ON(M.OBJ_TYPE_ID = D3.OBJ_TYPE_ID AND M.OBJ_ID=D3.OBJ_ID AND D3.ATR_ID_SEQ=103 AND D3.ATR_VAL_SEQ=101)  
+		  LEFT OUTER JOIN PEN_OBJ_D D4 ON(M.OBJ_TYPE_ID = D4.OBJ_TYPE_ID AND M.OBJ_ID=D4.OBJ_ID AND D4.ATR_ID_SEQ=104 AND D4.ATR_VAL_SEQ=101)  
+	  WHERE M.OBJ_TYPE_ID='901002L'
+	   AND M.OBJ_ID=#{objId}
+	   AND M.PATH_OBJ_TYPE_ID='901001L'
+	   
+	</select>
+	
+	<select id="basicQueryMenuList" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		SELECT    OBJ_TYPE_ID
+			    , OBJ_ID
+			    , PATH_OBJ_ID
+			    , OBJ_NM
+			    , LEVEL AS LVL
+			    ,CONNECT_BY_ISLEAF AS LEAF
+			  FROM PEN_OBJ_M 
+			 WHERE OBJ_TYPE_ID IN ('090101L','090102L')
+			 START WITH PATH_OBJ_ID IS NULL 
+			 CONNECT BY PRIOR  OBJ_ID=PATH_OBJ_ID
+	</select>
+	
+	<select id="basicQueryMenuView" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		SELECT  M.OBJ_TYPE_ID
+		        ,M.OBJ_ID
+		        ,M.OBJ_NM
+		        ,M.OBJ_DESC
+		        ,CASE 
+		        	WHEN D1.CNCT_ATR_YN = 'Y' THEN
+		        		(
+		        			SELECT 
+								SUBSTR(
+							        XMLAGG(
+							            XMLELEMENT(COL ,' ', OBJ_ATR_VAL) ORDER BY ATR_VAL_SEQ).EXTRACT('//text()'
+							        ).GETCLOBVAL()
+							       , 0)	
+		        			FROM PEN_OBJ_D WHERE OBJ_TYPE_ID = M.OBJ_TYPE_ID AND OBJ_ID = M.OBJ_ID AND ATR_ID_SEQ=105
+		        		)
+		        	ELSE
+		        		TO_CLOB((SELECT OBJ_ATR_VAL FROM PEN_OBJ_D WHERE OBJ_TYPE_ID = M.OBJ_TYPE_ID AND OBJ_ID = M.OBJ_ID AND ATR_ID_SEQ=105 AND ATR_VAL_SEQ=101))
+		        	END
+		        AS QUERY_VALUE
+		        ,CASE 
+		        	WHEN D2.CNCT_ATR_YN = 'Y' THEN
+		        		(
+		        			SELECT 
+								SUBSTR(
+							        XMLAGG(
+							            XMLELEMENT(COL ,' ', OBJ_ATR_VAL) ORDER BY ATR_VAL_SEQ).EXTRACT('//text()'
+							        ).GETCLOBVAL()
+							       , 0)	
+		        			FROM PEN_OBJ_D WHERE OBJ_TYPE_ID = M.OBJ_TYPE_ID AND OBJ_ID = M.OBJ_ID AND ATR_ID_SEQ=106
+		        		)
+		        	ELSE
+		        		TO_CLOB((SELECT OBJ_ATR_VAL FROM PEN_OBJ_D WHERE OBJ_TYPE_ID = M.OBJ_TYPE_ID AND OBJ_ID = M.OBJ_ID AND ATR_ID_SEQ=106 AND ATR_VAL_SEQ=101))
+		        	END
+		        AS QUERY_DESC
+		   FROM PEN_OBJ_M M
+		  LEFT OUTER JOIN PEN_OBJ_TYPE_ATR_D D1 ON(M.OBJ_TYPE_ID = D1.OBJ_TYPE_ID AND D1.ATR_ID_SEQ=105)
+		  LEFT OUTER JOIN PEN_OBJ_TYPE_ATR_D D2 ON(M.OBJ_TYPE_ID = D2.OBJ_TYPE_ID AND D2.ATR_ID_SEQ=106)  
+	  WHERE M.OBJ_TYPE_ID='090102L'
+	   AND M.OBJ_ID=#{objId}
+	   AND M.PATH_OBJ_TYPE_ID='090101L'
+	</select>
+	
+	
+	
+	
+	
+	
+</mapper>

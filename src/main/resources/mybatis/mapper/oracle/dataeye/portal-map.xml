@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="portal">
+    <select id="getAuthMenu" resultType="kr.co.penta.dataeye.common.entities.PortalMenuEntity" >
+ 		WITH GRP AS (
+		    SELECT USER_GRP_ID,
+		           USER_ID
+		      FROM PEN_SYS_GRP_USER_R
+		     WHERE USER_ID = #{sessionInfo.userId}
+		),
+		MENU_GRP AS (
+		    SELECT 'G' AS PRIV_RCVR_GBN,
+		           T01.USER_GRP_ID
+		    FROM PEN_SYS_GRP_R T01 JOIN GRP T02 ON (T01.REL_USER_GRP_ID = T02.USER_GRP_ID)
+		    UNION ALL
+		    SELECT 'G' AS PRIV_RCVR_GBN,
+		           USER_GRP_ID
+		    FROM PEN_SYS_GRP_R
+		    WHERE REL_USER_GRP_ID = 'ALL'
+		    UNION ALL
+		    SELECT DISTINCT 'U' AS PRIV_RCVR_GBN,
+		           GRP.USER_ID AS ROLE_ID
+		    FROM GRP
+		),
+		MENU_AUTH AS (
+		    SELECT T01.APP_ID AS APP_ID,
+		           T01.MENU_ID AS MENU_ID,
+		           MAX(SUBSTR(T01.PRIV_OPER_GBN, 1, INSTR(T01.PRIV_OPER_GBN,':',1,1)-1)) AS C_AUTH,
+		           MAX(SUBSTR(T01.PRIV_OPER_GBN,INSTR(T01.PRIV_OPER_GBN,':',1,1) +1,
+		           INSTR(T01.PRIV_OPER_GBN,':',1,2) - INSTR(T01.PRIV_OPER_GBN,':',1,1)-1)) AS R_AUTH,
+		           MAX(SUBSTR(T01.PRIV_OPER_GBN,INSTR(T01.PRIV_OPER_GBN,':',1,2) + 1,
+		           INSTR(T01.PRIV_OPER_GBN,':',1,3) - INSTR(T01.PRIV_OPER_GBN,':',1,2)-1)) AS U_AUTH,
+		           MAX(SUBSTR(T01.PRIV_OPER_GBN,INSTR(T01.PRIV_OPER_GBN,':',1,3) + 1,
+		           INSTR(T01.PRIV_OPER_GBN,':',1,4) - INSTR(T01.PRIV_OPER_GBN,':',1,3)-1)) AS D_AUTH,
+		           MAX(SUBSTR(T01.PRIV_OPER_GBN,INSTR(T01.PRIV_OPER_GBN,':',1,4) + 1)) AS E_AUTH
+		      FROM PEN_SYS_PRIV_MENU_R T01 
+		      JOIN MENU_GRP T02 ON (
+		            T01.PRIV_RCVR_GBN = T02.PRIV_RCVR_GBN
+		        AND T01.PRIV_RCVR_ID = T02.USER_GRP_ID
+		      )
+		      GROUP BY T01.APP_ID, T01.MENU_ID
+		),
+		MENU_AUTH_PATH AS (
+		    SELECT T01.APP_ID ,
+		           T01.MENU_ID ,
+		           T01.ICON_CLASS ,
+		           T01.UP_MENU_ID ,
+		           T01.MENU_NM ,
+           		   T01.MENU_TYPE,
+		           LEVEL AS LEV ,
+		           T04.C_AUTH ,
+		           T04.R_AUTH ,
+		           T04.U_AUTH ,
+		           T04.D_AUTH ,
+		           T04.E_AUTH ,
+		           SUBSTR(SYS_CONNECT_BY_PATH(T01.MENU_ID,'|'),2) AS PATH
+		      FROM PEN_MENU_M T01 
+		      LEFT OUTER JOIN MENU_AUTH T04 
+		      ON (
+		            T01.MENU_ID = T04.MENU_ID
+		        AND T01.APP_ID = T04.APP_ID
+		      )
+		      WHERE T01.DEL_YN = 'N'
+		      AND T01.USE_YN = 'Y' 
+		      CONNECT BY PRIOR T01.UP_MENU_ID = T01.MENU_ID 
+		      START WITH T04.MENU_ID IS NOT NULL
+		) ,
+		ALL_MENU AS (
+		    SELECT T01.APP_ID ,
+		           T01.MENU_ID ,
+		           T01.ICON_CLASS ,
+		           T01.UP_MENU_ID ,
+		           T01.MENU_NM ,
+		           T01.PGM_ID AS SCREEN_ID ,
+		           LEVEL AS LEV ,
+		           T01.MENU_TYPE ,
+		           T01.PGM_ID ,
+		           T01.SORT_NO ,
+		           T01.USE_YN AS MENU_USE_YN ,
+		           T01.MENU_GRP_CD AS MENU_GRP_CD ,
+		           SUBSTR(SYS_CONNECT_BY_PATH(T01.MENU_ID,'|'),2) AS PATH,
+		           SUBSTR(SYS_CONNECT_BY_PATH(LPAD(T01.SORT_NO,3,'0'),'|'),2) AS CONCAT_SORT_NO ,
+		           NVL(REGEXP_SUBSTR(SUBSTR(SYS_CONNECT_BY_PATH(LPAD(T01.SORT_NO,3,'0'),'|'),2),'[^|]+',1,1),'000') AS SORT1 ,
+		           NVL(REGEXP_SUBSTR(SUBSTR(SYS_CONNECT_BY_PATH(LPAD(T01.SORT_NO,3,'0'),'|'),2),'[^|]+',1,2),'000') AS SORT2 ,
+		           NVL(REGEXP_SUBSTR(SUBSTR(SYS_CONNECT_BY_PATH(LPAD(T01.SORT_NO,3,'0'),'|'),2),'[^|]+',1,3),'000') AS SORT3 ,
+		           NVL(REGEXP_SUBSTR(SUBSTR(SYS_CONNECT_BY_PATH(LPAD(T01.SORT_NO,3,'0'),'|'),2),'[^|]+',1,4),'000') AS SORT4 ,
+		           NVL(REGEXP_SUBSTR(SUBSTR(SYS_CONNECT_BY_PATH(LPAD(T01.SORT_NO,3,'0'),'|'),2),'[^|]+',1,5),'000') AS SORT5
+		      FROM PEN_MENU_M T01
+		     WHERE T01.DEL_YN = 'N'
+		     AND T01.USE_YN = 'Y'
+		     AND T01.APP_ID = #{appId} 
+		     CONNECT BY PRIOR T01.MENU_ID = T01.UP_MENU_ID 
+		     START WITH T01.UP_MENU_ID IS NULL
+		)
+		SELECT DISTINCT T01.MENU_GRP_CD AS "menuGrpCd",
+		    T01.MENU_ID AS "menuId" ,
+		    T01.ICON_CLASS AS "iconClass" ,
+		    T01.MENU_NM AS "menuNm" ,
+    		T01.MENU_TYPE AS "menuType",
+		    T01.PGM_ID AS "viewId" ,
+		    T01.UP_MENU_ID AS "upMenuId" ,
+		    T01.SORT_NO AS "sortNo" ,
+		    T01.SCREEN_ID AS "screenId" ,
+		    'Y' AS MENU_VIEW_YN ,
+		    T02.C_AUTH ,
+		    T02.R_AUTH ,
+		    T02.U_AUTH ,
+		    T02.D_AUTH ,
+		    T02.E_AUTH ,
+		    T01.SORT1 ,
+		    T01.SORT2 ,
+		    T01.SORT3 ,
+		    T01.SORT4
+		FROM ALL_MENU T01 
+		JOIN MENU_AUTH_PATH T02 
+		ON (
+		    T01.APP_ID = T02.APP_ID
+		    AND T01.MENU_ID = T02.MENU_ID
+		)
+		ORDER BY T01.SORT1 ,
+		    T01.SORT2,
+		    T01.SORT3,
+		    T01.SORT4
+    </select>
+</mapper>

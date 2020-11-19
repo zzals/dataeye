@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="system.user">
+    <select id="isExistUser" resultType="int">
+        SELECT COUNT(1)
+        FROM PEN_USER_M T101
+        WHERE T101.USER_ID = #{userId}
+    </select>
+    <!--  <select id="getUser" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        SELECT USER_ID,
+			   USER_NM,
+			   '' AS EX_DEPT_NAME,
+			   '' AS EX_LGT_PSTN_DV_NM,
+			   '' AS EMAIL_ADDR,HP_NO  
+		FROM PEN_USER_M
+
+   </select>-->
+   <select id="getUser" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+       SELECT F1.USER_ID                  AS USER_ID,
+			  F1.USER_NM                  AS USER_NM,
+		      (SELECT DISTINCT F2.ORG_NM FROM PEN_ORG_M F2 WHERE  F2.ORG_ID=F1.ORG_ID)   AS ORG_NM,
+			  F1.ORG_ID                   AS ORG_ID,
+			  F1.EMAIL_ADDR               AS EMAIL_ADDR,
+			  F1.TEL_NO                   AS TEL_NO,
+			  F1.HP_NO                    AS HP_NO,
+			  F1.ACCOUNT_NON_EXPIRED      AS ACCOUNT_NON_EXPIRED,
+			  F1.ACCOUNT_NON_LOCKED       AS ACCOUNT_NON_LOCKED,
+			  F1.CREDENTIALS_NON_EXPIRED  AS CREDENTIALS_NON_EXPIRED,
+			  F1.ACCOUNT_ENABLED          AS ACCOUNT_ENABLED,
+			  F1.LOGIN_FAIL_CNT           AS LOGIN_FAIL_CNT,
+			  F1.PASSWORD_LAST_CHG_DT     AS PASSWORD_LAST_CHG_DT,
+			  F1.LOGIN_LAST_DT            AS LOGIN_LAST_DT
+		FROM PEN_USER_M     F1
+	    <where>
+	           <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(userId)'>
+                   AND F1.USER_ID = #{userId}
+               </if>
+               <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+				<if test="searchKey == 'USER_ID'">
+					AND LOWER(F1.USER_ID) LIKE  LOWER('%'||#{searchValue}||'%')
+				</if>
+				<if test="searchKey == 'USER_NM'">
+					AND LOWER(F1.USER_NM) LIKE  LOWER('%'||#{searchValue}||'%')
+				</if>
+			</if>
+		</where>
+    </select>
+   
+    
+    <select id="getOrgNm" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        SELECT ORG_ID, ORG_NM, UP_ORG_ID, ORG_TYPE_CD, SORT_NO 
+		FROM PEN_ORG_M F1
+		WHERE DEL_YN='N'
+    </select>    
+    
+	<select id="getUserR" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		SELECT * FROM (
+			SELECT *
+			FROM PEN_USER_M T101
+			<where>
+                <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+					<if test="searchKey == 'USER_ID'">
+						AND LOWER(T101.USER_ID) LIKE  LOWER('%'||#{searchValue}||'%')
+					</if>
+					<if test="searchKey == 'USER_NM'">
+						AND LOWER(T101.USER_NM) LIKE  LOWER('%'||#{searchValue}||'%')
+					</if>
+				</if>
+			</where>
+		) T01
+		WHERE NOT EXISTS (
+			SELECT USER_ID FROM (
+				SELECT
+					T102.USER_ID
+				FROM PEN_SYS_USER_GRP_M T101
+					JOIN PEN_SYS_GRP_USER_R T102 ON (T101.USER_GRP_ID = T102.USER_GRP_ID)
+				WHERE T101.DEL_YN = 'N' AND T101.USER_GRP_ID = #{userGrpId}
+			) T02
+			WHERE T01.USER_ID = T02.USER_ID
+		)
+	</select>
+	
+    <select id="getSysUserGrpM" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        SELECT 
+            T101.*
+        FROM PEN_SYS_USER_GRP_M T101
+        <where>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(userGrpId)'>
+                AND T101.USER_GRP_ID = #{userGrpId}
+            </if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(userGrpType)'>
+                AND T101.USER_GRP_TYPE = #{userGrpType}
+            </if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(notUserGrpType)'>
+                AND T101.USER_GRP_TYPE != #{notUserGrpType}
+            </if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+                <if test="searchKey == 'USER_GRP_ID'">
+				    AND LOWER(T101.USER_GRP_ID) LIKE  LOWER('%'||#{searchValue}||'%')
+    			</if>
+    			<if test="searchKey == 'USER_GRP_NM'">
+    				AND LOWER(T101.USER_GRP_NM) LIKE  LOWER('%'||#{searchValue}||'%')
+    			</if>
+            </if> 
+        </where>
+        ORDER BY T101.USER_GRP_NM      
+    </select>
+    
+    <select id="getSysUserGrpM2" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        SELECT
+			T101.USER_GRP_ID, T101.USER_GRP_NM, T101.UP_USER_GRP_ID, T101.DEPTH, IS_LEAF
+		FROM 
+		(
+			SELECT 
+				USER_GRP_ID, USER_GRP_NM, NULL UP_USER_GRP_ID, 1 DEPTH, 'false' IS_LEAF
+			FROM PEN_SYS_USER_GRP_M WHERE USER_GRP_TYPE = 'ROLE'
+			AND USER_GRP_ID NOT IN ('PORTAL_ADMIN_ROLE','PORTAL_SYSTEM_ROLE')
+			UNION ALL
+			SELECT 
+				T01.USER_ID, T02.USER_NM, T01.USER_GRP_ID UP_USER_GRP_ID, 2 DEPTH, 'true' IS_LEAF
+			FROM PEN_SYS_GRP_USER_R T01
+			INNER JOIN PEN_USER_M T02 ON (T01.USER_ID = T02.USER_ID)
+		) T101
+		START WITH T101.UP_USER_GRP_ID IS NULL	
+		CONNECT BY PRIOR T101.USER_GRP_ID = T101.UP_USER_GRP_ID     
+    </select>
+    
+    <select id="getUserRoleForAuth" resultType="hashmap">
+        SELECT T101.*
+        FROM PEN_SYS_USER_GRP_M T101
+		WHERE T101.DEL_YN = 'N' 
+		  AND T101.USER_GRP_TYPE = 'ROLE'
+		  AND USER_GRP_ID NOT IN (
+		  		SELECT  A.USER_GRP_ID       
+				 FROM PEN_SYS_USER_GRP_M A
+				 INNER JOIN PEN_SYS_GRP_R B  ON A.USER_GRP_ID = B.REL_USER_GRP_ID
+				WHERE 1 = 1 
+				 AND B.USER_GRP_ID = #{userGrpId}				 
+		  )
+		  <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+			<if test="searchKey == 'USER_GRP_ID'">
+				AND LOWER(T101.USER_GRP_ID) LIKE  LOWER('%'||#{searchValue}||'%')
+			</if>
+			<if test="searchKey == 'USER_GRP_NM'">
+				AND LOWER(T101.USER_GRP_NM) LIKE  LOWER('%'||#{searchValue}||'%')
+			</if>
+		</if>
+    </select>
+
+     <select id="getUserAuth" resultType="hashmap">
+        SELECT T101.*
+        FROM PEN_SYS_USER_GRP_M T101
+		WHERE T101.DEL_YN = 'N' 
+		   AND T101.USER_GRP_TYPE IN ('FUNC_ACCESS','OBJ_FILTER')
+		<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(keyVal)'>
+			AND T101.USER_GRP_ID = #{keyVal}
+		</if>
+		<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+			<if test="searchKey == 'ID'">
+				AND LOWER(T101.USER_GRP_ID) LIKE  LOWER('%'||#{searchValue}||'%')
+			</if>
+			<if test="searchKey == 'NAME'">
+				AND LOWER(T101.USER_GRP_NM) LIKE  LOWER('%'||#{searchValue}||'%')
+			</if>
+		</if>
+    </select>
+
+	<select id="getGrp" resultType="hashmap">
+		SELECT T101.*
+		FROM PEN_SYS_USER_GRP_M T101
+		WHERE T101.DEL_YN = 'N' AND T101.USER_GRP_TYPE IN ('FUNC_ACCESS', 'OBJ_FILTER')
+		<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(keyVal)'>
+			AND T101.USER_GRP_ID = #{keyVal}
+		</if>
+		<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+			<if test="searchKey == 'ID'">
+				AND LOWER(T101.USER_GRP_ID) LIKE  LOWER('%'||#{searchValue}||'%')
+			</if>
+			<if test="searchKey == 'NAME'">
+				AND LOWER(T101.USER_GRP_NM) LIKE  LOWER('%'||#{searchValue}||'%')
+			</if>
+		</if>
+	</select>
+
+	<select id="getUserRoleRel" resultType="hashmap">
+		SELECT
+			T101.USER_GRP_ID        AS USER_GRP_ID,
+			T102.USER_ID            AS USER_ID,
+			T102.NAME               AS USER_NM,
+			T102.MOBILE             AS HP_NO,
+			T102.EMAIL              AS EMAIL_ADDR,
+			T102.EX_DEPT_NAME       AS EX_DEPT_NM,
+			T102.EX_LGT_PSTN_DV_NM  AS LG_PSTN_DV_NM
+		FROM PEN_SYS_USER_GRP_M T101
+			JOIN (
+				SELECT
+					T01.USER_GRP_ID,
+					T01.USER_ID,
+					T02.NAME,
+					T02.MOBILE,
+					T02.EMAIL,
+					T02.EX_DEPT_NAME,
+					T02.EX_LGT_PSTN_DV_NM
+				FROM PEN_SYS_GRP_USER_R T01
+					JOIN PTL_COM_USER T02 ON (T01.USER_ID = T02.USER_ID)
+			) T102 ON (T101.USER_GRP_ID = T102.USER_GRP_ID)
+		WHERE T101.DEL_YN = 'N' AND T101.USER_GRP_ID = #{keyVal}
+	</select>
+
+	<select id="getGrpRel" resultType="hashmap">
+		SELECT
+			T101.USER_GRP_ID        AS USER_GRP_ID,
+			T102.REL_USER_GRP_ID    AS REL_USER_GRP_ID,
+			T102.USER_GRP_NM        AS USER_GRP_NM,
+			T102.USER_GRP_DESC      AS USER_GRP_DESC,
+			T102.USER_GRP_TYPE      AS USER_GRP_TYPE
+		FROM PEN_SYS_USER_GRP_M T101
+			JOIN (
+				SELECT
+					T01.REL_USER_GRP_ID,
+					T02.USER_GRP_NM,
+					T02.USER_GRP_DESC,
+					T02.USER_GRP_TYPE
+				FROM PEN_SYS_GRP_R T01
+					JOIN PEN_SYS_USER_GRP_M T02 ON (T01.REL_USER_GRP_ID = T02.USER_GRP_ID)
+			) T102 ON (T101.USER_GRP_ID = T102.REL_USER_GRP_ID)
+		WHERE T101.DEL_YN = 'N' AND T101.USER_GRP_ID = #{keyVal}
+	</select>
+	
+	<select id="getRoleUser" resultType="hashmap">
+        SELECT    T103.USER_ID
+            , T103.USER_NM
+            , T103.TEL_NO
+            , T103.HP_NO
+		FROM PEN_SYS_USER_GRP_M T101
+	    INNER JOIN PEN_SYS_GRP_USER_R  T102 ON (T101.USER_GRP_ID = T102.USER_GRP_ID)
+	    INNER JOIN PEN_USER_M T103 ON (T102.USER_ID = T103.USER_ID)    
+		WHERE T101.DEL_YN = 'N' 
+		   AND T101.USER_GRP_ID = #{userGrpId}			   
+	</select>
+	
+	<select id="getAuthUser" resultType="hashmap">
+			SELECT   A.USER_GRP_ID
+				       ,A.USER_GRP_NM
+				       ,A.USER_GRP_DESC
+				 FROM PEN_SYS_USER_GRP_M A
+				 INNER JOIN PEN_SYS_GRP_R B  ON A.USER_GRP_ID = B.REL_USER_GRP_ID
+				WHERE 1 = 1 
+				 AND B.USER_GRP_ID = #{userGrpId}
+	</select>
+	
+
+    <select id="getUserGrpDupCnt" resultType="int">
+        SELECT
+            COUNT(*) CNT
+        FROM PEN_SYS_USER_GRP_M
+        WHERE USER_GRP_ID = #{userGrpId}
+    </select>
+
+    <update id="updateUserRole" parameterType="hashMap">
+        UPDATE PEN_SYS_USER_GRP_M SET
+            USER_GRP_NM = #{USER_GRP_NM, jdbcType=VARCHAR},
+            USER_GRP_DESC = #{USER_GRP_DESC, jdbcType=VARCHAR},
+            USE_YN = #{USE_YN, jdbcType=VARCHAR},
+            CHG_DT = CURRENT_TIMESTAMP,
+            CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR}
+        WHERE
+            USER_GRP_ID = #{USER_GRP_ID}
+    </update>
+
+    <delete id="deleteUserRole" parameterType="kr.co.penta.dataeye.common.entities.CamelMap">
+		{call
+        	declare
+        	begin
+        		DELETE FROM PEN_SYS_USER_GRP_M WHERE USER_GRP_ID = #{keyVal};
+            	DELETE FROM PEN_SYS_GRP_USER_R where USER_GRP_ID = #{keyVal};
+        	end
+    	}
+    </delete>
+    
+       <delete id="deleteUserAuth" parameterType="kr.co.penta.dataeye.common.entities.CamelMap">
+		{call
+        	declare
+        	begin
+        		DELETE FROM PEN_SYS_USER_GRP_M WHERE USER_GRP_ID = #{keyVal};
+            	DELETE FROM PEN_SYS_GRP_R where USER_GRP_ID = #{keyVal};
+        	end
+    	}
+    </delete>
+	
+	
+	<insert id="insertUserAuthRel" parameterType="hashMap">
+		INSERT INTO PEN_SYS_GRP_R
+		(
+			USER_GRP_ID,
+			REL_USER_GRP_ID,
+			DEL_YN,
+			CRET_DT,
+			CRETR_ID,
+			CHG_DT,
+			CHGR_ID
+		)
+		SELECT
+			#{keyVal} AS USER_GRP_ID,
+			USER_GRP_ID AS REL_USER_GRP_ID,
+			'N' AS DEL_YN,
+			CURRENT_TIMESTAMP AS CRET_DT,
+			#{sessionInfo.userId} AS CRETR_ID,
+			CURRENT_TIMESTAMP AS CHG_DT,
+			#{sessionInfo.userId} AS CHGR_ID
+		FROM PEN_SYS_USER_GRP_M
+		WHERE USER_GRP_ID IN
+		<foreach collection="data" item="item" index="index"  open="(" close=")" separator=",">
+			#{item.USER_GRP_ID}
+		</foreach>
+	</insert>
+
+	<delete id="deleteUserAuthRel" parameterType="kr.co.penta.dataeye.common.entities.CamelMap">
+		DELETE FROM PEN_SYS_GRP_R
+		WHERE USER_GRP_ID = #{keyVal}
+		AND REL_USER_GRP_ID IN
+		<foreach collection="data" item="item" index="index"  open="(" close=")" separator=",">
+			#{item.USER_GRP_ID}
+		</foreach>
+	</delete>
+    
+    <select id="getUserMenuGrp" resultType="hashmap" >		  
+	      SELECT A.APP_ID
+                   , B.USER_GRP_ID
+			       , B.USER_GRP_NM
+			       , A.PRIV_RCVR_GBN
+			       , A.PRIV_RCVR_ID
+                   , TRIM(REGEXP_SUBSTR(A.PRIV_OPER_GBN, '[^:]+',1,1)) AS C_AUTH
+            	   , TRIM(REGEXP_SUBSTR(A.PRIV_OPER_GBN, '[^:]+',1,2)) AS R_AUTH
+             	   , TRIM(REGEXP_SUBSTR(A.PRIV_OPER_GBN, '[^:]+',1,3)) AS U_AUTH
+                   , TRIM(REGEXP_SUBSTR(A.PRIV_OPER_GBN, '[^:]+',1,4)) AS D_AUTH
+                   , TRIM(REGEXP_SUBSTR(A.PRIV_OPER_GBN, '[^:]+',1,5)) AS E_AUTH             
+			       ,C.MENU_ID
+             	   ,C.MENU_NM
+			 FROM PEN_SYS_PRIV_MENU_R A
+				 INNER JOIN PEN_SYS_USER_GRP_M B ON(A.PRIV_RCVR_ID = B.USER_GRP_ID)
+				 INNER JOIN PEN_MENU_M C ON(A.MENU_ID = C.MENU_ID)
+			 WHERE PRIV_RCVR_GBN ='G'
+	            AND A.MENU_ID=#{menuId}
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+            	AND UPPER(B.USER_GRP_NM) LIKE UPPER('%'||#{searchValue}||'%')
+            </if>
+	</select>    
+    
+    <select id="getUserMenuUsr" resultType="hashmap" >						     
+				SELECT A.APP_ID
+                   , B.USER_ID
+                   , A.PRIV_RCVR_GBN
+                   , A.PRIV_RCVR_ID
+				   , B.USER_NM
+				   , TRIM(REGEXP_SUBSTR(A.PRIV_OPER_GBN, '[^:]+',1,1)) AS C_AUTH
+            	   , TRIM(REGEXP_SUBSTR(A.PRIV_OPER_GBN, '[^:]+',1,2)) AS R_AUTH
+             	   , TRIM(REGEXP_SUBSTR(A.PRIV_OPER_GBN, '[^:]+',1,3)) AS U_AUTH
+                   , TRIM(REGEXP_SUBSTR(A.PRIV_OPER_GBN, '[^:]+',1,4)) AS D_AUTH
+                   , TRIM(REGEXP_SUBSTR(A.PRIV_OPER_GBN, '[^:]+',1,5)) AS E_AUTH
+                   ,C.MENU_ID
+             	   ,C.MENU_NM
+				 FROM PEN_SYS_PRIV_MENU_R A
+					 INNER JOIN PEN_USER_M B ON(A.PRIV_RCVR_ID = B.USER_ID)
+					 INNER JOIN PEN_MENU_M C ON(A.MENU_ID = C.MENU_ID)
+				 WHERE PRIV_RCVR_GBN ='U'
+	         	   AND A.MENU_ID=#{menuId} 
+	         	    <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+		            	AND UPPER(B.USER_NM) LIKE UPPER('%'||#{searchValue}||'%')
+		            </if>
+    </select>
+    
+	<delete id="delMenuGrp" parameterType="hashMap">
+     		DELETE FROM PEN_SYS_PRIV_MENU_R 
+     		WHERE MENU_ID=#{menuId} 
+     		   AND PRIV_RCVR_GBN=#{privRcvrGbn}
+     		   AND PRIV_RCVR_ID IN
+
+     		   <foreach collection="privRcvrId" item="item" index="index"  open="(" close=")" separator=",">
+            		#{item}
+        	  </foreach>			
+	</delete>
+
+	<select id="getGrpList" resultType="hashmap" >
+		SELECT T101.USER_GRP_ID
+				, T101.USER_GRP_NM 
+		FROM PEN_SYS_USER_GRP_M T101
+		WHERE T101.USER_GRP_TYPE IN ('FUNC_ACCESS','OBJ_FILTER')
+        <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(notInMenuId)'>
+            AND T101.USER_GRP_ID NOT IN (
+                SELECT T102.PRIV_RCVR_ID FROM PEN_SYS_PRIV_MENU_R T102
+                WHERE T102.PRIV_RCVR_GBN = 'G'
+                AND T102.MENU_ID = #{notInMenuId}
+            )
+        </if>
+        ORDER BY T101.USER_GRP_NM
+    </select>
+    
+   	<select id="getMenuAuthGrpDetail" resultType="hashmap" >
+				SELECT   
+					 TRIM(REGEXP_SUBSTR(A.PRIV_OPER_GBN, '[^:]+',1,1)) AS C_AUTH
+            	   , TRIM(REGEXP_SUBSTR(A.PRIV_OPER_GBN, '[^:]+',1,2)) AS R_AUTH
+             	   , TRIM(REGEXP_SUBSTR(A.PRIV_OPER_GBN, '[^:]+',1,3)) AS U_AUTH
+                   , TRIM(REGEXP_SUBSTR(A.PRIV_OPER_GBN, '[^:]+',1,4)) AS D_AUTH
+                   , TRIM(REGEXP_SUBSTR(A.PRIV_OPER_GBN, '[^:]+',1,5)) AS E_AUTH
+                   ,PRIV_RCVR_ID
+             FROM PEN_SYS_PRIV_MENU_R A
+            WHERE A.MENU_ID = #{menuId}
+               AND A.PRIV_RCVR_ID = #{privRcvrId}
+    </select>
+    
+	<select id="getUserList" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		SELECT * FROM (
+			SELECT *
+			FROM PEN_USER_M T101
+			<where>
+				<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+					<if test="searchKey == 'USER_ID'">
+						AND LOWER(T101.USER_ID) LIKE  LOWER('%'||#{searchValue}||'%')
+					</if>
+					<if test="searchKey == 'USER_NM'">
+						AND LOWER(T101.USER_NM) LIKE  LOWER('%'||#{searchValue}||'%')
+					</if>
+				</if>
+			</where>
+		) T01
+		WHERE USER_ID NOT IN (			
+			SELECT PRIV_RCVR_ID				      
+				 FROM PEN_SYS_PRIV_MENU_R
+				 WHERE PRIV_RCVR_GBN ='U'		
+	         	   AND MENU_ID=#{menuId}
+		)
+	</select>
+
+    <select id="getSysGrpRCnt" resultType="int">
+        SELECT COUNT(1)
+        FROM PEN_SYS_GRP_R T101
+        <where>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(userGrpId)'>
+                AND T101.USER_GRP_ID = #{userGrpId}
+            </if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(relUserGrpId)'>
+                AND T101.REL_USER_GRP_ID = #{relUserGrpId}
+            </if>
+        </where>
+    </select>
+    <select id="getSysGrpUserRCnt" resultType="int">
+        SELECT COUNT(1)
+        FROM PEN_SYS_GRP_USER_R T101
+        <where>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(userGrpId)'>
+                AND T101.USER_GRP_ID = #{userGrpId}
+            </if>
+        </where>
+    </select>
+    <select id="checkSysGrpUserRCnt" resultType="int">
+        SELECT COUNT(1) 
+        FROM PEN_SYS_GRP_USER_R
+        WHERE USER_ID = #{userId} 
+        AND USER_GRP_ID = #{userGrpId}
+    </select>
+    
+    <select id="addAuthList" resultType="kr.co.penta.dataeye.common.entities.CamelMap">		
+			 SELECT AUTH_ID
+			       ,AUTH_NM
+			       ,AUTH_DESC
+			       ,AUTH_DIV
+			       ,DECODE(AUTH_DIV,'G','그룹','U','사용자') AS AUTH_DIV_NM
+							FROM (
+							    SELECT 
+							            USER_GRP_ID AS AUTH_ID
+							            ,USER_GRP_NM AS AUTH_NM
+			                            ,USER_GRP_DESC AS AUTH_DESC
+							            ,'G' AS AUTH_DIV
+							        FROM PEN_SYS_USER_GRP_M
+							        WHERE USER_GRP_TYPE !='ROLE'
+							          AND USER_GRP_ID NOT IN (            
+							             SELECT PRIV_RCVR_ID FROM  PEN_SYS_PRIV_OBJ_R
+							            WHERE OBJ_TYPE_ID=#{objTypeId} 
+				               			  AND OBJ_ID = #{objId} 
+							          )
+							    UNION ALL         
+							    SELECT USER_ID  AS AUTH_ID
+							         ,USER_NM  AS AUTH_NM
+			                         ,EMAIL_ADDR AS AUTH_DESC
+							         ,'U' AS AUTH_DIV
+							    FROM  PEN_USER_M
+							    WHERE USER_ID NOT IN (            
+							             SELECT PRIV_RCVR_ID FROM  PEN_SYS_PRIV_OBJ_R
+							           WHERE OBJ_TYPE_ID=#{objTypeId} 
+				             		     AND OBJ_ID = #{objId} 
+							          )
+				)
+			<where>
+				<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+					<if test="searchKey == 'AUTH_ID'">
+						AND LOWER(AUTH_ID) LIKE  LOWER('%'||#{searchValue}||'%')
+					</if>
+					<if test="searchKey == 'AUTH_NM'">
+						AND LOWER(AUTH_NM) LIKE  LOWER('%'||#{searchValue}||'%')
+					</if>
+				</if>
+			</where>
+ 
+	</select>
+	
+	<insert id="addObjAuth" parameterType="hashMap">
+		INSERT INTO PEN_SYS_PRIV_OBJ_R
+		(
+			OBJ_TYPE_ID,
+			OBJ_ID,
+			PRIV_RCVR_GBN,
+			PRIV_RCVR_ID,
+			DEL_YN,
+			CRET_DT,
+			CRETR_ID,
+			CHG_DT,
+			CHGR_ID,
+			PRIV_OPER_GBN
+		)
+		VALUES (#{OBJ_TYPE_ID},#{OBJ_ID},#{PRIV_RCVR_GBN},#{PRIV_RCVR_ID},'Y',sysdate,#{sessionInfo.userId},sysdate,#{sessionInfo.userId},'D')
+		
+	</insert>
+	
+	<delete id="delObjAuth" parameterType="hashMap">	
+		DELETE 
+		FROM PEN_SYS_PRIV_OBJ_R
+		WHERE OBJ_TYPE_ID = #{OBJ_TYPE_ID}
+		  AND OBJ_ID = #{OBJ_ID}
+		  AND PRIV_RCVR_ID = #{PRIV_RCVR_ID}  
+	</delete>
+	
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="objreltype">
+    <select id="getObjRelType" resultType="kr.co.penta.dataeye.common.entities.CamelMap" >
+        SELECT T101.REL_TYPE_ID
+             , T101.DEL_YN
+             , T101.CRET_DT
+             , T101.CRETR_ID
+             , T101.CHG_DT
+             , T101.CHGR_ID
+             , T101.REL_TYPE_NM
+             , T101.DOWN_REL_TYPE_NM
+             , T101.UP_REL_TYPE_NM
+             , T101.REL_TYPE_DESC
+             , T101.OBJ_TYPE_ID
+             , T101.REL_OBJ_TYPE_ID
+             , T101.META_REL_CD
+             , T101.UP_REL_TYPE_ID AS PARENT_REL_TYPE_ID
+             , T102.REL_TYPE_NM AS PARENT_REL_TYPE_NM
+             , T101.ATR_ADM_CD
+             , CASE WHEN T101.ATR_ADM_CD = '0' THEN 'REL GROUP'
+                    WHEN T101.ATR_ADM_CD = '1' THEN 'REL'
+                    WHEN T101.ATR_ADM_CD = '2' THEN 'SQL POOL'
+             END AS ATR_ADM_NM
+        FROM PEN_REL_TYPE_M T101
+        LEFT OUTER JOIN PEN_REL_TYPE_M T102
+        ON (
+            T101.UP_REL_TYPE_ID = T102.REL_TYPE_ID
+        )
+        <where>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(sqlId)'>
+                AND T101.REL_TYPE_NM = #{sqlId}
+            </if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+                AND T101.${searchKey} LIKE  '%'||#{searchValue}||'%'
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PEN_OBJ_M">
+	<insert id="insert" parameterType="kr.co.penta.dataeye.common.entities.meta.PenObjM">
+		INSERT INTO PEN_OBJ_M
+		(
+			OBJ_TYPE_ID, 			OBJ_ID, 				DEL_YN, 				CRET_DT, 												CRETR_ID,
+			CHG_DT, 										CHGR_ID, 		ADM_OBJ_ID, 
+			OBJ_NM, 				OBJ_ABBR_NM, 										OBJ_DESC, 			PATH_OBJ_TYPE_ID, 											PATH_OBJ_ID
+		)
+		VALUES
+		(
+			#{OBJ_TYPE_ID, jdbcType=VARCHAR}, #{OBJ_ID, jdbcType=VARCHAR}, #{DEL_YN, jdbcType=CHAR}, 
+			<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRET_DT)'>
+				TO_TIMESTAMP(#{CRET_DT}, '${timestampFormat}'),
+			</if> 
+			<if test='!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRET_DT)'>
+				CURRENT_TIMESTAMP,
+			</if> 
+			<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRETR_ID)'>
+				#{CRETR_ID, jdbcType=VARCHAR},
+			</if> 
+			<if test='!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRETR_ID)'>
+				#{sessionInfo.userId, jdbcType=VARCHAR},
+			</if>
+			CURRENT_TIMESTAMP, #{sessionInfo.userId, jdbcType=VARCHAR}, #{ADM_OBJ_ID, jdbcType=VARCHAR}, #{OBJ_NM, jdbcType=VARCHAR}, #{OBJ_ABBR_NM, jdbcType=VARCHAR},
+			#{OBJ_DESC, jdbcType=VARCHAR}, #{PATH_OBJ_TYPE_ID, jdbcType=VARCHAR}, #{PATH_OBJ_ID, jdbcType=VARCHAR}
+		)
+	</insert>
+    <update id="update" parameterType="kr.co.penta.dataeye.common.entities.meta.PenObjM">
+        UPDATE PEN_OBJ_M
+        <set>
+            CHG_DT = CURRENT_TIMESTAMP,
+            CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR},
+            DEL_YN = #{DEL_YN, jdbcType=CHAR},
+            ADM_OBJ_ID = #{ADM_OBJ_ID, jdbcType=VARCHAR},
+            OBJ_NM = #{OBJ_NM, jdbcType=VARCHAR},
+            OBJ_ABBR_NM = #{OBJ_ABBR_NM, jdbcType=VARCHAR},
+            OBJ_DESC = #{OBJ_DESC, jdbcType=VARCHAR},
+            PATH_OBJ_TYPE_ID = #{PATH_OBJ_TYPE_ID, jdbcType=VARCHAR},
+            PATH_OBJ_ID = #{PATH_OBJ_ID, jdbcType=VARCHAR},
+        </set>
+        WHERE OBJ_TYPE_ID = #{objTypeId}
+          AND OBJ_ID = #{objId}
+    </update>
+	<delete id="remove" parameterType="hashMap">
+		DELETE FROM PEN_OBJ_M
+		WHERE
+		<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(objTypeId) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(objId)'>
+	  		    OBJ_TYPE_ID = #{objTypeId}
+		  	AND OBJ_ID = #{objId}
+		  	<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(pathObjTypeId)'>
+	  			AND PATH_OBJ_TYPE_ID = #{pathObjTypeId}
+	  		</if>
+	  		<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(pathObjId)'>
+	  			AND PATH_OBJ_ID = #{pathObjId}
+	  		</if>
+		</if>
+		<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(pathObjTypeId) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(pathObjId)'>
+	  		PATH_OBJ_TYPE_ID = #{pathObjTypeId}
+		  	AND PATH_OBJ_ID = #{pathObjId}
+		  	<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(objTypeId)'>
+	  			AND OBJ_TYPE_ID = #{objTypeId}
+	  		</if>
+	  		<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(objId)'>
+	  			AND OBJ_ID = #{objId}
+	  		</if>
+		</if><!-- 
+        <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(objTypeId) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(pathObjId)'>
+            OBJ_TYPE_ID = #{objTypeId}
+            AND PATH_OBJ_ID = #{pathObjId}
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(pathObjTypeId)'>
+                AND PATH_OBJ_TYPE_ID = #{pathObjTypeId}
+            </if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(objId)'>
+                AND OBJ_ID = #{objId}
+            </if>
+        </if> -->
+	</delete>
+	<update id="updateDelYn" parameterType="hashMap">
+		UPDATE PEN_OBJ_M
+		SET DEL_YN = 'Y',
+			CHG_DT = CURRENT_TIMESTAMP,
+			CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR}
+		WHERE OBJ_TYPE_ID = #{objTypeId}
+		  AND OBJ_ID = #{objId}
+	</update>
+</mapper>

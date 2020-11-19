@@ -1,0 +1,44 @@
+spring:
+  profiles: production
+  product:
+    name: dataeye
+  thymeleaf:
+    cache: false
+  view:
+    tiles-enabled: false
+
+  datasource:
+    dataeye-ds:
+      database-type: oracle
+      #url: jdbc:oracle:thin:@192.168.100.75:1521:DE
+      url: jdbc:oracle:thin:@localhost:1521:orcl
+      username: dataeye_ksoe
+      password: A9jChBPzE1WLAsBKXZXQWJYw+aEDRSp81+rTL2XWCQI=
+      driver-class-name: oracle.jdbc.driver.OracleDriver
+      test-while-idle: true
+      test-on-borrow: true
+      validation-query: SELECT 1 FROM DUAL
+      mybatis:
+        mapper-locations: classpath*:mybatis/mapper/oracle/dataeye/**/*.xml 
+        type-handlers-package: kr.co.penta.dataeye.spring.mybatis.typehandler.oracle
+        executor-type: batch
+        configuration:
+          map-underscore-to-camel-case: true
+          lazy-loading-enabled: true
+          call-setters-on-nulls: true
+
+server:
+  port: 8080
+  context-path: /dataeye_ebay
+  session:
+    timeout: 3600
+#    cookie:
+#      http-only: true
+#      secure: false
+  tomcat:
+    max-threads: 10
+    uri-encoding: UTF-8
+#management:
+#  port: 9001
+#  address: 127.0.0.1
+

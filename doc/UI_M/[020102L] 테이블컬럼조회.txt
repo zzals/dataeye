@@ -1,0 +1,143 @@
+##SCRIPT
+$(document).ready(function() {
+	var parentObj = opener || parent;
+	var reqParam = $("input#reqParam").data();
+    
+	var renderGrid = function($grid, $gridPager) {
+	    var colModel = [
+			{ index:'OBJ_NM', name: 'OBJ_NM', label: '컬럼물리명', width: 100, align:'left', 
+				formatter: "dynamicLink", 
+				formatoptions: {
+					onClick: function (rowid, irow, icol, cellvalue, e) {
+						var rowData = $(this).jqGrid("getRowData", rowid);
+						DE.ui.open.popup(
+							"view",
+							[rowData["OBJ_TYPE_ID"], rowData["OBJ_ID"]],
+							{
+								viewname:'common/metacore/objectInfoTab',
+								objTypeId:rowData["OBJ_TYPE_ID"],
+								objId:rowData["OBJ_ID"],
+								mode:'RO'
+							},
+							null
+						);
+					}
+				}
+			},
+			{ index:'OBJ_ABBR_NM', name: 'OBJ_ABBR_NM', label: '컬럼논리명', width: 100, align:'left'},
+			{ index:'COL_ORD', name: 'COL_ORD', label: '순번', width: 100, align:'left'},      	      
+			{ index:'DATA_TYPE', name: 'DATA_TYPE', label: '데이터타입', width: 100, align:'left'},      	      
+			{ index:'DATA_LEN', name: 'DATA_LEN', label: '길이', width: 70, align:'right'},      	      
+			{ index:'DATA_SCALE', name: 'DATA_SCALE', label: '소수점', width: 70, align:'right'},      	      
+			{ index:'NOT_NULL_YN', name: 'NOT_NULL_YN', label: 'NOT NULL 여부', width: 80, align:'center'},      	      
+			{ index:'PK_ORD', name: 'PK_ORD', label: 'PK순번', width: 80, align:'rigth'},      	      
+			{ index:'FK_YN', name: 'FK_YN', label: 'FK여부', width: 80, align:'center'},      	      
+			{ index:'DISTRIB_KEY_ORD', name: 'DISTRIB_KEY_ORD', label: '분산키순번', width: 80, align:'right'},      	      
+			{ index:'DEFAULT_VAL', name: 'DEFAULT_VAL', label: '디폴트값', width: 100, align:'left'},      	      
+			{ index:'OBJ_TYPE_ID', name: 'OBJ_TYPE_ID', label: 'OBJ_TYPE_ID', hidden:true},      	      
+			{ index:'OBJ_ID', name: 'OBJ_ID', label: 'OBJ_ID', hidden:true}
+		];
+		
+		var opts = {
+			"url":DE.contextPath+"/metacore/uiview?oper=execQueryByGrid",
+			"colModel":colModel,
+			pager:"#"+$gridPager.prop("id"),
+			isPaging:false,
+			loadonce: true,
+			multiselect: false,
+			scroll:-1,
+			autowidth:true,
+			shrinkToFit: true,
+			height:200,
+			isResize:false,
+			gridComplete: function() {
+				DE.jqgrid.checkedHandler($(this));
+			}
+		};
+			
+		var navOpts = {
+			navOptions:{
+				cloneToTop:false,
+				add:false,
+				del:false,
+				edit:false,
+				refresh:true,
+				search:false,
+				view:false
+			}
+		};
+		
+		DE.jqgrid.render($grid, opts);
+		DE.jqgrid.navGrid($grid, $gridPager, navOpts);
+	}
+
+	var init = function() {
+		renderGrid($("#jqGrid"), $("#jqGridPager"));
+		
+		var postData = {
+			"mode":reqParam["mode"],
+			"objTypeId":reqParam["objTypeId"],
+			"objId":reqParam["objId"],
+			"uiId":reqParam["uiId"],
+			"confSqlKey":"CONF_SQL1"
+		};
+
+		DE.jqgrid.reload($("#jqGrid"), postData);
+	};
+	init();
+
+	$(this).off("autoResize").on( "autoResize", function( event ) {
+		var winHeight = $(window).height();
+		var winWidth = $(window).width();
+		$("#jqGrid").setGridWidth(winWidth-30);
+		$("#jqGrid").setGridHeight(winHeight-90);
+	}).trigger("autoResize");
+});
+
+##QUERY
+ 	SELECT *
+	    FROM (
+	        SELECT  T101.OBJ_TYPE_ID ,
+			        T101.OBJ_ID ,
+			        T101.ADM_OBJ_ID ,
+			        T101.OBJ_NM ,
+	                T101.OBJ_ABBR_NM,
+			        T101.OBJ_DESC ,
+			        T104.OBJ_TYPE_ID AS TAB_OBJ_TYPE_ID,
+			        T104.OBJ_ID AS TAB_OBJ_ID,
+	                T104.OBJ_NM AS TAB_OBJ_NM,
+			        MAX(CASE WHEN T102.ATR_ID_SEQ = 101 THEN T102.OBJ_ATR_VAL END) AS COL_ORD,
+			        MAX(CASE WHEN T102.ATR_ID_SEQ = 102 THEN T102.OBJ_ATR_VAL END) AS DATA_TYPE,
+			        MAX(CASE WHEN T102.ATR_ID_SEQ = 103 THEN T102.OBJ_ATR_VAL END) AS DATA_LEN,
+			        MAX(CASE WHEN T102.ATR_ID_SEQ = 104 THEN T102.OBJ_ATR_VAL END) AS DATA_SCALE,
+			        MAX(CASE WHEN T102.ATR_ID_SEQ = 105 THEN T102.OBJ_ATR_VAL END) AS NOT_NULL_YN,
+			        MAX(CASE WHEN T102.ATR_ID_SEQ = 106 THEN T102.OBJ_ATR_VAL END) AS DEFAULT_VAL,
+			        MAX(CASE WHEN T102.ATR_ID_SEQ = 107 THEN T102.OBJ_ATR_VAL END) AS PK_ORD,
+			        MAX(CASE WHEN T102.ATR_ID_SEQ = 108 THEN T102.OBJ_ATR_VAL END) AS FK_YN,
+			        MAX(CASE WHEN T102.ATR_ID_SEQ = 111 THEN T102.OBJ_ATR_VAL END) AS DISTRIB_KEY_ORD
+			FROM    PEN_OBJ_M T101
+			LEFT OUTER JOIN PEN_OBJ_D T102
+			ON ( 
+			    T102.OBJ_TYPE_ID = T101.OBJ_TYPE_ID
+			    AND T102.OBJ_ID   = T101.OBJ_ID 
+			)
+	        LEFT OUTER JOIN PEN_OBJ_M T104
+	        ON (
+	            T101.PATH_OBJ_TYPE_ID = T104.OBJ_TYPE_ID
+	            AND T101.PATH_OBJ_ID = T104.OBJ_ID
+	        )
+			WHERE T101.DEL_YN = 'N'
+			AND T101.OBJ_TYPE_ID = '020104L'
+			AND T101.PATH_OBJ_TYPE_ID = #{objTypeId}
+			AND T101.PATH_OBJ_ID = #{objId}
+			GROUP BY T101.OBJ_TYPE_ID ,
+			        T101.OBJ_ID ,
+			        T101.ADM_OBJ_ID ,
+			        T101.OBJ_NM ,
+	                T101.OBJ_ABBR_NM,
+			        T101.OBJ_DESC,
+	                T104.OBJ_TYPE_ID,
+			        T104.OBJ_ID,
+	                T104.OBJ_NM
+		) T101
+	    ORDER BY TO_CHAR(COL_ORD, '0009')

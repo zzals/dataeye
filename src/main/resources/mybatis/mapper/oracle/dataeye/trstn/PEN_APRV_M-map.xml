@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PEN_APRV_M">
+    <insert id="insert" parameterType="kr.co.penta.dataeye.common.entities.meta.PenAprvM">
+        INSERT INTO PEN_APRV_M (
+            APRV_ID, DEL_YN, CRET_DT, CRETR_ID, CHG_DT, CHGR_ID, APRV_NM, APRV_DESC, APRV_TYPE_CD, APRV_REQR_ID
+            , APRV_REQR_CD, APRV_REQ_DT, LAST_LINE_ID, LAST_STUS_CD, APRV_OBJ_ID, APRV_LINK_ID, OBJ_TYPE_ID, OBJ_ID, APRV_ATR01_VAL
+        )
+        VALUES (
+            #{APRV_ID, jdbcType=VARCHAR}, #{DEL_YN, jdbcType=CHAR}
+        <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRET_DT)">
+            , TO_TIMESTAMP(#{CRET_DT}, '${timestampFormat}')
+        </if>
+        <if test="!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRET_DT)">
+            , CURRENT_TIMESTAMP
+        </if>
+        <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRETR_ID)">
+            , #{CRETR_ID, jdbcType=VARCHAR}
+        </if>
+        <if test="!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRETR_ID)">
+            , #{userId, jdbcType=VARCHAR}
+        </if>
+            , CURRENT_TIMESTAMP, #{userId, jdbcType=VARCHAR}, #{APRV_NM, jdbcType=VARCHAR}
+            , #{APRV_DESC, jdbcType=VARCHAR}, #{APRV_TYPE_CD, jdbcType=VARCHAR}
+        <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(APRV_REQR_ID)">
+            , #{APRV_REQR_ID, jdbcType=VARCHAR}
+        </if>
+        <if test="!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(APRV_REQR_ID)">
+            , #{userId, jdbcType=VARCHAR}
+        </if>
+            , #{APRV_REQR_CD, jdbcType=VARCHAR}
+        <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(APRV_REQ_DT)">
+            , TO_TIMESTAMP(#{APRV_REQ_DT}, '${timestampFormat}')
+        </if>
+        <if test="!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(APRV_REQ_DT)">
+            , CURRENT_TIMESTAMP
+        </if>
+            , #{LAST_LINE_ID, jdbcType=VARCHAR}, #{LAST_STUS_CD, jdbcType=VARCHAR}, #{APRV_OBJ_ID, jdbcType=VARCHAR}
+            , #{APRV_LINK_ID, jdbcType=VARCHAR}, #{OBJ_TYPE_ID, jdbcType=VARCHAR}, #{OBJ_ID, jdbcType=VARCHAR}
+            , #{APRV_ATR01_VAL, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="update" parameterType="kr.co.penta.dataeye.common.entities.meta.PenAprvM">
+        UPDATE PEN_APRV_M
+        <set>
+            CHG_DT = CURRENT_TIMESTAMP
+            , CHGR_ID = #{userId, jdbcType=VARCHAR}
+        <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(APRV_DESC)">
+            , APRV_DESC = #{APRV_DESC, jdbcType=VARCHAR}
+        </if>
+            , LAST_LINE_ID = #{LAST_LINE_ID, jdbcType=VARCHAR}
+        <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(LAST_STUS_CD)">
+            , LAST_STUS_CD = #{LAST_STUS_CD, jdbcType=VARCHAR}
+        </if>
+        </set>
+        WHERE APRV_ID = #{APRV_ID}
+    </update>
+
+    <delete id="delete" parameterType="hashMap">
+        DELETE FROM PEN_APRV_M WHERE APRV_ID = #{aprvId}
+    </delete>
+
+    <delete id="deleteAll" parameterType="hashMap">
+        {call
+            declare
+            begin
+                DELETE FROM PEN_APRV_M WHERE APRV_ID = #{aprvId};
+                DELETE FROM PEN_APRV_D WHERE APRV_ID = #{aprvId};
+            end
+        }
+    </delete>
+
+    <update id="delYn" parameterType="hashMap">
+        UPDATE PEN_APRV_M
+        <set>
+            DEL_YN = #{delYn, jdbcType=CHAR}
+            , CHG_DT = CURRENT_TIMESTAMP
+            , CHGR_ID = #{userId, jdbcType=VARCHAR}
+        </set>
+        WHERE APRV_ID = #{aprvId}
+    </update>
+
+    <insert id="approve" parameterType="hashMap">
+        INSERT INTO PEN_OBJ_M (
+            OBJ_TYPE_ID, OBJ_ID, DEL_YN, CRET_DT, CRETR_ID, CHG_DT, CHGR_ID, ADM_OBJ_ID
+            , OBJ_NM, OBJ_ABBR_NM, OBJ_DESC, PATH_OBJ_TYPE_ID, PATH_OBJ_ID
+        )
+        SELECT OBJ_TYPE_ID
+            , OBJ_ID
+            , DEL_YN
+            , CRET_DT
+            , CRETR_ID
+            , CHG_DT
+            , CHGR_ID
+            , ADM_OBJ_ID
+            , OBJ_NM
+            , OBJ_ABBR_NM
+            , OBJ_DESC
+            , PATH_OBJ_TYPE_ID
+            , PATH_OBJ_ID
+        FROM PEN_OBJ_M_T
+        WHERE APRV_ID = #{aprvId}
+    </insert>
+    <delete id="deleteByAprvId" parameterType="hashMap">
+        DELETE FROM PEN_APRV_M
+        WHERE APRV_ID = #{aprvId}
+    </delete>
+</mapper>

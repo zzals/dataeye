@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PEN_USER_M">
+	<insert id="copyInsert" parameterType="hashMap">
+		INSERT INTO PEN_USER_M
+        (
+            USER_ID,                    DEL_YN,             CRET_DT,                CRETR_ID,           CHG_DT,
+            CHGR_ID,                    USER_NM,            USER_PASSWORD,          TEL_NO,             HP_NO,
+            EMAIL_ADDR,                 ORG_ID,             ACCOUNT_NON_EXPIRED,    ACCOUNT_NON_LOCKED, CREDENTIALS_NON_EXPIRED,    
+            ACCOUNT_ENABLED,            LOGIN_FAIL_CNT,     PASSWORD_LAST_CHG_DT,   LOGIN_LAST_DT
+		)
+        SELECT T101.USER_ID
+           , 'N'
+           , CURRENT_TIMESTAMP
+           , #{sessionInfo.userId, jdbcType=VARCHAR}
+           , CURRENT_TIMESTAMP
+           , #{sessionInfo.userId, jdbcType=VARCHAR}
+           , T101.NAME
+           , #{userPassword, jdbcType=VARCHAR}
+           , T101.PHONE
+           , T101.MOBILE
+           , T101.EMAIL
+           , NULL
+           , 'Y'
+           , 'Y'
+           , 'Y'
+           , 'Y'
+           , 0
+           , CURRENT_TIMESTAMP
+           , NULL
+        FROM PTL_COM_USER T101
+        WHERE T101.USER_ID = #{userId}
+	</insert>
+    <update id="updatePwd" parameterType="hashmap">
+        UPDATE PEN_USER_M
+        <set>
+            CHG_DT = CURRENT_TIMESTAMP,
+            CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR},
+            USER_PASSWORD = #{userPassword, jdbcType=VARCHAR},
+            ACCOUNT_NON_EXPIRED = 'Y',
+            ACCOUNT_NON_LOCKED = 'Y',
+            CREDENTIALS_NON_EXPIRED = 'Y',
+            ACCOUNT_ENABLED = 'Y',
+            LOGIN_FAIL_CNT = 0,
+            PASSWORD_LAST_CHG_DT = CURRENT_TIMESTAMP
+        </set>
+        WHERE USER_ID = #{userId}
+    </update>
+    <update id="updateUserPwdM" parameterType="hashmap">
+        UPDATE PEN_USER_M
+        <set>
+            CHG_DT = CURRENT_TIMESTAMP,
+            CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR},
+            USER_PASSWORD = #{userPassword, jdbcType=VARCHAR},
+            LOGIN_FAIL_CNT = 0,
+            PASSWORD_LAST_CHG_DT = CURRENT_TIMESTAMP
+        </set>
+        WHERE USER_ID = #{sessionInfo.userId, jdbcType=VARCHAR}
+    </update>
+    <update id="updateAccountAuth" parameterType="hashmap">
+        UPDATE PEN_USER_M
+        <set>
+            CHG_DT = CURRENT_TIMESTAMP,
+            CHGR_ID = #{chgrId, jdbcType=VARCHAR},
+            ACCOUNT_NON_EXPIRED = #{accountNonExpired},
+            ACCOUNT_NON_LOCKED = #{accountNonLocked},
+            CREDENTIALS_NON_EXPIRED = #{credentialsNonExpired},
+            ACCOUNT_ENABLED = #{accountEnabled},
+            LOGIN_FAIL_CNT = #{loginFailCnt}
+            <if test="isLoginSuccess">
+            	, PASSWORD_LAST_CHG_DT = CURRENT_TIMESTAMP
+            </if>
+        </set>
+        WHERE USER_ID = #{userId}
+    </update>
+    
+    <insert id="insertUserM" parameterType="hashMap">
+		INSERT INTO PEN_USER_M
+		(
+			USER_ID,
+			USER_PASSWORD,
+			USER_NM,
+			ORG_ID,
+		    EMAIL_ADDR,
+		    TEL_NO,
+		    HP_NO,
+			DEL_YN,
+			CRET_DT,
+			CRETR_ID,
+			CHG_DT,
+			CHGR_ID,
+			LOGIN_FAIL_CNT,
+			ACCOUNT_NON_EXPIRED,
+			ACCOUNT_NON_LOCKED,
+			CREDENTIALS_NON_EXPIRED,
+			ACCOUNT_ENABLED,
+			PASSWORD_LAST_CHG_DT,
+			LOGIN_LAST_DT
+		)
+		VALUES (
+			#{USER_ID}    ,
+			#{userInitPassword} ,
+			#{USER_NM}    ,
+			#{ORG_ID}     ,
+		    #{EMAIL_ADDR} ,
+		    #{TEL_NO}     ,
+		    #{HP_NO}      ,
+			'N' ,
+			SYSDATE ,
+			#{sessionInfo.userId} ,
+			SYSDATE ,
+			#{sessionInfo.userId} ,
+			0       ,
+			'Y'     ,
+			'Y'     ,
+			'Y'     ,
+			'Y'     ,
+			SYSDATE ,
+			SYSDATE 
+		)
+	</insert>
+	<update id="updateUserM" parameterType="hashMap">
+	 UPDATE PEN_USER_M
+        <set>
+            CHG_DT     = CURRENT_TIMESTAMP,
+            CHGR_ID    = #{sessionInfo.userId, jdbcType=VARCHAR},
+            USER_NM    = #{userNm},
+            ORG_ID     = #{orgId},
+            EMAIL_ADDR = #{emailAddr},
+            TEL_NO     = #{telNo},
+            HP_NO      = #{hpNo}
+        </set>
+        WHERE USER_ID = #{userId}
+	</update>
+	<delete id="deleteUserM" parameterType="hashMap">
+        DELETE FROM PEN_USER_M
+        WHERE USER_ID = #{userId}
+    </delete>
+</mapper>

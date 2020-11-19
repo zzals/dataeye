@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="objtype">
+    <select id="getObjTypeM" resultType="kr.co.penta.dataeye.common.entities.CamelMap" >
+        SELECT T101.OBJ_TYPE_ID AS "OBJ_TYPE_ID"
+                   , T101.DEL_YN AS "DEL_YN"
+                   , T101.OBJ_TYPE_NM AS "OBJ_TYPE_NM"
+                   , T101.OBJ_TYPE_DESC AS "OBJ_TYPE_DESC"
+                   , T101.SORT_NO AS "SORT_NO"
+                   , T101.UP_OBJ_TYPE_ID AS "UP_OBJ_TYPE_ID" 
+                   , T102.OBJ_TYPE_NM AS "UP_OBJ_TYPE_NM"
+                   , T101.HIER_LEV_NO AS "HIER_LEV_NO"
+                   , T101.LST_LEV_YN AS "LST_LEV_YN"
+                   , T101.ATR_ADM_CD AS "ATR_ADM_CD"
+                   , T103.CD_NM AS "ATR_ADM_NM"
+                   , T101.STLM_YN AS "STLM_YN"
+                   , T101.HST_YN AS "HST_YN"
+                   , T101.TAG_YN AS "TAG_YN"
+                   , T101.CMMT_YN AS "CMMT_YN"
+        FROM PEN_OBJ_TYPE_M T101
+        LEFT OUTER JOIN PEN_OBJ_TYPE_M T102
+        ON (
+            T101.UP_OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+        )
+        LEFT OUTER JOIN (
+            SELECT 
+                CD_ID
+                ,CD_NM
+            FROM PEN_CD_M
+            WHERE CD_GRP_ID = 'SYS_ATRMA'
+        ) T103 ON (T103.CD_ID = T101.ATR_ADM_CD)
+        <where>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(objTypeId)'>
+                AND T101.OBJ_TYPE_ID = #{objTypeId}
+            </if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(upObjTypeId)'>
+                AND T101.UP_OBJ_TYPE_ID = #{upObjTypeId}
+            </if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+                  AND UPPER(T101.${searchKey}) LIKE  '%'||UPPER(#{searchValue})||'%'
+            </if>
+            <if test='1==1'>
+                  AND T101.DEL_YN = 'N'
+            </if>
+        </where>
+        ORDER BY T101.OBJ_TYPE_ID
+    </select>
+    <select id="getObjTypeAtrD" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+         SELECT T101.META_TYPE_CD AS "META_TYPE_CD"
+            , T101.OBJ_TYPE_ID AS "OBJ_TYPE_ID"
+            , T101.ATR_ID_SEQ AS "ATR_ID_SEQ"
+            , T102.ATR_ID AS "ATR_ID"
+            , T102.ATR_NM AS "ATR_NM"
+            , T101.ATR_ALIAS_NM AS "ATR_ALIAS_NM" 
+            , T101.SORT_NO AS "SORT_NO"
+            , T101.MULTI_ATR_YN AS "MULTI_ATR_YN"
+            , T101.CNCT_ATR_YN AS "CNCT_ATR_YN"
+            , T101.MAND_YN AS "MAND_YN"
+            , T101.ATR_ADM_TGT_YN AS "ATR_ADM_TGT_YN"
+            , T101.DEGR_NO AS "DEGR_NO"
+            , T101.INDC_YN AS "INDC_YN"
+            , T101.FIND_TGT_NO AS "FIND_TGT_NO"
+            , T101.AVAIL_CHK_PGM_ID AS "AVAIL_CHK_PGM_ID"
+            , T101.UI_COMP_WIDTH_RADIO AS "UI_COMP_WIDTH_RADIO"
+            , CASE WHEN T101.UI_COMP_WIDTH_RADIO = '12' THEN '100%'
+                       WHEN T101.UI_COMP_WIDTH_RADIO = '6' THEN '50%'
+            END   AS "UI_COMP_WIDTH_RADIO_DISP"
+            , T101.UI_COMP_HEIGHT_PX AS "UI_COMP_HEIGHT_PX"
+            , CASE WHEN T101.UI_COMP_HEIGHT_PX IS NOT NULL THEN T101.UI_COMP_HEIGHT_PX||' px' END AS "UI_COMP_HEIGHT_PX_DISP"
+        FROM PEN_OBJ_TYPE_ATR_D T101
+        LEFT OUTER JOIN PEN_ATR_M T102 ON (T102.ATR_ID = T101.ATR_ID)
+		<where>
+            <if test='objTypeId != null and !"".equals(objTypeId)'> 
+                T101.OBJ_TYPE_ID = #{objTypeId}
+            </if>
+            AND META_TYPE_CD = 'O'
+        </where>
+		ORDER BY T101.ATR_ID_SEQ    
+    </select>  
+    
+     <select id="getDuplCntByObjTypeId" resultType="int" >
+        SELECT COUNT(1) CNT
+        FROM PEN_OBJ_TYPE_M T101
+        WHERE OBJ_TYPE_ID = #{objTypeId}
+    </select> 
+    
+     <select id="getTobObjType" resultType="map" >
+           SELECT  OBJ_TYPE_ID AS "OBJ_TYPE_ID"
+		          ,OBJ_TYPE_NM AS "OBJ_TYPE_NM"
+		          ,HIER_LEV_NO AS "HIER_LEV_NO"
+		  FROM PEN_OBJ_TYPE_M 
+		  WHERE LST_LEV_YN='N'
+		  ORDER BY OBJ_TYPE_ID ASC
+    </select> 
+</mapper>

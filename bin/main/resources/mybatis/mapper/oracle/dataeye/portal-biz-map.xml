@@ -1,0 +1,627 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="portal_biz">
+
+	<select id="getStdTermMenu" resultType="hashmap">
+     <![CDATA[
+		     
+		     SELECT 
+			        TITLE
+			        ,IDX_KEY
+			        ,HIER_LEV_NO
+			        ,ORD
+			FROM(
+			        SELECT 
+			            TITLE
+			            ,IDX_KEY
+			            ,HIER_LEV_NO
+			            ,ORD
+			        FROM (
+			         SELECT
+			                '용어기준' AS "TITLE"        
+			                ,'' AS IDX_KEY
+			                ,'1' AS HIER_LEV_NO
+			                ,1 AS ORD
+			            FROM DUAL UNION ALL
+			            SELECT
+			                '숫자(0-9)' AS "TITLE"        
+			                ,'0-9' AS IDX_KEY
+			                ,'2' AS HIER_LEV_NO
+			                ,2 AS ORD
+			            FROM DUAL UNION ALL
+			            SELECT
+			                '알파벳(A-Z)' AS "TITLE"
+			                ,'A-Z' AS IDX_KEY
+			                ,'2' AS HIER_LEV_NO
+			                ,3 AS ORD
+			            FROM DUAL UNION ALL
+			            SELECT
+			                'ㄱ ~ ㄷ' AS "TITLE"
+			                ,'가-딯' AS IDX_KEY
+			                ,'2' AS HIER_LEV_NO        
+			                ,4 AS ORD
+			            FROM DUAL UNION ALL
+			            SELECT
+			                'ㄹ ~ ㅂ' AS "TITLE"
+			                ,'라-빟' AS IDX_KEY
+			                ,'2' AS HIER_LEV_NO
+			                ,5 AS ORD
+			            FROM DUAL UNION ALL
+			            SELECT
+			                'ㅅ ~ ㅈ' AS "TITLE"
+			                ,'사-짛' AS IDX_KEY
+			                ,'2' AS HIER_LEV_NO
+			                ,6 AS ORD
+			            FROM DUAL UNION ALL
+			            SELECT
+			                
+			                'ㅊ ~ ㅎ' AS "TITLE"        
+			                ,'차-힣' AS IDX_KEY
+			                ,'2' AS HIER_LEV_NO
+			                ,7 AS ORD
+			            FROM DUAL UNION ALL
+			            SELECT
+			                '[전체]' AS "TITLE"
+			                ,'' AS IDX_KEY
+			                ,'2' AS HIER_LEV_NO  
+			                  ,8 AS ORD
+			            FROM DUAL
+			        ) T101
+			        UNION ALL
+			        SELECT
+			             TITLE
+			            ,IDX_KEY
+			            ,HIER_LEV_NO
+			            ,ORD
+			        FROM (
+			        SELECT         
+			                 '도메인기준' AS "TITLE"
+			                 ,'' AS IDX_KEY
+			                  ,'1' AS HIER_LEV_NO  
+			                  ,9 AS ORD
+			              FROM DUAL
+			            UNION ALL      
+			            SELECT 
+			                   T101.OBJ_NM AS "TITLE"
+			                  ,T101.OBJ_NM AS IDX_KEY
+			                  ,'2' AS HIER_LEV_NO  
+			                  ,10 AS ORD
+			            FROM PEN_OBJ_M T101
+			            WHERE T101.OBJ_TYPE_ID = '010304L'
+			              AND T101.DEL_YN = 'N'
+			            UNION ALL
+			            SELECT         
+			                 '[전체]' AS "TITLE"
+			                 ,'' AS IDX_KEY
+			                  ,'2' AS HIER_LEV_NO  
+			                  ,11 AS ORD
+			            FROM DUAL
+			        ) T101
+			        UNION ALL
+			        SELECT 
+			             TITLE
+			            ,IDX_KEY
+			            ,HIER_LEV_NO
+			            ,ORD
+			        FROM (
+			        SELECT         
+			                 '분류어기준' AS "TITLE"
+			                 ,'' AS IDX_KEY
+			                  ,'1' AS HIER_LEV_NO  
+			                  ,12 AS ORD
+			              FROM DUAL
+			              UNION ALL
+			            SELECT                
+			                 T101.OBJ_NM AS "TITLE"
+			                ,T101.OBJ_NM AS IDX_KEY
+			                  ,'2' AS HIER_LEV_NO  
+			                  ,13 AS ORD
+			            FROM PEN_OBJ_M T101
+			            INNER JOIN PEN_OBJ_D T102 ON (T102.OBJ_TYPE_ID=T101.OBJ_TYPE_ID AND T102.OBJ_ID=T101.OBJ_ID AND T102.ATR_ID_SEQ = 101 AND T102.OBJ_ATR_VAL = 'Y')
+			            WHERE T101.OBJ_TYPE_ID = '010301L'
+			            UNION ALL
+			            SELECT
+			                '[전체]' AS "TITLE"
+			                , '[전체]' AS IDX_KEY
+			                  ,'2' AS HIER_LEV_NO  
+			                  ,14 AS ORD
+			            FROM DUAL
+			        ) T101
+			) ORDER BY ORD,TITLE		     
+     ]]>
+    </select>
+    <select id="getStdWord" resultType="hashmap">    
+    SELECT T1.OBJ_TYPE_ID                         AS OBJ_TYPE_ID ,
+			  T1.OBJ_ID                                   AS OBJ_ID ,
+			  T1.OBJ_NM                                   AS OBJ_NM ,
+			  T1.ADM_OBJ_ID                               AS OBJ_ENG_ABBR_NM ,
+			  T1.OBJ_ABBR_NM                              AS OBJ_ENG_NM ,
+			  T2.OBJ_ATR_VAL                              AS CLSD_YN ,
+			  COALESCE(T3.CNT, 0)                         AS TERM_CNT ,
+			  T1.OBJ_DESC                                 AS OBJ_DESC ,
+			  T1.CRETR_ID                                 AS CRETR_ID ,
+			  DATAEYE_PKG.getDisplayUserName(T1.CRETR_ID) AS CRETR_NM
+			FROM PEN_OBJ_M T1
+			LEFT OUTER JOIN PEN_OBJ_D T2
+			ON (T1.OBJ_TYPE_ID = T2.OBJ_TYPE_ID
+			AND T1.OBJ_ID      = T2.OBJ_ID
+			AND T2.ATR_ID_SEQ  = 101)
+			LEFT OUTER JOIN
+			  (SELECT OBJ_ATR_VAL,
+			    COUNT(*) CNT
+			  FROM
+			    (SELECT OBJ_ATR_VAL
+			    FROM PEN_OBJ_D
+			    WHERE OBJ_TYPE_ID = '010302L'
+			    AND ATR_ID_SEQ   IN (102,103,104,105,106,107,108,109)
+			    AND ATR_VAL_SEQ   = 101
+			    AND DEL_YN        = 'N'
+			    UNION ALL
+			    SELECT PATH_OBJ_ID AS OBJ_ATR_VAL
+			    FROM PEN_OBJ_M
+			    WHERE OBJ_TYPE_ID = '010302L'
+			    AND DEL_YN        = 'N'
+			    )
+			  GROUP BY OBJ_ATR_VAL
+			  ) T3
+			ON (T1.OBJ_ID      = T3.OBJ_ATR_VAL)
+			WHERE T1.DEL_YN    = 'N'
+			AND T1.OBJ_TYPE_ID = '010301L'
+			AND T1.OBJ_NM      = REGEXP_SUBSTR(T1.OBJ_NM, '^[0-9].*')
+			ORDER BY T1.OBJ_NM ASC 
+    </select>
+    
+    
+    <select id="getStdWordUseCntList" resultType="hashmap">    
+   SELECT *
+		FROM
+		  (SELECT T2.OBJ_TYPE_ID                        AS OBJ_TYPE_ID ,
+		    T2.OBJ_ID                                   AS OBJ_ID ,
+		    T2.OBJ_NM                                   AS OBJ_NM ,
+		    T2.ADM_OBJ_ID                               AS OBJ_ENG_ABBR_NM ,
+		    T2.OBJ_DESC                                 AS OBJ_DESC ,
+		    T4.OBJ_NM                                   AS DMN_NM ,
+		    T2.CRETR_ID                                 AS CRETR_ID ,
+		    DATAEYE_PKG.getDisplayUserName(T2.CRETR_ID) AS CRETR_NM
+		  FROM PEN_OBJ_D T1
+		  INNER JOIN PEN_OBJ_M T2
+		  ON (T1.OBJ_TYPE_ID = T2.OBJ_TYPE_ID
+		  AND T1.OBJ_ID      = T2.OBJ_ID)
+		  LEFT OUTER JOIN PEN_OBJ_D T3
+		  ON (T2.OBJ_TYPE_ID = T3.OBJ_TYPE_ID
+		  AND T2.OBJ_ID      = T3.OBJ_ID
+		  AND T3.ATR_ID_SEQ  = 101)
+		  LEFT OUTER JOIN PEN_OBJ_M T4
+		  ON (T3.OBJ_ATR_VAL   = T4.OBJ_ID)
+		  WHERE T1.OBJ_TYPE_ID = '010302L'
+		  AND T2.DEL_YN        = 'N'
+		  AND T1.ATR_ID_SEQ   IN (102,103,104,105,106,107,108,109)
+		  AND T1.ATR_VAL_SEQ   = 101
+		  AND T1.OBJ_ATR_VAL   = #{objId}
+		  UNION ALL
+		  SELECT T1.OBJ_TYPE_ID                         AS OBJ_TYPE_ID ,
+		    T1.OBJ_ID                                   AS OBJ_ID ,
+		    T1.OBJ_NM                                   AS OBJ_NM ,
+		    T1.ADM_OBJ_ID                               AS OBJ_ENG_ABBR_NM ,
+		    T1.OBJ_DESC                                 AS OBJ_DESC ,
+		    T4.OBJ_NM                                   AS DMN_NM ,
+		    T1.CRETR_ID                                 AS CRETR_ID ,
+		    DATAEYE_PKG.getDisplayUserName(T1.CRETR_ID) AS CRETR_NM
+		  FROM PEN_OBJ_M T1
+		  LEFT OUTER JOIN PEN_OBJ_D T3
+		  ON (T1.OBJ_TYPE_ID = T3.OBJ_TYPE_ID
+		  AND T1.OBJ_ID      = T3.OBJ_ID
+		  AND T3.ATR_ID_SEQ  = 101)
+		  LEFT OUTER JOIN PEN_OBJ_M T4
+		  ON (T3.OBJ_ATR_VAL   = T4.OBJ_ID)
+		  WHERE T1.OBJ_TYPE_ID = #{objId}
+		  AND T1.PATH_OBJ_ID   = '010302L'
+		  AND T1.DEL_YN        = 'N'
+		  ) T101
+		ORDER BY T101.OBJ_TYPE_ID,T101.OBJ_ID 
+    </select>
+    
+     <select id="getStdDomainUseCntList" resultType="hashmap">
+     
+      SELECT T2.OBJ_TYPE_ID                         AS OBJ_TYPE_ID ,
+			  T2.OBJ_ID                                   AS OBJ_ID ,
+			  T2.OBJ_NM                                   AS OBJ_NM ,
+			  T2.ADM_OBJ_ID                               AS OBJ_ENG_ABBR_NM ,
+			  T2.OBJ_DESC                                 AS OBJ_DESC ,
+			  T2.CRETR_ID                                 AS CRETR_ID ,
+			  DATAEYE_PKG.getDisplayUserName(T2.CRETR_ID) AS CRETR_NM
+			FROM PEN_OBJ_D T1
+			INNER JOIN PEN_OBJ_M T2
+			ON (T1.OBJ_TYPE_ID   = T2.OBJ_TYPE_ID
+			AND T1.OBJ_ID        = T2.OBJ_ID)
+			WHERE T1.OBJ_TYPE_ID = '010302L'
+			AND T1.ATR_ID_SEQ    = 101
+			AND T1.ATR_VAL_SEQ   = 101
+			AND T1.OBJ_ATR_VAL   = #{objId}
+			AND T2.DEL_YN='N'
+			ORDER BY T2.OBJ_TYPE_ID,
+			  T2.OBJ_ID
+      
+      </select>
+    
+     
+    <select id="getStdTerm" resultType="hashmap">
+      
+		 SELECT  OBJ_TYPE_ID ,
+		        OBJ_ID ,
+		        OBJ_NM ,
+		        OBJ_ENG_ABBR_NM ,
+		        0 AS USED_CNT ,
+		        OBJ_DESC ,
+		        CRETR_ID ,
+		        DATAEYE_PKG.getDisplayUserName(T101.CRETR_ID) AS CRETR_NM ,
+		        DMN_OBJ_NM ,
+		        DATAEYE_PKG.getDispalyDataType(BAS_DATA_TYPE, COL_LEN, COL_POINT_LEN)    AS BAS_DISP_DATA_TYPE ,
+		        DATAEYE_PKG.getDispalyDataType(ORACLE_DATA_TYPE, COL_LEN, COL_POINT_LEN) AS ORACLE_DATA_TYPE ,
+		        DATAEYE_PKG.getDispalyDataType(PDA_DATA_TYPE, COL_LEN, COL_POINT_LEN)    AS PDA_DATA_TYPE ,
+		        DATAEYE_PKG.getDispalyDataType(IMPALA_DATA_TYPE, COL_LEN, COL_POINT_LEN) AS IMPALA_DATA_TYPE ,
+		        COL_LEN ,
+		        COL_POINT_LEN
+		FROM
+		        (SELECT T101.OBJ_TYPE_ID AS OBJ_TYPE_ID ,
+		                T101.OBJ_ID      AS OBJ_ID ,
+		                T101.OBJ_NM      AS OBJ_NM ,
+		                T101.ADM_OBJ_ID  AS OBJ_ENG_ABBR_NM ,
+		                0                AS USED_CNT ,
+		                T101.OBJ_DESC    AS OBJ_DESC ,
+		                T101.CRETR_ID    AS CRETR_ID ,
+		                T104.OBJ_NM      AS DMN_OBJ_NM ,
+		                MAX(
+		                CASE
+		                        WHEN T105.ATR_ID_SEQ = 101
+		                        THEN T105.OBJ_ATR_VAL
+		                END) AS BAS_DATA_TYPE ,
+		                MAX(
+		                CASE
+		                        WHEN T105.ATR_ID_SEQ = 111
+		                        THEN T105.OBJ_ATR_VAL
+		                END) AS ORACLE_DATA_TYPE ,
+		                MAX(
+		                CASE
+		                        WHEN T105.ATR_ID_SEQ = 112
+		                        THEN T105.OBJ_ATR_VAL
+		                END) AS PDA_DATA_TYPE ,
+		                MAX(
+		                CASE
+		                        WHEN T105.ATR_ID_SEQ = 113
+		                        THEN T105.OBJ_ATR_VAL
+		                END) AS IMPALA_DATA_TYPE ,
+		                MAX(
+		                CASE
+		                        WHEN T105.ATR_ID_SEQ = 102
+		                        THEN T105.OBJ_ATR_VAL
+		                END) AS COL_LEN ,
+		                MAX(
+		                CASE
+		                        WHEN T105.ATR_ID_SEQ = 103
+		                        THEN T105.OBJ_ATR_VAL
+		                END) AS COL_POINT_LEN
+		        FROM    PEN_OBJ_M T101
+		        LEFT OUTER JOIN PEN_OBJ_M T102
+		        ON ( T101.PATH_OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+		            AND T101.PATH_OBJ_ID   = T102.OBJ_ID )
+		        LEFT OUTER JOIN PEN_OBJ_D T103
+		        ON ( T101.OBJ_TYPE_ID   = T103.OBJ_TYPE_ID
+		            AND T101.OBJ_ID     = T103.OBJ_ID
+		            AND T103.ATR_ID_SEQ = 101 )
+		        LEFT OUTER JOIN PEN_OBJ_M T104
+		        ON ( T103.OBJ_ATR_VAL    = T104.OBJ_ID
+		            AND T104.OBJ_TYPE_ID = '010303L' )
+		        LEFT OUTER JOIN PEN_OBJ_D T105
+		        ON ( T105.OBJ_TYPE_ID    = T104.OBJ_TYPE_ID
+		            AND T105.OBJ_ID      = T104.OBJ_ID
+		            AND T105.ATR_ID_SEQ IN (101, 102, 103, 111, 112, 113) )
+		        WHERE   T101.DEL_YN      = 'N'
+		            AND T101.OBJ_TYPE_ID = '010302L'
+		                /*표준용어*/
+		          <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+			           AND T101.${searchKey} LIKE  '%'||#{searchValue}||'%'
+			       </if>
+			       <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(idxKey)'>
+			          <choose>            
+			                <when test="idxKey=='0-9'" >
+			             		      AND T101.OBJ_NM = REGEXP_SUBSTR(T101.OBJ_NM, '^[0-9].*')
+			                </when>                
+			                <when test="idxKey=='A-Z'" >
+			              		      AND T101.OBJ_NM = REGEXP_SUBSTR(T101.OBJ_NM, '^[A-Za-z].*')
+			                </when>
+			                <when test="idxKey=='가-딯'" >
+			             		     AND T101.OBJ_NM &gt;= '가' AND T101.OBJ_NM &lt; '라'
+			                </when>
+			                <when test="idxKey=='라-빟'" >
+			              		    AND T101.OBJ_NM &gt;= '라' AND T101.OBJ_NM &lt; '사'
+			                </when>
+			                <when test="idxKey=='사-짛'" >
+			         			     AND T101.OBJ_NM &gt;= '사' AND T101.OBJ_NM &lt; '차'
+			                </when>
+			                <when test="idxKey=='차-힣'" >
+			          		        AND T101.OBJ_NM &gt;= '차' AND T101.OBJ_NM &lt; '힝'
+			                </when>			                
+			                <otherwise>
+			                    AND T101.OBJ_NM LIKE '%'|| #{idxKey} ||'%'
+			                </otherwise>			                
+			            </choose>
+			       </if>			       
+		        GROUP BY T101.OBJ_TYPE_ID ,
+		                T101.OBJ_ID ,
+		                T101.OBJ_NM ,
+		                T101.ADM_OBJ_ID ,
+		                T101.OBJ_DESC ,
+		                T101.CRETR_ID ,
+		                T104.OBJ_NM
+		        ) T101
+		ORDER BY T101.OBJ_NM ASC
+
+    </select>
+        
+    <select id="getStdTermSub" resultType="hashmap">
+     <![CDATA[      
+		SELECT   T1.ATR_ID_SEQ                               AS ATR_ID_SEQ ,
+			        T2.OBJ_TYPE_ID                              AS OBJ_TYPE_ID ,
+			        T2.OBJ_ID                                   AS OBJ_ID ,
+			        T2.OBJ_NM                                   AS OBJ_NM ,
+			        T2.ADM_OBJ_ID                               AS OBJ_ENG_ABBR_NM ,
+			        COALESCE(T3.CNT,0)                          AS USED_CNT ,
+			        T2.OBJ_ABBR_NM                              AS OBJ_ENG_NM ,
+			        T2.OBJ_DESC                                 AS OBJ_DESC ,
+			        T2.CRETR_ID                                 AS CRETR_ID ,
+			        DATAEYE_PKG.getDisplayUserName(T2.CRETR_ID) AS CRETR_NM
+			FROM    PEN_OBJ_D T1
+			JOIN PEN_OBJ_M T2
+			ON (T1.OBJ_ATR_VAL     = T2.OBJ_ID
+			    AND T2.OBJ_TYPE_ID = '010301L')
+			LEFT OUTER JOIN
+			        (SELECT OBJ_ID,
+			                COUNT(*) AS CNT
+			        FROM
+			                (SELECT PATH_OBJ_TYPE_ID AS OBJ_TYPE_ID ,
+			                        PATH_OBJ_ID      AS OBJ_ID
+			                FROM    PEN_OBJ_M
+			                WHERE   OBJ_TYPE_ID = '010302L'
+			                    AND DEL_YN      = 'N'
+			                UNION ALL
+			                SELECT '010301L',
+			                        OBJ_ATR_VAL
+			                FROM    PEN_OBJ_D
+			                WHERE   OBJ_TYPE_ID = '010302L'
+			                    AND ATR_ID_SEQ  = 102
+			                    AND DEL_YN      = 'N'
+			                UNION ALL
+			                SELECT '010301L',
+			                        OBJ_ATR_VAL
+			                FROM    PEN_OBJ_D
+			                WHERE   OBJ_TYPE_ID = '010302L'
+			                    AND ATR_ID_SEQ  = 103
+			                    AND DEL_YN      = 'N'
+			                UNION ALL
+			                SELECT '010301L',
+			                        OBJ_ATR_VAL
+			                FROM    PEN_OBJ_D
+			                WHERE   OBJ_TYPE_ID = '010302L'
+			                    AND ATR_ID_SEQ  = 104
+			                    AND DEL_YN      = 'N'
+			                UNION ALL
+			                SELECT '010301L',
+			                        OBJ_ATR_VAL
+			                FROM    PEN_OBJ_D
+			                WHERE   OBJ_TYPE_ID = '010302L'
+			                    AND ATR_ID_SEQ  = 105
+			                    AND DEL_YN      = 'N'
+			                UNION ALL
+			                SELECT '010301L',
+			                        OBJ_ATR_VAL
+			                FROM    PEN_OBJ_D
+			                WHERE   OBJ_TYPE_ID = '010302L'
+			                    AND ATR_ID_SEQ  = 106
+			                    AND DEL_YN      = 'N'
+			                UNION ALL
+			                SELECT '010301L',
+			                        OBJ_ATR_VAL
+			                FROM    PEN_OBJ_D
+			                WHERE   OBJ_TYPE_ID = '010302L'
+			                    AND ATR_ID_SEQ  = 107
+			                    AND DEL_YN      = 'N'
+			                UNION ALL
+			                SELECT '010301L',
+			                        OBJ_ATR_VAL
+			                FROM    PEN_OBJ_D
+			                WHERE   OBJ_TYPE_ID = '010302L'
+			                    AND ATR_ID_SEQ  = 108
+			                    AND DEL_YN      = 'N'
+			                UNION ALL
+			                SELECT '010301L',
+			                        OBJ_ATR_VAL
+			                FROM    PEN_OBJ_D
+			                WHERE   OBJ_TYPE_ID = '010302L'
+			                    AND ATR_ID_SEQ  = 109
+			                    AND DEL_YN      = 'N'
+			                )
+			        GROUP BY OBJ_ID
+			        ) T3
+			ON (T2.OBJ_ID          = T3.OBJ_ID)
+			WHERE   T1.OBJ_TYPE_ID = '010302L'
+			    AND T1.ATR_VAL_SEQ = 101
+			    AND T1.OBJ_ID      = #{objId}
+			/*변수 : 표준용어 ID*/
+			UNION ALL
+			SELECT  999                AS ATR_ID_SEQ ,
+			        T2.OBJ_TYPE_ID     AS OBJ_TYPE_ID ,
+			        T2.OBJ_ID          AS OBJ_ID ,
+			        T2.OBJ_NM          AS OBJ_NM ,
+			        T2.ADM_OBJ_ID      AS OBJ_ENG_ABBR_NM ,
+			        COALESCE(T3.CNT,0) AS USED_CNT ,
+			        T2.OBJ_ABBR_NM     AS OBJ_ENG_NM ,
+			        T2.OBJ_DESC        AS OBJ_DESC ,
+			        T2.CRETR_ID        AS CRETR_ID ,
+			        TO_CHAR(T4.USER_NM)         AS CRETR_NM
+			FROM    PEN_OBJ_M T1
+			JOIN PEN_OBJ_M T2
+			ON (T1.PATH_OBJ_TYPE_ID = T2.OBJ_TYPE_ID
+			    AND T1.PATH_OBJ_ID  = T2.OBJ_ID)
+			LEFT OUTER JOIN
+			        (SELECT OBJ_ID,
+			                COUNT(*) AS CNT
+			        FROM
+			                (SELECT PATH_OBJ_TYPE_ID AS OBJ_TYPE_ID ,
+			                        PATH_OBJ_ID      AS OBJ_ID
+			                FROM    PEN_OBJ_M
+			                WHERE   OBJ_TYPE_ID = '010302L'
+			                    AND DEL_YN      = 'N'
+			                UNION ALL
+			                SELECT '010301L',
+			                        OBJ_ATR_VAL
+			                FROM    PEN_OBJ_D
+			                WHERE   OBJ_TYPE_ID = '010302L'
+			                    AND ATR_ID_SEQ  = 102
+			                    AND DEL_YN      = 'N'
+			                UNION ALL
+			                SELECT '010301L',
+			                        OBJ_ATR_VAL
+			                FROM    PEN_OBJ_D
+			                WHERE   OBJ_TYPE_ID = '010302L'
+			                    AND ATR_ID_SEQ  = 103
+			                    AND DEL_YN      = 'N'
+			                UNION ALL
+			                SELECT '010301L',
+			                        OBJ_ATR_VAL
+			                FROM    PEN_OBJ_D
+			                WHERE   OBJ_TYPE_ID = '010302L'
+			                    AND ATR_ID_SEQ  = 104
+			                    AND DEL_YN      = 'N'
+			                UNION ALL
+			                SELECT '010301L',
+			                        OBJ_ATR_VAL
+			                FROM    PEN_OBJ_D
+			                WHERE   OBJ_TYPE_ID = '010302L'
+			                    AND ATR_ID_SEQ  = 105
+			                    AND DEL_YN      = 'N'
+			                UNION ALL
+			                SELECT '010301L',
+			                        OBJ_ATR_VAL
+			                FROM    PEN_OBJ_D
+			                WHERE   OBJ_TYPE_ID = '010302L'
+			                    AND ATR_ID_SEQ  = 106
+			                    AND DEL_YN      = 'N'
+			                UNION ALL
+			                SELECT '010301L',
+			                        OBJ_ATR_VAL
+			                FROM    PEN_OBJ_D
+			                WHERE   OBJ_TYPE_ID = '010302L'
+			                    AND ATR_ID_SEQ  = 107
+			                    AND DEL_YN      = 'N'
+			                UNION ALL
+			                SELECT '010301L',
+			                        OBJ_ATR_VAL
+			                FROM    PEN_OBJ_D
+			                WHERE   OBJ_TYPE_ID = '010302L'
+			                    AND ATR_ID_SEQ  = 108
+			                    AND DEL_YN      = 'N'
+			                UNION ALL
+			                SELECT '010301L',
+			                        OBJ_ATR_VAL
+			                FROM    PEN_OBJ_D
+			                WHERE   OBJ_TYPE_ID = '010302L'
+			                    AND ATR_ID_SEQ  = 109
+			                    AND DEL_YN      = 'N'
+			                )
+			        GROUP BY OBJ_ID
+			        ) T3
+			ON (T2.OBJ_ID = T3.OBJ_ID)
+			LEFT OUTER JOIN PEN_USER_M T4
+			ON (T2.CRETR_ID        = T4.USER_ID)
+			WHERE   T1.OBJ_TYPE_ID = '010302L'
+			    AND T1.OBJ_ID      = #{objId}
+			ORDER BY ATR_ID_SEQ
+	]]>
+    </select>
+    
+    <select id="wordAbbrNm" resultType="hashmap">
+		SELECT 
+		  ADM_OBJ_ID AS WORD_ABBR_NM
+          <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isBoolean(wordNmDupChk)'>
+            , OBJ_NM AS WORD_NM
+          </if> 
+		FROM PEN_OBJ_M
+		WHERE OBJ_TYPE_ID = '010301L'
+		  AND DEL_YN = 'N'
+	</select>
+    	<select id="dmn" resultType="hashmap">
+		SELECT 
+			OBJ_ID
+			,OBJ_NM
+		FROM PEN_OBJ_M
+		WHERE OBJ_TYPE_ID = '010303L'
+		  AND DEL_YN = 'N'
+	</select>
+	
+	<select id="newObjId" resultType="hashMap">
+        SELECT '${objTypeId}_'||TRIM(TO_CHAR(NVL(MAX(SUBSTR(OBJ_ID, 9)),0)+1, '000000009')) AS OBJ_ID 
+        FROM PEN_OBJ_M
+        WHERE OBJ_TYPE_ID = #{objTypeId}
+        AND OBJ_ID LIKE #{objTypeId}||'_%'
+        AND UPPER(SUBSTR(OBJ_ID, 9)) = LOWER(SUBSTR(OBJ_ID, 9))
+    </select>
+	
+	<select id="dmnNm" resultType="String">
+		SELECT OBJ_NM 
+		FROM PEN_OBJ_M
+		WHERE OBJ_TYPE_ID = '010303L'
+		  AND DEL_YN = 'N'
+	</select>
+    <select id="dmnGrpNm" resultType="String">
+		SELECT 
+            OBJ_NM 
+		FROM PEN_OBJ_M
+		WHERE OBJ_TYPE_ID = '010304L'
+		  AND DEL_YN = 'N'
+	</select>
+		<select id="dmnDataType" resultType="String">
+		SELECT 
+            CD_NM 
+		FROM PEN_CD_M
+		WHERE CD_GRP_ID = 'NETESSADB DATATYPE'	
+	</select>
+	<select id="dmnGrp" resultType="hashmap">
+		SELECT 
+			OBJ_ID
+			,OBJ_NM 
+		FROM PEN_OBJ_M
+		WHERE OBJ_TYPE_ID = '010304L'
+		  AND DEL_YN = 'N'
+	</select>
+    
+    <select id="objBasInfo" resultType="hashMap">
+		SELECT
+			OBJ_TYPE_ID AS OBJ_TYPE_ID
+			, OBJ_ID AS OBJ_ID
+			, DEL_YN AS DEL_YN
+			, CRET_DT AS CRET_DT
+			, CRETR_ID AS CRETR_ID
+			, CHG_DT AS CHG_DT
+			, CHGR_ID AS CHGR_ID
+			, ADM_OBJ_ID AS ADM_OBJ_ID
+			, OBJ_NM AS OBJ_NM
+			, OBJ_ABBR_NM AS OBJ_ABBR_NM
+			, OBJ_DESC AS OBJ_DESC
+			, PATH_OBJ_TYPE_ID AS PATH_OBJ_TYPE_ID
+			, PATH_OBJ_ID AS PATH_OBJ_ID
+		FROM PEN_OBJ_M
+		<where> 
+			OBJ_TYPE_ID = #{objTypeId}
+			<if test='objId != null'>
+				AND OBJ_ID = #{objId}
+			</if>
+			<if test='keyword != null and !"".equals(keyword)'>
+                AND ${searchKey} LIKE '%'||#{keyword}||'%'
+            </if>
+		</where>
+		ORDER BY OBJ_NM
+	</select>
+	
+	
+</mapper>

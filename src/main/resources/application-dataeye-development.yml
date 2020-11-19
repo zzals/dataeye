@@ -1,0 +1,70 @@
+dataeye:
+  app-id: DATAEYE1
+  theme: kcis
+  config:
+    java-timestamp-format: yyyy-MM-dd HH:mm:ss
+    java-date-format: yyyy-MM-dd HH:mm:ss
+    db-timestamp-format: YYYY-MM-DD HH24:MI:SS
+    db-date-format: YYYY-MM-DD HH24:MI:SS
+    login-logging-enable: true
+    logout-logging-enable: false
+    menu-access-logging-enable: true
+    object-access-logging-enable: true
+    object-access-logging-target-objects: 010201L, 010205L
+    xss-filter-enable: false
+    dummy-flag: true
+    algorithm: PBEWITHSHA256AND256BITAES-CBC-BC
+    key: ebaykorea
+    initpwd: sEv6fwAB1WD9l5hp3vt05Eg1Qsdc472RZLzLsj88cPo=
+  
+  ldap:
+    url: ldap://192.168.100.73
+    domain: BAT
+    searchBase: DC=bat,DC=penta,DC=co,DC=kr
+    svId: Administrator
+    svPw: e4mNFdhg0RqpAmd1mFSL4+ag9l3CprYkFFtbieNa5cA=
+    
+  meta-config:
+    atr-sqlsbst-inmemory-enable: false  #속성 쿼리 실행 결과 메모리 로딩 여부
+    logical-delete-enable: false  #메타 삭제시 논리삭제 여부
+    split-delimiter-char: \u00B6  #구분자로 사용할 char
+    split-delimiter-string: \u00B6  #구분자로 사용할 string
+    obj-rel-search-limit: 1000
+    
+  jqgrid:
+    paging-enable: true
+    scroll: false
+    row-num: 20
+    default-height: 500
+    nav-edit-enable: true
+    nav-add-enable: true
+    nav-del-enable: true
+    nav-search-enable: true
+    nav-refresh-enable: true
+    nav-view-enable: true
+    top-pager: false 
+    
+  attach-file:
+    upload-temp-path: C:\DATAEYE_ATTACH_FILE\FILES_TEMP
+    #upload-read-path: C:\DATAEYE_ATTACH_FILE
+    upload-read-path: /data/upload
+    template-path: /data/app/dataeye/apache-tomcat-8.0.44/webapps/dataeye/template
+  
+  template:
+    std-word-upload-template: 단어_일괄등록_템플릿.xlsx
+    std-term-upload-template: 용어_일괄등록_템플릿.xlsx
+    std-domain-upload-template: 도메인_일괄등록_템플릿.xlsx
+    dsgn-tab-upload-template: 테이블목록_템플릿.xlsx
+    dsgn-col-upload-template: 테이블정의서_템플릿.xlsx
+    
+  biz-std:
+    word-nm-dupl-chk-enable: false
+    word-abbr-auto-upper-enable: true
+    term-abbr-length-chk-enable: true
+    term-abbr-max-length: 30
+    
+  mgr-role:
+    admin-role: ROLE_ADMIN            #어드민 롤
+    admin-role-group: ADMIN_MENU_A    #어드민 롤 그룹
+    system-role: ROLE_SYSTEM          #시스템 롤
+    system-role-group: SYSTEM_MENU_A  #시스템 롤 그룹

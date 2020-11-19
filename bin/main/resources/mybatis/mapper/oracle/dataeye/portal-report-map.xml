@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="portal.report"> 	
+  
+    <select id="reportList" resultType="kr.co.penta.dataeye.common.entities.CamelMap">    
+		SELECT M01.OBJ_TYPE_ID      AS OBJ_TYPE_ID
+			     , M01.OBJ_ID           AS OBJ_ID
+			     , M01.OBJ_NM           AS OBJ_NM             --정형분석명\
+			     , CASE
+					WHEN (SELECT COUNT(USER_ID) FROM PEN_SYS_USER_OBJ_FVRT_D WHERE DEL_YN = 'N' AND USER_ID = #{sessionInfo.userId} AND OBJ_TYPE_ID = M01.OBJ_TYPE_ID AND OBJ_ID = M01.OBJ_ID) > 0 THEN 'YES'
+					ELSE 'NO'
+			     END AS BOOKMARK_YN
+			     , CASE
+					WHEN (SELECT COUNT(USER_ID) FROM PEN_SYS_USER_OBJ_FVRT_D WHERE DEL_YN = 'N' AND USER_ID = #{sessionInfo.userId} AND OBJ_TYPE_ID = M01.OBJ_TYPE_ID AND OBJ_ID = M01.OBJ_ID) > 0 THEN 'YES'
+					ELSE 'NO'
+			     END AS BOOKMARK_YN
+			     , M01.OBJ_DESC         AS OBJ_DESC
+			     , M01.PATH_OBJ_TYPE_ID AS PATH_OBJ_TYPE_ID
+			     , M01.PATH_OBJ_ID      AS PATH_OBJ_ID
+			     , M02.OBJ_NM           AS PATH_OBJ_NM       --분류체계명			     
+			     , D101.OBJ_ATR_VAL     AS OBJ_ATR_VAL_101_CD
+			     , C1101.CD_NM          AS OBJ_ATR_VAL_101_NM --중요도			     
+			     , D102.OBJ_ATR_VAL     AS OBJ_ATR_VAL_102_CD
+			     , C1102.CD_NM          AS OBJ_ATR_VAL_102_NM --활용목적			     
+			     , D103.OBJ_ATR_VAL     AS OBJ_ATR_VAL_103_NM			     
+			     , D104.OBJ_ATR_VAL     AS OBJ_ATR_VAL_104_CD
+			     , C1103.CD_NM          AS OBJ_ATR_VAL_104_NM --활용주기			     
+			     , D105.OBJ_ATR_VAL     AS OBJ_ATR_VAL_105_CD
+			     , C1104.CD_NM          AS OBJ_ATR_VAL_105_NM --사용자구분			     
+			     , D106.OBJ_ATR_VAL     AS OBJ_ATR_VAL_106_CD
+			     , U01.USER_NM          AS OBJ_ATR_VAL_106_NM --담당자명		
+                 , D109.OBJ_ATR_VAL     AS OBJ_ATR_VAL_109_NM
+			     , DD108.OBJ_ATR_VAL    AS DD108_ATR_VAL -- 인스턴스 연결정보
+                 , DD108.OBJ_TYPE_ID    AS DD108_OBJ_TYPE_ID -- 인스턴스 연결정보
+			     , D108.OBJ_ATR_VAL     AS  D108_ATR_VAL -- 인스턴스  	  
+			  FROM PEN_OBJ_M M01
+			  LEFT OUTER JOIN PEN_OBJ_M M02  ON (M01.PATH_OBJ_TYPE_ID = M02.OBJ_TYPE_ID AND M01.PATH_OBJ_ID = M02.OBJ_ID)
+			  LEFT OUTER JOIN PEN_OBJ_M M03  ON (M02.PATH_OBJ_TYPE_ID = M03.OBJ_TYPE_ID AND M02.PATH_OBJ_ID = M03.OBJ_ID)
+			  LEFT OUTER JOIN PEN_OBJ_D D101 ON (M01.OBJ_TYPE_ID = D101.OBJ_TYPE_ID AND M01.OBJ_ID = D101.OBJ_ID AND D101.ATR_ID_SEQ = 101 AND D101.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_OBJ_D D102 ON (M01.OBJ_TYPE_ID = D102.OBJ_TYPE_ID AND M01.OBJ_ID = D102.OBJ_ID AND D102.ATR_ID_SEQ = 102 AND D102.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_OBJ_D D103 ON (M01.OBJ_TYPE_ID = D103.OBJ_TYPE_ID AND M01.OBJ_ID = D103.OBJ_ID AND D103.ATR_ID_SEQ = 103 AND D103.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_OBJ_D D104 ON (M01.OBJ_TYPE_ID = D104.OBJ_TYPE_ID AND M01.OBJ_ID = D104.OBJ_ID AND D104.ATR_ID_SEQ = 104 AND D104.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_OBJ_D D105 ON (M01.OBJ_TYPE_ID = D105.OBJ_TYPE_ID AND M01.OBJ_ID = D105.OBJ_ID AND D105.ATR_ID_SEQ = 105 AND D105.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_OBJ_D D106 ON (M01.OBJ_TYPE_ID = D106.OBJ_TYPE_ID AND M01.OBJ_ID = D106.OBJ_ID AND D106.ATR_ID_SEQ = 106 AND D106.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_OBJ_D D108 ON (M01.OBJ_TYPE_ID = D108.OBJ_TYPE_ID AND M01.OBJ_ID = D108.OBJ_ID AND D108.ATR_ID_SEQ = 108 AND D108.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_OBJ_D D109 ON (M01.OBJ_TYPE_ID = D109.OBJ_TYPE_ID AND M01.OBJ_ID = D109.OBJ_ID AND D109.ATR_ID_SEQ = 109 AND D109.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_CD_M C1101 ON (D101.OBJ_ATR_VAL = C1101.CD_ID AND C1101.CD_GRP_ID = 'BM_RPTIMP')
+			  LEFT OUTER JOIN PEN_CD_M C1102 ON (D101.OBJ_ATR_VAL = C1102.CD_ID AND C1102.CD_GRP_ID = 'BM_RPTPUR')
+			  LEFT OUTER JOIN PEN_CD_M C1103 ON (D101.OBJ_ATR_VAL = C1103.CD_ID AND C1103.CD_GRP_ID = 'BM_RPTRCYC')
+			  LEFT OUTER JOIN PEN_CD_M C1104 ON (D101.OBJ_ATR_VAL = C1104.CD_ID AND C1104.CD_GRP_ID = 'BM_RPTUSRTP')			 
+			  LEFT OUTER JOIN PEN_USER_M U01 ON (D106.OBJ_ATR_VAL = U01.USER_ID)			  			  
+			  LEFT OUTER JOIN PEN_OBJ_D DD108 ON (DD108.OBJ_ID = D108.OBJ_ATR_VAL AND DD108.OBJ_TYPE_ID IN('020500L','020600L') AND DD108.ATR_ID_SEQ = 101 AND DD108.ATR_VAL_SEQ = 101 )			  
+			 WHERE 1=1
+			   AND M01.OBJ_TYPE_ID = '010102L'
+			   AND M01.DEL_YN = 'N'
+		   	<if test='"_all".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+            	AND (
+	            	   UPPER(M01.OBJ_NM) LIKE '%'||UPPER(#{searchValue})||'%'
+	            	OR UPPER(U01.USER_NM) LIKE '%'||UPPER(#{searchValue})||'%'
+	            )
+            </if>
+            <if test='"OBJ_NM".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+				AND UPPER(M01.OBJ_NM) LIKE '%'||UPPER(#{searchValue})||'%'
+			</if>
+            <if test='"OBJ_ATR_VAL_106_NM".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+				AND UPPER(U01.USER_NM) LIKE '%'||UPPER(#{searchValue})||'%'
+			</if>
+			<if test=' @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(cateIds)'>
+				AND M01.PATH_OBJ_ID  IN(${cateIds})
+			</if>    
+			<if test=' @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(sessionInfo.userId)'>
+			 AND (M01.OBJ_TYPE_ID,M01.OBJ_ID) NOT IN
+            (	            
+	            SELECT OBJ_TYPE_ID,OBJ_ID 
+	            FROM  ( 
+	                SELECT A.OBJ_TYPE_ID , A.OBJ_ID , NVL(C.USER_ID,A.PRIV_RCVR_ID) AS USER_ID
+	                      FROM PEN_SYS_PRIV_OBJ_R A
+	                      LEFT OUTER JOIN PEN_SYS_GRP_R B ON(A.PRIV_RCVR_ID = B.USER_GRP_ID AND A.PRIV_RCVR_GBN='G')
+	                      LEFT OUTER JOIN PEN_SYS_GRP_USER_R C  ON(B.REL_USER_GRP_ID = C.USER_GRP_ID )
+	             ) AUTH
+	              WHERE AUTH.USER_ID=#{sessionInfo.userId}                     
+	          )
+		</if>
+		ORDER BY M01.OBJ_ID ASC       
+    </select>
+    
+    
+     <select id="mainList" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+     	     SELECT * FROM (  
+				SELECT M01.OBJ_TYPE_ID      AS OBJ_TYPE_ID
+					     , M01.OBJ_ID           AS OBJ_ID
+					     , M01.OBJ_NM           AS OBJ_NM             --정형분석명
+					     , M01.OBJ_DESC         AS OBJ_DESC
+					     , M01.PATH_OBJ_TYPE_ID AS PATH_OBJ_TYPE_ID
+					     , M01.PATH_OBJ_ID      AS PATH_OBJ_ID
+					     , M02.OBJ_NM           AS PATH_OBJ_NM       --분류체계명			     
+					     , D101.OBJ_ATR_VAL     AS OBJ_ATR_VAL_101_CD
+					     , C1101.CD_NM          AS OBJ_ATR_VAL_101_NM --중요도			     
+					     , D102.OBJ_ATR_VAL     AS OBJ_ATR_VAL_102_CD
+					     , C1102.CD_NM          AS OBJ_ATR_VAL_102_NM --활용목적			     
+					     , D103.OBJ_ATR_VAL     AS OBJ_ATR_VAL_103_NM			     
+					     , D104.OBJ_ATR_VAL     AS OBJ_ATR_VAL_104_CD
+					     , C1103.CD_NM          AS OBJ_ATR_VAL_104_NM --활용주기			     
+					     , D105.OBJ_ATR_VAL     AS OBJ_ATR_VAL_105_CD
+					     , C1104.CD_NM          AS OBJ_ATR_VAL_105_NM --사용자구분			     
+					     , D106.OBJ_ATR_VAL     AS OBJ_ATR_VAL_106_CD
+					     , U01.USER_NM          AS OBJ_ATR_VAL_106_NM --담당자명		
+		                 , D109.OBJ_ATR_VAL     AS OBJ_ATR_VAL_109_NM
+					     , DD108.OBJ_ATR_VAL    AS DD108_ATR_VAL -- 인스턴스 연결정보
+		                 , DD108.OBJ_TYPE_ID    AS DD108_OBJ_TYPE_ID -- 인스턴스 연결정보
+					     , D108.OBJ_ATR_VAL     AS  D108_ATR_VAL -- 인스턴스  	  
+					  FROM PEN_OBJ_M M01
+					  LEFT OUTER JOIN PEN_OBJ_M M02  ON (M01.PATH_OBJ_TYPE_ID = M02.OBJ_TYPE_ID AND M01.PATH_OBJ_ID = M02.OBJ_ID)
+					  LEFT OUTER JOIN PEN_OBJ_M M03  ON (M02.PATH_OBJ_TYPE_ID = M03.OBJ_TYPE_ID AND M02.PATH_OBJ_ID = M03.OBJ_ID)
+					  LEFT OUTER JOIN PEN_OBJ_D D101 ON (M01.OBJ_TYPE_ID = D101.OBJ_TYPE_ID AND M01.OBJ_ID = D101.OBJ_ID AND D101.ATR_ID_SEQ = 101 AND D101.ATR_VAL_SEQ = 101)
+					  LEFT OUTER JOIN PEN_OBJ_D D102 ON (M01.OBJ_TYPE_ID = D102.OBJ_TYPE_ID AND M01.OBJ_ID = D102.OBJ_ID AND D102.ATR_ID_SEQ = 102 AND D102.ATR_VAL_SEQ = 101)
+					  LEFT OUTER JOIN PEN_OBJ_D D103 ON (M01.OBJ_TYPE_ID = D103.OBJ_TYPE_ID AND M01.OBJ_ID = D103.OBJ_ID AND D103.ATR_ID_SEQ = 103 AND D103.ATR_VAL_SEQ = 101)
+					  LEFT OUTER JOIN PEN_OBJ_D D104 ON (M01.OBJ_TYPE_ID = D104.OBJ_TYPE_ID AND M01.OBJ_ID = D104.OBJ_ID AND D104.ATR_ID_SEQ = 104 AND D104.ATR_VAL_SEQ = 101)
+					  LEFT OUTER JOIN PEN_OBJ_D D105 ON (M01.OBJ_TYPE_ID = D105.OBJ_TYPE_ID AND M01.OBJ_ID = D105.OBJ_ID AND D105.ATR_ID_SEQ = 105 AND D105.ATR_VAL_SEQ = 101)
+					  LEFT OUTER JOIN PEN_OBJ_D D106 ON (M01.OBJ_TYPE_ID = D106.OBJ_TYPE_ID AND M01.OBJ_ID = D106.OBJ_ID AND D106.ATR_ID_SEQ = 106 AND D106.ATR_VAL_SEQ = 101)
+					  LEFT OUTER JOIN PEN_OBJ_D D108 ON (M01.OBJ_TYPE_ID = D108.OBJ_TYPE_ID AND M01.OBJ_ID = D108.OBJ_ID AND D108.ATR_ID_SEQ = 108 AND D108.ATR_VAL_SEQ = 101)
+					  LEFT OUTER JOIN PEN_OBJ_D D109 ON (M01.OBJ_TYPE_ID = D109.OBJ_TYPE_ID AND M01.OBJ_ID = D109.OBJ_ID AND D109.ATR_ID_SEQ = 109 AND D109.ATR_VAL_SEQ = 101)
+					  LEFT OUTER JOIN PEN_CD_M C1101 ON (D101.OBJ_ATR_VAL = C1101.CD_ID AND C1101.CD_GRP_ID = 'BM_RPTIMP')
+					  LEFT OUTER JOIN PEN_CD_M C1102 ON (D101.OBJ_ATR_VAL = C1102.CD_ID AND C1102.CD_GRP_ID = 'BM_RPTPUR')
+					  LEFT OUTER JOIN PEN_CD_M C1103 ON (D101.OBJ_ATR_VAL = C1103.CD_ID AND C1103.CD_GRP_ID = 'BM_RPTRCYC')
+					  LEFT OUTER JOIN PEN_CD_M C1104 ON (D101.OBJ_ATR_VAL = C1104.CD_ID AND C1104.CD_GRP_ID = 'BM_RPTUSRTP')			 
+					  LEFT OUTER JOIN PEN_USER_M U01 ON (D106.OBJ_ATR_VAL = U01.USER_ID)			  			  
+					  LEFT OUTER JOIN PEN_OBJ_D DD108 ON (DD108.OBJ_ID = D108.OBJ_ATR_VAL AND DD108.OBJ_TYPE_ID IN('020500L','020600L') AND DD108.ATR_ID_SEQ = 101 AND DD108.ATR_VAL_SEQ = 101 )			  
+					 WHERE 1=1
+					   AND M01.OBJ_TYPE_ID = '010102L'
+					   AND M01.DEL_YN = 'N'
+		     ) WHERE ROWNUM <![CDATA[ <= ]]>5
+    </select>
+    
+    
+    
+    <select id="cateList" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+    
+    	SELECT OBJ_ID,OBJ_NM,OBJ_DESC FROM PEN_OBJ_M 
+           WHERE OBJ_TYPE_ID='010101L'
+             AND OBJ_ID IN (
+               SELECT DISTINCT PATH_OBJ_ID FROM PEN_OBJ_M 
+               WHERE OBJ_TYPE_ID='010102L'  
+             )
+    </select>
+    
+      <select id="getReportDetail" resultType="hashmap">      
+			SELECT NVL(M01.OBJ_TYPE_ID,' ')      AS OBJ_TYPE_ID
+			     , NVL(M01.OBJ_ID,' ')           AS OBJ_ID
+			     , NVL(M01.OBJ_NM,' ')           AS OBJ_NM             --정형분석명
+			     , NVL(M01.OBJ_DESC,' ')         AS OBJ_DESC
+			     , NVL(M01.PATH_OBJ_TYPE_ID,' ') AS PATH_OBJ_TYPE_ID
+			     , NVL(M01.PATH_OBJ_ID,' ')      AS PATH_OBJ_ID
+			     , NVL(M02.OBJ_NM,' ')           AS PATH_OBJ_NM       --분류체계명			     
+			     , NVL(D101.OBJ_ATR_VAL,' ')     AS OBJ_ATR_VAL_101_CD
+			     , NVL(C1101.CD_NM,' ')          AS OBJ_ATR_VAL_101_NM --중요도			     
+			     , NVL(D102.OBJ_ATR_VAL,' ')     AS OBJ_ATR_VAL_102_CD
+			     , NVL(C1102.CD_NM,' ')          AS OBJ_ATR_VAL_102_NM --활용목적			     
+			     , NVL(D103.OBJ_ATR_VAL,' ')     AS OBJ_ATR_VAL_103_NM			     
+			     , NVL(D104.OBJ_ATR_VAL,' ')     AS OBJ_ATR_VAL_104_CD
+			     , NVL(C1103.CD_NM,' ')          AS OBJ_ATR_VAL_104_NM --활용주기			     
+			     , NVL(D105.OBJ_ATR_VAL,' ')     AS OBJ_ATR_VAL_105_CD
+			     , NVL(C1104.CD_NM,' ')          AS OBJ_ATR_VAL_105_NM --사용자구분			     
+			     , NVL(D106.OBJ_ATR_VAL,' ')     AS OBJ_ATR_VAL_106_CD
+			     , NVL(U01.USER_NM,' ')          AS OBJ_ATR_VAL_106_NM --담당자명		
+                 , NVL(D109.OBJ_ATR_VAL,' ')     AS OBJ_ATR_VAL_109_NM
+			     , NVL(M10.OBJ_TYPE_ID,' ')      AS REL_OBJ_TYPE_ID --010107L 필터 / 010104L 지표 / 010105L 관점
+			     , NVL(M10.OBJ_ID,' ')           AS REL_OBJ_ID	
+			     , NVL(M10.ADM_OBJ_ID, '')      AS ADM_OBJ_ID		     
+			     , NVL(DF101.OBJ_ATR_VAL,'')    AS F101_ATR_VAL --필터유형
+			     , NVL(DF102.OBJ_ATR_VAL,' ')    AS F102_ATR_VAL --필터상세유형
+			     , NVL(DF103.OBJ_ATR_VAL,' ')    AS F103_ATR_VAL --구성요소유형
+			     , NVL(DF104.OBJ_ATR_VAL,' ')    AS F104_ATR_VAL --구성요소유형상세	
+			     , NVL(M10.OBJ_NM,' ')           AS D_NAME 
+     			 , NVL(M10.OBJ_DESC,' ')         AS D_DESC  		     
+			     , NVL(DD101.OBJ_ATR_VAL,' ')    AS D101_ATR_VAL --관점_샘플데이터 / 지표_산출식		
+			     , NVL(DD108.OBJ_ATR_VAL,' ')    AS DD108_ATR_VAL -- 인스턴스 연결정보
+			     , NVL(D108.OBJ_ATR_VAL,' ')     AS  D108_ATR_VAL -- 인스턴스  	  
+			  FROM PEN_OBJ_M M01
+			  LEFT OUTER JOIN PEN_OBJ_M M02  ON (M01.PATH_OBJ_TYPE_ID = M02.OBJ_TYPE_ID AND M01.PATH_OBJ_ID = M02.OBJ_ID)
+			  LEFT OUTER JOIN PEN_OBJ_M M03  ON (M02.PATH_OBJ_TYPE_ID = M03.OBJ_TYPE_ID AND M02.PATH_OBJ_ID = M03.OBJ_ID)
+			  LEFT OUTER JOIN PEN_OBJ_D D101 ON (M01.OBJ_TYPE_ID = D101.OBJ_TYPE_ID AND M01.OBJ_ID = D101.OBJ_ID AND D101.ATR_ID_SEQ = 101 AND D101.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_OBJ_D D102 ON (M01.OBJ_TYPE_ID = D102.OBJ_TYPE_ID AND M01.OBJ_ID = D102.OBJ_ID AND D102.ATR_ID_SEQ = 102 AND D102.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_OBJ_D D103 ON (M01.OBJ_TYPE_ID = D103.OBJ_TYPE_ID AND M01.OBJ_ID = D103.OBJ_ID AND D103.ATR_ID_SEQ = 103 AND D103.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_OBJ_D D104 ON (M01.OBJ_TYPE_ID = D104.OBJ_TYPE_ID AND M01.OBJ_ID = D104.OBJ_ID AND D104.ATR_ID_SEQ = 104 AND D104.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_OBJ_D D105 ON (M01.OBJ_TYPE_ID = D105.OBJ_TYPE_ID AND M01.OBJ_ID = D105.OBJ_ID AND D105.ATR_ID_SEQ = 105 AND D105.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_OBJ_D D106 ON (M01.OBJ_TYPE_ID = D106.OBJ_TYPE_ID AND M01.OBJ_ID = D106.OBJ_ID AND D106.ATR_ID_SEQ = 106 AND D106.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_OBJ_D D108 ON (M01.OBJ_TYPE_ID = D108.OBJ_TYPE_ID AND M01.OBJ_ID = D108.OBJ_ID AND D108.ATR_ID_SEQ = 108 AND D108.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_OBJ_D D109 ON (M01.OBJ_TYPE_ID = D109.OBJ_TYPE_ID AND M01.OBJ_ID = D109.OBJ_ID AND D109.ATR_ID_SEQ = 109 AND D109.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_CD_M C1101 ON (D101.OBJ_ATR_VAL = C1101.CD_ID AND C1101.CD_GRP_ID = 'BM_RPTIMP')
+			  LEFT OUTER JOIN PEN_CD_M C1102 ON (D101.OBJ_ATR_VAL = C1102.CD_ID AND C1102.CD_GRP_ID = 'BM_RPTPUR')
+			  LEFT OUTER JOIN PEN_CD_M C1103 ON (D101.OBJ_ATR_VAL = C1103.CD_ID AND C1103.CD_GRP_ID = 'BM_RPTRCYC')
+			  LEFT OUTER JOIN PEN_CD_M C1104 ON (D101.OBJ_ATR_VAL = C1104.CD_ID AND C1104.CD_GRP_ID = 'BM_RPTUSRTP')			 
+			  LEFT OUTER JOIN PEN_USER_M U01 ON (D106.OBJ_ATR_VAL = U01.USER_ID)			  
+			  LEFT OUTER JOIN PEN_OBJ_R R01 ON (M01.OBJ_TYPE_ID = R01.OBJ_TYPE_ID AND M01.OBJ_ID = R01.OBJ_ID AND R01.DEL_YN = 'N')
+			  LEFT OUTER JOIN PEN_OBJ_M M10 ON (R01.REL_OBJ_TYPE_ID = M10.OBJ_TYPE_ID AND R01.REL_OBJ_ID = M10.OBJ_ID AND M10.OBJ_TYPE_ID IN ('010104L','010105L','010107L') AND M10.DEL_YN = 'N')			  
+			  LEFT OUTER JOIN PEN_OBJ_D DF101 ON (DF101.OBJ_TYPE_ID = '010107L' AND M10.OBJ_TYPE_ID = DF101.OBJ_TYPE_ID AND M10.OBJ_ID = DF101.OBJ_ID AND DF101.ATR_ID_SEQ = 101 AND DF101.ATR_VAL_SEQ = 101 AND DF101.DEL_YN = 'N')
+			  LEFT OUTER JOIN PEN_OBJ_D DF102 ON (DF101.OBJ_TYPE_ID = '010107L' AND M10.OBJ_TYPE_ID = DF102.OBJ_TYPE_ID AND M10.OBJ_ID = DF102.OBJ_ID AND DF102.ATR_ID_SEQ = 102 AND DF102.ATR_VAL_SEQ = 101 AND DF102.DEL_YN = 'N')
+			  LEFT OUTER JOIN PEN_OBJ_D DF103 ON (DF101.OBJ_TYPE_ID = '010107L' AND M10.OBJ_TYPE_ID = DF103.OBJ_TYPE_ID AND M10.OBJ_ID = DF103.OBJ_ID AND DF103.ATR_ID_SEQ = 103 AND DF103.ATR_VAL_SEQ = 101 AND DF103.DEL_YN = 'N')
+			  LEFT OUTER JOIN PEN_OBJ_D DF104 ON (DF101.OBJ_TYPE_ID = '010107L' AND M10.OBJ_TYPE_ID = DF104.OBJ_TYPE_ID AND M10.OBJ_ID = DF104.OBJ_ID AND DF104.ATR_ID_SEQ = 104 AND DF104.ATR_VAL_SEQ = 101 AND DF104.DEL_YN = 'N')			  
+			  LEFT OUTER JOIN PEN_OBJ_D DD101 ON (DD101.OBJ_TYPE_ID IN ('010105L','010104L') AND M10.OBJ_TYPE_ID = DD101.OBJ_TYPE_ID AND M10.OBJ_ID = DD101.OBJ_ID AND DD101.ATR_ID_SEQ = 101 AND DD101.ATR_VAL_SEQ = 101 AND DD101.DEL_YN = 'N')			  
+			  LEFT OUTER JOIN PEN_OBJ_D DD108 ON (DD108.OBJ_ID = D108.OBJ_ATR_VAL AND DD108.OBJ_TYPE_ID IN('020500L','020600L') AND DD108.ATR_ID_SEQ = 101 AND DD108.ATR_VAL_SEQ = 101 )			  
+			 WHERE 1=1
+			   AND M01.OBJ_TYPE_ID = '010102L'
+			   AND M01.OBJ_ID = #{reportId}
+			   AND M01.DEL_YN = 'N'
+			 ORDER BY M10.OBJ_TYPE_ID DESC, M10.OBJ_ID DESC 
+      
+     </select>
+     
+     <select id="getToolLoginUserDetail" resultType="hashmap">			 		 
+		 SELECT C.ADM_OBJ_ID AS TOOL_ID,D.OBJ_ATR_VAL AS TOOL_PWD
+		  FROM PEN_USER_M A
+		  INNER JOIN PEN_SYS_USER_OBJ_IF_D B ON(A.USER_ID = B.USER_ID)          
+		  INNER JOIN PEN_OBJ_M C ON(B.OBJ_TYPE_ID = C.OBJ_TYPE_ID AND B.OBJ_ID = C.OBJ_ID)
+		  INNER JOIN PEN_OBJ_D D ON(C.OBJ_TYPE_ID = D.OBJ_TYPE_ID AND C.OBJ_ID = D.OBJ_ID AND D.ATR_ID_SEQ = 101 AND D.ATR_VAL_SEQ = 101)        
+          INNER JOIN PEN_OBJ_D E ON(C.PATH_OBJ_ID = E.OBJ_ATR_VAL  AND E.ATR_ID_SEQ = 108 AND E.ATR_VAL_SEQ = 101)
+		WHERE A.USER_ID = #{userId}
+		  AND D.OBJ_TYPE_ID = '0205U1L' 
+          AND E.obj_type_id = '010102L'
+          AND E.OBJ_ID = #{reportId}	  
+     </select>
+     
+     <select id="bookmarkReportList" resultType="kr.co.penta.dataeye.common.entities.CamelMap">    
+		SELECT M01.OBJ_TYPE_ID      AS OBJ_TYPE_ID
+			     , M01.OBJ_ID           AS OBJ_ID
+			     , M01.OBJ_NM           AS OBJ_NM             --정형분석명\
+			     , CASE
+					WHEN (SELECT COUNT(USER_ID) FROM PEN_SYS_USER_OBJ_FVRT_D WHERE DEL_YN = 'N' AND USER_ID = #{sessionInfo.userId} AND OBJ_TYPE_ID = M01.OBJ_TYPE_ID AND OBJ_ID = M01.OBJ_ID) > 0 THEN 'YES'
+					ELSE 'NO'
+			     END AS BOOKMARK_YN
+			     , M01.OBJ_DESC         AS OBJ_DESC
+			     , M01.PATH_OBJ_TYPE_ID AS PATH_OBJ_TYPE_ID
+			     , M01.PATH_OBJ_ID      AS PATH_OBJ_ID
+			     , M02.OBJ_NM           AS PATH_OBJ_NM       --분류체계명			     
+			     , D101.OBJ_ATR_VAL     AS OBJ_ATR_VAL_101_CD
+			     , C1101.CD_NM          AS OBJ_ATR_VAL_101_NM --중요도			     
+			     , D102.OBJ_ATR_VAL     AS OBJ_ATR_VAL_102_CD
+			     , C1102.CD_NM          AS OBJ_ATR_VAL_102_NM --활용목적			     
+			     , D103.OBJ_ATR_VAL     AS OBJ_ATR_VAL_103_NM			     
+			     , D104.OBJ_ATR_VAL     AS OBJ_ATR_VAL_104_CD
+			     , C1103.CD_NM          AS OBJ_ATR_VAL_104_NM --활용주기			     
+			     , D105.OBJ_ATR_VAL     AS OBJ_ATR_VAL_105_CD
+			     , C1104.CD_NM          AS OBJ_ATR_VAL_105_NM --사용자구분			     
+			     , D106.OBJ_ATR_VAL     AS OBJ_ATR_VAL_106_CD
+			     , U01.USER_NM          AS OBJ_ATR_VAL_106_NM --담당자명		
+                 , D109.OBJ_ATR_VAL     AS OBJ_ATR_VAL_109_NM
+			     , DD108.OBJ_ATR_VAL    AS DD108_ATR_VAL -- 인스턴스 연결정보
+                 , DD108.OBJ_TYPE_ID    AS DD108_OBJ_TYPE_ID -- 인스턴스 연결정보
+			     , D108.OBJ_ATR_VAL     AS  D108_ATR_VAL -- 인스턴스  	  
+			  FROM PEN_OBJ_M M01
+			  LEFT OUTER JOIN PEN_OBJ_M M02  ON (M01.PATH_OBJ_TYPE_ID = M02.OBJ_TYPE_ID AND M01.PATH_OBJ_ID = M02.OBJ_ID)
+			  LEFT OUTER JOIN PEN_OBJ_M M03  ON (M02.PATH_OBJ_TYPE_ID = M03.OBJ_TYPE_ID AND M02.PATH_OBJ_ID = M03.OBJ_ID)
+			  LEFT OUTER JOIN PEN_OBJ_D D101 ON (M01.OBJ_TYPE_ID = D101.OBJ_TYPE_ID AND M01.OBJ_ID = D101.OBJ_ID AND D101.ATR_ID_SEQ = 101 AND D101.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_OBJ_D D102 ON (M01.OBJ_TYPE_ID = D102.OBJ_TYPE_ID AND M01.OBJ_ID = D102.OBJ_ID AND D102.ATR_ID_SEQ = 102 AND D102.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_OBJ_D D103 ON (M01.OBJ_TYPE_ID = D103.OBJ_TYPE_ID AND M01.OBJ_ID = D103.OBJ_ID AND D103.ATR_ID_SEQ = 103 AND D103.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_OBJ_D D104 ON (M01.OBJ_TYPE_ID = D104.OBJ_TYPE_ID AND M01.OBJ_ID = D104.OBJ_ID AND D104.ATR_ID_SEQ = 104 AND D104.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_OBJ_D D105 ON (M01.OBJ_TYPE_ID = D105.OBJ_TYPE_ID AND M01.OBJ_ID = D105.OBJ_ID AND D105.ATR_ID_SEQ = 105 AND D105.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_OBJ_D D106 ON (M01.OBJ_TYPE_ID = D106.OBJ_TYPE_ID AND M01.OBJ_ID = D106.OBJ_ID AND D106.ATR_ID_SEQ = 106 AND D106.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_OBJ_D D108 ON (M01.OBJ_TYPE_ID = D108.OBJ_TYPE_ID AND M01.OBJ_ID = D108.OBJ_ID AND D108.ATR_ID_SEQ = 108 AND D108.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_OBJ_D D109 ON (M01.OBJ_TYPE_ID = D109.OBJ_TYPE_ID AND M01.OBJ_ID = D109.OBJ_ID AND D109.ATR_ID_SEQ = 109 AND D109.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN PEN_CD_M C1101 ON (D101.OBJ_ATR_VAL = C1101.CD_ID AND C1101.CD_GRP_ID = 'BM_RPTIMP')
+			  LEFT OUTER JOIN PEN_CD_M C1102 ON (D101.OBJ_ATR_VAL = C1102.CD_ID AND C1102.CD_GRP_ID = 'BM_RPTPUR')
+			  LEFT OUTER JOIN PEN_CD_M C1103 ON (D101.OBJ_ATR_VAL = C1103.CD_ID AND C1103.CD_GRP_ID = 'BM_RPTRCYC')
+			  LEFT OUTER JOIN PEN_CD_M C1104 ON (D101.OBJ_ATR_VAL = C1104.CD_ID AND C1104.CD_GRP_ID = 'BM_RPTUSRTP')			 
+			  LEFT OUTER JOIN PEN_USER_M U01 ON (D106.OBJ_ATR_VAL = U01.USER_ID)			  			  
+			  LEFT OUTER JOIN PEN_OBJ_D DD108 ON (DD108.OBJ_ID = D108.OBJ_ATR_VAL AND DD108.OBJ_TYPE_ID IN('020500L','020600L') AND DD108.ATR_ID_SEQ = 101 AND DD108.ATR_VAL_SEQ = 101 )			  
+			 WHERE 1=1
+			   AND M01.OBJ_TYPE_ID = '010102L'
+			   AND M01.DEL_YN = 'N'
+			   AND (M01.OBJ_TYPE_ID,M01.OBJ_ID) IN
+			   (
+			   		SELECT OBJ_TYPE_ID, OBJ_ID FROM PEN_SYS_USER_OBJ_FVRT_D WHERE DEL_YN = 'N' AND USER_ID = #{sessionInfo.userId}
+			   )
+		   	<if test='"_all".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+            	AND (
+	            	   UPPER(M01.OBJ_NM) LIKE '%'||UPPER(#{searchValue})||'%'
+	            	OR UPPER(U01.USER_NM) LIKE '%'||UPPER(#{searchValue})||'%'
+	            )
+            </if>
+            <if test='"OBJ_NM".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+				AND UPPER(M01.OBJ_NM) LIKE '%'||UPPER(#{searchValue})||'%'
+			</if>
+            <if test='"OBJ_ATR_VAL_106_NM".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+				AND UPPER(U01.USER_NM) LIKE '%'||UPPER(#{searchValue})||'%'
+			</if>
+			<if test=' @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(cateIds)'>
+				AND M01.PATH_OBJ_ID  IN(${cateIds})
+			</if>    
+			<if test=' @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(sessionInfo.userId)'>
+			 AND (M01.OBJ_TYPE_ID,M01.OBJ_ID) NOT IN
+            (	            
+	            SELECT OBJ_TYPE_ID,OBJ_ID 
+	            FROM  ( 
+	                SELECT A.OBJ_TYPE_ID , A.OBJ_ID , NVL(C.USER_ID,A.PRIV_RCVR_ID) AS USER_ID
+	                      FROM PEN_SYS_PRIV_OBJ_R A
+	                      LEFT OUTER JOIN PEN_SYS_GRP_R B ON(A.PRIV_RCVR_ID = B.USER_GRP_ID AND A.PRIV_RCVR_GBN='G')
+	                      LEFT OUTER JOIN PEN_SYS_GRP_USER_R C  ON(B.REL_USER_GRP_ID = C.USER_GRP_ID )
+	             ) AUTH
+	              WHERE AUTH.USER_ID=#{sessionInfo.userId}                     
+	          )
+		</if>
+		ORDER BY M01.OBJ_ID ASC       
+    </select>
+    
+     <select id="objMngNmString" parameterType="hashmap" resultType="String">
+     	SELECT 
+     		USER_NM 
+     	FROM PEN_USER_M
+		WHERE
+			USER_ID = (
+				SELECT
+					OBJ_ATR_VAL
+				FROM PEN_OBJ_D
+				WHERE
+					OBJ_TYPE_ID = #{objTypeId}
+					AND OBJ_ID = #{objId}
+					AND ATR_ID_SEQ = 106
+					AND ATR_VAL_SEQ = 101
+			)
+     	
+     </select>
+     
+     <insert id="bookmarkProc" parameterType="hashmap">
+     	INSERT INTO PEN_SYS_USER_OBJ_FVRT_D
+     		(USER_ID, SEQ_ID, DEL_YN, CRET_DT, CRETR_ID, 
+     		CHG_DT, CHGR_ID, OBJ_TYPE_ID, OBJ_ID)
+     	VALUES
+     		(#{sessionInfo.userId, jdbcType=VARCHAR}, #{seqId}, 'N', SYSDATE, #{sessionInfo.userId, jdbcType=VARCHAR}, 
+     		SYSDATE, #{sessionInfo.userId, jdbcType=VARCHAR}, #{objTypeId}, #{objId})
+     </insert>
+     
+     <update id="bookmarkUpdate" parameterType="hashmap">
+     	UPDATE PEN_SYS_USER_OBJ_FVRT_D 
+     	SET DEL_YN = #{delYn}
+     		, CHG_DT = SYSDATE
+     		, CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR}
+     	WHERE USER_ID = #{sessionInfo.userId, jdbcType=VARCHAR} AND OBJ_TYPE_ID = #{objTypeId} AND OBJ_ID = #{objId}
+     </update>
+     
+     <delete id="bookmarkDelete" parameterType="hashmap">
+     	DELETE PEN_SYS_USER_OBJ_FVRT_D WHERE USER_ID = #{sessionInfo.userId, jdbcType=VARCHAR} AND OBJ_TYPE_ID = #{objTypeId} AND OBJ_ID = #{objId}
+     </delete>
+</mapper>

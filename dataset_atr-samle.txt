@@ -1,0 +1,95 @@
+
+##L0
+DE.ui.open.popup(
+	"view",
+	['multisave', '010201L', '010201L_8e00e946-8aff-41ab-9c68-460f287eaf3b'],
+	{
+		viewname:'portal/bdp/010202L.p0001',
+		dsetTypeId:'010201L',
+		dsetId:'010201L_8e00e946-8aff-41ab-9c68-460f287eaf3b',
+		mode:'U'
+	},
+    "width=1300, height=800, toolbar=non, menubar=no"
+);
+
+##L1
+DE.ui.open.popup(
+	"view",
+	['multisave', '010205L', '010205L_8e00e946-8aff-41ab-9c68-460f287eaf3b'],
+	{
+		viewname:'portal/bdp/010206L.p0001',
+		dsetTypeId:'010205L',
+		dsetId:'010205L_8e00e946-8aff-41ab-9c68-460f287eaf3b',
+		mode:'U'
+	},
+    "width=1300, height=800, toolbar=non, menubar=no"
+);
+
+
+##설계 컬럼
+DE.ui.open.popup(
+	"view",
+	['multisave', '040103L', '040103L_8e00e946-8aff-41ab-9c68-460f287eaf3b'],
+	{
+		viewname:'portal/bdp/040103L.p0001',
+		dsgnTabTypeId:'040102L',
+		dsgnTabId:'7d1cc208-5a81-4ee7-a8f2-3bb289338fbf',
+		mode:'U'
+	},
+    "width=1300, height=800, toolbar=non, menubar=no"
+);
+
+#br 상세결과
+DE.ui.open.popup(
+	"view",
+	["030103L", "030103L_f5a09729-cffd-4458-90f0-afebadd87413"],
+	{
+		viewname:'portal/qm/br/qm.br.p0001',
+		brTypeId:"030103L_f5a09729-cffd-4458-90f0-afebadd87413", 
+		brId:"030103L",
+		brSeq:"b33e2b76-c179-49db-b0d5-433bdc1b7a6d"
+	},
+	"width=1000, height=602, left=100, top=300,toolbar=no, menubar=no, location=no"
+);
+
+#dataset 물리테이블 
+DE.ui.open.popup(
+	"view",
+	["030103L", "030103L_f5a09729-cffd-4458-90f0-afebadd87413"],
+	{
+		viewname:'common/metacore/datasetView',
+		objTypeId:"010201L", 
+		objId:"010201L_8e00e946-8aff-41ab-9c68-460f287eaf3b"
+	},
+	"width=1000, height=602, left=100, top=300,toolbar=no, menubar=no, location=no"
+);
+
+#관계 영향도 샘플
+DE.ui.open.popup(
+	"view",
+	["datasetInfluenceViewNewPopup"],
+	{
+		viewname:'common/metacore/ui.influence.view',
+		objTypeId:"xxxx",
+		objId:"yyyyy",
+		mode:"R",
+		menuId:"xxxxxx",
+		uiId:"UI_DSET_IA"
+	},
+	"width="+screen.availWidth+", height="+screen.availHeight+", toolbar=no, menubar=no, location=no"
+);
+
+#표준단어 멀티등록
+DE.ui.open.popup(
+	"view",
+	["datasetInfluenceViewNewPopup"],
+	{
+		viewname:'common/metacore/stdWordMultiInsert',
+		objTypeId:"xxxx",
+		objId:"yyyyy",
+		mode:"R",
+		menuId:"xxxxxx",
+		uiId:"UI_DSET_IA"
+	},
+	"width="+screen.availWidth+", height="+screen.availHeight+", toolbar=no, menubar=no, location=no"
+);

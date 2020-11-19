@@ -1,0 +1,146 @@
+##SCRIPT
+$(document).ready(function() {
+	var parentObj = opener || parent;
+	var reqParam = $("input#reqParam").data();
+    
+	var renderGrid = function($grid, $gridPager) {
+	    var colModel = [
+	        DE.jqgrid.colModel.objTypeIcon({ label: '유형'}),
+			{name:'OBJ_NM',index:'OBJ_NM', label:'객체명', width:150, align:'left', 
+		    	formatter: "dynamicLink", 
+		    	formatoptions: {
+		    		onClick: function (rowid, irow, icol, cellvalue, e) {
+		    			var rowData = $(this).jqGrid("getLocalRow", rowid);
+		    			DE.ui.open.popup(
+	    					"view",
+	    					[rowData["OBJ_TYPE_ID"], rowData["OBJ_ID"]],
+	    					{
+	    						viewname:'common/metacore/objectInfoTab',
+	    						objTypeId:rowData["OBJ_TYPE_ID"],
+	    						objId:rowData["OBJ_ID"],
+	    						mode:'R'
+	    					},
+	    					null
+	    				);
+		    		}
+		    	}
+	        },
+			{name:'DISP_PATH_OBJ_NM',index:'DISP_PATH_OBJ_NM', label:'품질지표', width:250, align:'left'},
+			{name:'BR_TYPE',index:'BR_TYPE', label:'검증룰 유형', width:120, align:'left', fixed:true},
+			{name:'QLTY_CHRGR',index:'QLTY_CHRGR', label:'품질담당자', width:120, align:'left', fixed:true},
+			{name:'WORK_CHRGR',index:'WORK_CHRGR', label:'업무담당자', width:120, align:'left', fixed:true},
+			{name:'OBJ_ID',index:'OBJ_ID', label:'OBJ_ID', hidden:true}
+	   	];
+	
+		var opts = {
+			"url":DE.contextPath+"/metacore/uiview?oper=execQueryByGrid",
+			"colModel":colModel,
+	        pager:"#"+$gridPager.prop("id"),
+	        isPaging:false,
+			loadonce: true,
+			multiselect: false,
+			scroll:-1,
+			autowidth:true,
+			shrinkToFit: true,
+			height:200,
+                        isResize:false,
+	        gridComplete: function() {
+	        	DE.jqgrid.checkedHandler($(this));
+	        }
+		};
+		
+		var navOpts = {
+			navOptions:{
+				cloneToTop:false,
+				add:false,
+				del:false,
+				edit:false,
+				refresh:true,
+				search:false,
+				view:false
+			}
+		};
+		
+		DE.jqgrid.render($grid, opts);
+		DE.jqgrid.navGrid($grid, $gridPager, navOpts);
+	}
+
+	var init = function() {
+		renderGrid($("#jqGrid"), $("#jqGridPager"));
+		
+		var postData = {
+			"mode":reqParam["mode"],
+			"objTypeId":reqParam["objTypeId"],
+			"objId":reqParam["objId"],
+			"uiId":reqParam["uiId"],
+			"confSqlKey":"CONF_SQL1"
+		};
+
+		DE.jqgrid.reload($("#jqGrid"), postData);
+	};
+	init();
+
+	$(this).off("autoResize").on( "autoResize", function( event ) {
+		var winHeight = $(window).height();
+		var winWidth = $(window).width();
+		$("#jqGrid").setGridWidth(winWidth-30);
+		$("#jqGrid").setGridHeight(winHeight-90);
+	}).trigger("autoResize");
+});
+
+##QUERY
+SELECT T103.OBJ_TYPE_ID
+     , T103.OBJ_ID
+     , T103.OBJ_NM
+     , T105.DISP_OBJ_NM AS DISP_PATH_OBJ_NM
+     , MAX(CASE WHEN T104.ATR_ID_SEQ=103 THEN CASE WHEN T104.OBJ_ATR_VAL IS NULL THEN '[담당자없음]' ELSE T104.OBJ_ATR_VAL END END) AS QLTY_CHRGR
+     , MAX(CASE WHEN T104.ATR_ID_SEQ=104 THEN T104.OBJ_ATR_VAL END) AS WORK_CHRGR
+     , MAX(T106.UP_REL_TYPE_NM) AS BR_TYPE
+FROM PEN_OBJ_R T101
+INNER JOIN PEN_REL_TYPE_M T102
+ON (
+    T101.REL_TYPE_ID = T102.REL_TYPE_ID
+    AND T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+    AND T102.META_REL_CD = 'UD'
+)
+INNER JOIN PEN_OBJ_M T103
+ON (
+    T101.REL_OBJ_TYPE_ID = T103.OBJ_TYPE_ID
+    AND T101.REL_OBJ_ID = T103.OBJ_ID
+)
+INNER JOIN PEN_OBJ_D T104
+ON (
+    T103.OBJ_TYPE_ID = T104.OBJ_TYPE_ID
+    AND T103.OBJ_ID = T104.OBJ_ID
+)
+LEFT OUTER JOIN (
+    SELECT T101.OBJ_ID ,
+            T101.OBJ_NM ,
+            SUBSTR(SYS_CONNECT_BY_PATH(T101.OBJ_NM, ' > '), 4) AS DISP_OBJ_NM
+    FROM
+            ( SELECT * FROM PEN_OBJ_M T101 WHERE T101.OBJ_TYPE_ID = '030101L'
+            ) T101
+            CONNECT BY PRIOR OBJ_TYPE_ID = PATH_OBJ_TYPE_ID
+        AND PRIOR OBJ_ID                 = PATH_OBJ_ID
+            START WITH PATH_OBJ_ID      IS NULL
+) T105
+ON ( T103.PATH_OBJ_ID = T105.OBJ_ID )
+LEFT OUTER JOIN (
+    SELECT REL_OBJ_TYPE_ID ,
+            UP_REL_TYPE_NM
+    FROM    PEN_REL_TYPE_M
+    WHERE   OBJ_TYPE_ID = '030103L'
+        AND META_REL_CD = 'IR'
+        AND DEL_YN      = 'N'
+    ) T106
+ON ( 
+    T106.REL_OBJ_TYPE_ID = T104.OBJ_ATR_VAL
+    AND T104.ATR_ID_SEQ   = 106 
+)                
+WHERE T101.OBJ_TYPE_ID = #{objTypeId}
+AND T101.OBJ_ID = #{objId}
+GROUP BY  T103.OBJ_TYPE_ID
+     , T103.OBJ_ID
+     , T103.OBJ_NM
+     , T105.DISP_OBJ_NM
+ORDER BY T103.OBJ_NM ASC

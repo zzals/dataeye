@@ -1,0 +1,124 @@
+@charset "UTF-8";
+body,p,h1,h2,h3,h4,h5,h6,ul,ol,li,dl,dt,dd,table,th,td,form,fieldset,legend,input,textarea,button,select {
+	margin:0;padding:0;
+}
+body,input,textarea,select,button,table,h1,h2,h3,h4,h5 {
+	font-size:12px;
+	line-height:1.4em;
+	font-family:'Malgun Gothic',dotum,Helvetica,Arial,sans-serif;
+	color:#333;
+}
+header,footer,section,article,aside,nav,hgroup,details,menu,figure,figcaption {display:block;}
+table {
+	width:100%;
+	border-collapse:collapse;
+}
+img, fieldset {border:0;}
+ul,ol {list-style:none;}
+em,address {font-style:normal;}
+a {color:inherit;text-decoration:none;vertical-align:top;}
+img {vertical-align:top;}
+b, strong {font-weight:normal;}
+button {
+	margin:0;
+	padding:0;
+	font-family:inherit;
+	font-size:inherit;
+	background:transparent;
+	border:0 none;
+	cursor:pointer
+}
+h1, h2, h3, h4, h5, h6 {font-weight:normal;}
+select {height:31px;vertical-align:top;border:1px solid #d2d6de;}
+input[type="text"] {height:29px;border:1px solid #d2d6de;color:#333;vertical-align:top;}
+body,html {overflow:hidden;}
+iframe {border:0;}
+.pop_container {position:relative;}
+#header h1 {padding:11px 0 0 25px;font-size:18px;color:#000;font-weight:bold;background:url(../images/pop_title_ico.png) no-repeat 0 15px;}
+#header {
+	height:50px;
+	margin:0 0 10px 0;
+	padding:0 10px;
+	background:#f5f5f5;
+	background:-webkit-linear-gradient(#f5f5f5, #eeeeee);
+	background:-o-linear-gradient(#f5f5f5, #eeeeee);
+	background:-moz-linear-gradient(#f5f5f5, #eeeeee);
+	background:linear-gradient(#f5f5f5, #eeeeee);
+	border-bottom:1px solid #ccc;
+}
+h2.stit {position:relative;padding:0 0 15px 30px;font-size:16px;}
+h2.stit:before {content:'';display:block;width:5px;height:5px;background:#ec068d;position:absolute;top:8px;left:17px;}
+.pop_contents h2.stit {margin-top:20px;padding-left:16px;}
+.pop_contents h2.stit:before {content:'';width:5px;height:5px;background:#ec068d;position:absolute;top:8px;left:3px;}
+.pop_contents {overflow-y:auto;margin-right:15px;padding:0 0 15px 15px;}
+.pop_contents .pop_contents_in {width:100%;height:100%;display:table;box-sizing:border-box;overflow:hidden;padding:0 0 0 0;}
+.search_area {margin:0 15px 20px;padding:8px 15px;background:#f8f8f8;border:1px solid #e7e7e7;border-radius:4px;}
+.search_area .cont_right {float:right;}
+.search_area .cont_right .btn_default {
+	border:1px solid #8c97a6;
+	background: -webkit-linear-gradient(#939EAF,#8c97a6);
+	background: -o-linear-gradient(#939EAF,#8c97a6);
+	background: -moz-linear-gradient(#939EAF,#8c97a6);
+	background-image:linear-gradient(to bottom, #939EAF, #8c97a6);
+}
+.pop_contents_wrap {overflow:hidden;width:100%;box-sizing:border-box;}
+.pop_contents_wrap h2.stit {margin-top:0;}
+.pop_contents_wrap .cont_left {width: calc(50% - 5px);height:100%;float:left;}
+.pop_contents_wrap .cont_right {width: calc(50% - 5px);height:100%;float:right;}
+/* close button */
+.pop_close {
+	display:block;
+	position:absolute;
+	top:5px;
+	right:20px;
+	border:none;
+	font-size:25px;
+	color: #000;
+	opacity:0.2;
+	outline:none;
+}
+/* btn */
+.btn_area {
+	position:fixed;
+	left:0;
+	bottom:0;
+	width:100%;
+	padding:10px 15px;
+	border-top:1px solid #ccc;
+	background:#f5f5f5;
+	box-sizing:border-box;
+}
+.btn_area .btn_right {text-align:right;}
+.btn_area .btn_default {height:26px;line-height:26px;}
+.btn_default {
+	display:inline-block;
+	padding:0 12px;
+	height:29px;
+	line-height:29px;
+	border:1px solid #5e6779;
+	border-radius:4px;
+	background: -webkit-linear-gradient(#8c97a6, #596171);
+	background: -o-linear-gradient(#8c97a6, #596171);
+	background: -moz-linear-gradient(#8c97a6, #596171);
+	background-image:linear-gradient(to bottom, #8c97a6, #596171);
+	color:#fff;
+}
+.btn_default:hover {
+	background: -webkit-linear-gradient(#596171, #8c97a6);
+	background: -o-linear-gradient(#596171, #8c97a6);
+	background: -moz-linear-gradient(#596171, #8c97a6);
+	background-image:linear-gradient(to bottom, #596171, #8c97a6);
+	color:#fff;
+}
+button.btn_default {height:31px;}
+.btn_search {
+	display:inline-block;
+	padding:0 12px;
+	height:29px;
+	line-height:29px;
+	border:1px solid #ccc;
+	border-radius:4px;
+	background:#f4f4f4;
+	color:#333;
+}
+

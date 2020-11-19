@@ -1,0 +1,10 @@
+1. 010304L 도메인 그룹 설명 atr_id_seq 가 7번으로 잘못 등록되어 있음
+	UPDATE PEN_OBJ_TYPE_ATR_D 
+	SET ATR_ID_SEQ = 6, SORT_NO=6
+	WHERE OBJ_TYPE_ID = '010304L'
+	AND  ATR_ID_SEQ = 7;
+
+2. ForceNumericOnly 체크 함수 mask 함수로 변경 
+	update pen_obj_type_atr_d
+	    set avail_chk_pgm_id =replace(avail_chk_pgm_id, 'ForceNumericOnly"', 'InputMask", "param":{"format":"0000000000"}')
+	where avail_chk_pgm_id like '%ForceNumericOnly%';

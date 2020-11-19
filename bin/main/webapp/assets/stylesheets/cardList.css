@@ -1,0 +1,268 @@
+@charset "utf-8";
+
+/* 데이터셋 메인 탭 */
+#DataSet_Main{
+	width:100%;
+	box-sizing:border-box;
+}
+#DataSet_Main ul{margin:0; padding:0;}
+
+ul.DataSet_tab{
+	width:100%;
+	height:45px;
+	box-sizing:border-box;
+	border-bottom:1px solid #ccc;
+}
+
+ul.DataSet_tab .ListSelWrap{
+	float:right; width:100px; height:43px; line-height:43px; border:1px solid #ccc; border-bottom:none;
+}
+ul.DataSet_tab .ListSelWrap .selWraps{
+	background:none; border:none; height:40px; width:100px; padding-left:10px; font-size:14px;  
+}
+
+ul.DataSet_tab li{
+	height:42px;
+	width:124px;
+	float:left;
+	font-size:14px;
+	color:#ebebeb;
+	
+}
+
+ul.DataSet_tab li a{
+	display:inline-block;
+	color: #000000;
+	width:124px;
+	font-size:14px;
+	text-align:center;
+	background:#ebebeb;
+	height:42px;
+	line-height:42px;
+	text-decoration:none;
+	border:1px solid #ccc;
+	border-bottom:none
+	
+}
+
+ul.DataSet_tab li a.selected{
+	display:inline-block;
+	color: #fff;
+	width:124px;
+	text-align:center;
+	background:#003471;
+	height:42px;
+	line-height:42px;
+	text-decoration:none;
+	border:1px solid #003471;
+	border-right:none;
+}
+ul.DataSet_panel{
+	clear:both;
+	border-top:none;
+	display:table;width:100%;
+}
+ul.DataSet_panel li{
+	list-style-type:none;
+	color:#333;
+	padding-top:15px;
+}
+
+ul.DataSet_panel li .OneBox_Con{float:left; width:320px; height:165px; border:1px solid #e0e5ec; box-sizing:border-box; margin:4px;}
+ul.DataSet_panel li .OneBox_Con .Inner_Wrap{padding:20px; width:320px; height:165px; box-sizing:border-box;}
+ul.DataSet_panel li .OneBox_Con .Inner_Wrap dd.In_Ico{}
+ul.DataSet_panel li .OneBox_Con .Inner_Wrap dd.In_Ico img{margin-right:2px;}
+ul.DataSet_panel li .OneBox_Con .Inner_Wrap dd.In_Titles{color:#262626; margin-top:2px; height:47px; line-height:140%; font-size:17px; letter-spacing:-0.7px;}
+ul.DataSet_panel li .OneBox_Con .Inner_Wrap dd.In_cont01{color:#8d8d8d; height:17px; margin-top:5px; height:17px; line-height:17px;font-size:14px; letter-spacing:-0.7px;}
+ul.DataSet_panel li .OneBox_Con .Inner_Wrap dd.In_cont02{color:#8d8d8d; height:17px; line-height:17px; height:17px; font-size:12px; letter-spacing:-0.5px;}
+ul.DataSet_panel li .OneBox_Con .Inner_Wrap dd.In_cont03{color:#000000; height:18px;margin-top:5px; height:17px; line-height:18px;font-size:14px; letter-spacing:-0.7px;}
+ul.DataSet_panel li .OneBox_Con .Inner_Wrap dd.In_Titles .InCols{color:#2761ae}
+
+
+/*토탈*/
+ul.Totlas_DataSet_tab{
+	width:100%;
+	height:44px;
+	box-sizing:border-box;
+	border-bottom:1px solid #ccc;
+}
+
+ul.Totlas_DataSet_tab .ListSelWrap{
+	float:right; width:100px; height:43px; line-height:43px; border:1px solid #ccc; border-bottom:none;
+}
+ul.Totlas_DataSet_tab .ListSelWrap .selWraps{
+	background:#fff; border:none; height:40px; width:100px; padding-left:10px; font-size:14px;  
+}
+
+ul.Totlas_DataSet_tab li{
+	height:42px;
+	width:11%;
+	float:left;
+	font-size:14px;
+	color:#ebebeb;
+}
+ul.Totlas_DataSet_tab li:first-child{
+	height:42px;
+	width:12%;
+	float:left;
+	font-size:14px;
+	color:#ebebeb;
+}
+
+ul.Totlas_DataSet_tab li a{
+	display:inline-block;
+	color: #000000;
+	width:99%;
+	font-size:14px;
+	text-align:center;
+	background:#ebebeb;
+	height:42px;
+	line-height:42px;
+	text-decoration:none;
+	border:1px solid #ccc;
+	border-bottom:none;
+	border-left:none;
+}
+
+ul.Totlas_DataSet_tab li a.selected{
+	display:inline-block;
+	color: #fff;
+	width:99%;
+	text-align:center;
+	background:#003471;
+	height:42px;
+	line-height:42px;
+	text-decoration:none;
+	border:1px solid #003471;
+	border-left:none;
+}
+
+ul.Totlas_DataSet_panel{
+	clear:both;
+	border-top:none;
+	display:table;
+}
+ul.Totlas_DataSet_panel li{
+	list-style-type:none;
+	color:#333;
+	padding-top:15px;display:table;
+}
+
+ul.Totlas_DataSet_panel li .OneBox_Con{float:left; width:391px; height:172px; border:1px solid #e0e5ec; box-sizing:border-box; margin:4px;}
+
+ul.Totlas_DataSet_panel li .OneBox_Con .Inner_Wrap{padding:20px; width:391px; height:165px; box-sizing:border-box;}
+ul.Totlas_DataSet_panel li .OneBox_Con .Inner_Wrap dd.In_Ico{height:25px}
+ul.Totlas_DataSet_panel li .OneBox_Con .Inner_Wrap dd.In_Ico img{margin-right:2px;}
+ul.Totlas_DataSet_panel li .OneBox_Con .Inner_Wrap dd.In_Titles{color:#262626; margin-top:2px; height:47px; line-height:140%; font-size:17px; letter-spacing:-0.7px;}
+ul.Totlas_DataSet_panel li .OneBox_Con .Inner_Wrap dd.In_cont01{color:#8d8d8d; height:17px; margin-top:5px; line-height:17px; height:17px;font-size:14px; letter-spacing:-0.7px; width:100%; text-overflow: ellipsis; overflow:hidden;  white-space: nowrap;}
+ul.Totlas_DataSet_panel li .OneBox_Con .Inner_Wrap dd.In_cont02{color:#8d8d8d; height:17px; line-height:17px; height:17px;font-size:12px; letter-spacing:-0.5px; margin-top:3px;}
+ul.Totlas_DataSet_panel li .OneBox_Con .Inner_Wrap dd.In_cont03{color:#000000; height:18px;margin-top:2px; height:18px; line-height:18px;font-size:14px; letter-spacing:-0.7px;}
+
+ul.Totlas_DataSet_panel li .OneBox_Con .Inner_Wrap dd.In_Titles .InCols{color:#2761ae; font-size:17px;}
+
+.ribbon{
+  background:#ccc;
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  margin: auto;
+  position:absolute;
+  right:10px;
+  top:0px;
+  margin-bottom:-25px;  
+  cursor:pointer;
+}
+
+.ribbon:before{
+  content: "";
+  position: absolute;
+  bottom: -15px;
+  left: 0;
+  z-index:100;
+  width: 0;
+	height: 0;
+	border-top: 15px solid #ccc;
+	border-right: 15px solid transparent;
+}
+
+
+.ribbon:after{
+  content: "";
+  position: absolute;
+  bottom: -15px;
+  z-index:99;
+  right: 0;
+  width: 0;
+	height: 0;
+	border-top: 15px solid #ccc;
+	border-left: 15px solid transparent;
+}
+
+.ribbon_active{
+  background:#f5b933;
+  width: 25px;
+  height: 25px;
+  position: absolute;
+  margin: auto;
+  position:absolute;
+  right:10px;
+  top:0px;
+  margin-bottom:-25px;  
+  cursor:pointer;
+}
+
+.ribbon_active:before{
+  content: "";
+  position: absolute;
+  bottom: -15px;
+  left: 0;
+  z-index:100;
+  width: 0;
+	height: 0;
+	border-top: 15px solid #f5b933;
+	border-right: 15px solid transparent;
+}
+
+
+.ribbon_active:after{
+  content: "";
+  position: absolute;
+  bottom: -15px;
+  z-index:99;
+  right: 0;
+  width: 0;
+	height: 0;
+	border-top: 15px solid #f5b933;
+	border-left: 15px solid transparent;
+}
+
+
+.ribbon i {margin:10px 0 0 7px; z-index:105; position:relative; color:#fff;}
+.ribbon_active i {margin:13px 0 0 7px; z-index:105; position:relative; color:#fff;}
+
+/* CARD LIST */
+
+.card_Area {float:left; border:1px solid #ccc; margin-right:10px; padding:20px; 
+	width:350px; position:relative; margin-bottom:10px;
+	box-sizing: border-box;
+	transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
+}
+.card_Area .cardList_title {font-size:16px; font-weight:bold;margin-bottom:15px;
+	text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.card_Area .cardList_IMG {position: absolute; width:80px;}
+.card_Area .cardList_Contents_Area {text-overflow: ellipsis;
+    overflow: hidden;
+    width: 90%;
+    padding-left: 70px;
+    height: 70px;}
+.card_Area .cardList_Contents_Area .cardList_comment {color:#999; font-size:12px; height:40px;}
+.card_Area .cardList_Contents_Area .cardList_impor {color:#666; font-size:12px; font-weight:bold;}
+.card_Area .cardList_Contents_Area .cardList_impor span.txt_box {border:1px solid #ccc; background:#efefef; padding:1px 5px;}
+.card_Area .cardList_line {float:left; width:100%; border-bottom:1px dashed #ccc; margin:10px 0;}
+.card_Area .cardList_per_Area {float:left; width:100%;}
+.card_Area .cardList_per_Area .per {float:left; font-size:11px; letter-spacing:-1px; border:1px solid #dfdfdf; border-radius:2px; background:#f5f5f5; padding:1px 5px; color:#999;}
+.card_Area .cardList_per_Area .per_name {float:left; font-size:12px; font-weight:bold; color:#666; margin-left:5px; padding-top:1px;}
+.card_Area .cardList_per_Area .per_name span.phone {font-weight:normal; color:#999;}

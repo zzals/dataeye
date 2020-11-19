@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="system.menu">
+
+    <select id="getChildMenuCnt" resultType="int" >
+        SELECT COUNT(1) AS CNT
+        FROM PEN_MENU_M T101
+        WHERE UP_MENU_ID = #{menuId}
+    </select>
+    
+    <select id="getMenu" resultType="kr.co.penta.dataeye.common.entities.CamelMap" >	  
+			SELECT MENU_ID ,
+					  DEL_YN ,
+					  CRET_DT ,
+					  CRETR_ID ,
+					  CHG_DT ,
+					  CHGR_ID ,
+					  MENU_ADM_ID ,
+					  MENU_NM ,
+					  MENU_DESC ,
+					  ICON_CLASS ,
+					  PGM_ID ,
+					  UP_MENU_ID ,
+					  (SELECT A.MENU_NM FROM PEN_MENU_M A WHERE A.MENU_ID = B.UP_MENU_ID) AS UP_MENU_NM ,
+					  MENU_TYPE ,
+					  APP_ID ,
+					  SORT_NO ,
+					  USE_YN ,
+					  MENU_GRP_CD
+					FROM PEN_MENU_M B
+					WHERE MENU_ID =#{menuId}
+    </select> 
+    <select id="getMenuList" resultType="hashmap" >
+            WITH Q(MENU_ID, MENU_NM, UP_MENU_ID, DEPTH, SORT_PATH, MENU_TYPE, PGM_ID, ICON_CLASS, SORT_NO, DEL_YN, USE_YN, APP_ID ) AS
+                (SELECT T1.MENU_ID MENU_ID,
+                        T1.MENU_NM MENU_NM,
+                        UP_MENU_ID,
+                        1 DEPTH,
+                        CAST(TO_CHAR (SORT_NO, '009') AS VARCHAR2(4000)) AS SORT_PATH,
+                        MENU_TYPE,
+                        PGM_ID,
+                        ICON_CLASS,
+                        SORT_NO,
+                        DEL_YN,
+                        USE_YN,
+                        APP_ID
+                FROM    PEN_MENU_M T1
+                WHERE   T1.UP_MENU_ID IS NULL
+                    AND T1.DEL_YN      = 'N'
+                    AND T1.APP_ID=#{appId}
+                UNION ALL
+                SELECT  T1.MENU_ID MENU_ID,
+                        T1.MENU_NM MENU_NM,
+                        T1.UP_MENU_ID,
+                        1+Q.DEPTH DEPTH,
+                        CAST(Q.SORT_PATH ||TO_CHAR (T1.SORT_NO, '009') AS VARCHAR2(4000)) AS SORT_PATH,
+                        T1.MENU_TYPE,
+                        T1.PGM_ID,
+                        T1.ICON_CLASS,
+                        T1.SORT_NO,
+                        T1.DEL_YN,
+                        T1.USE_YN,
+                        T1.APP_ID
+                FROM    PEN_MENU_M T1,
+                        Q
+                WHERE   T1.UP_MENU_ID = Q.MENU_ID
+                    AND T1.DEL_YN     = 'N'
+                    AND T1.APP_ID=#{appId}
+                )
+    SELECT ROWNUM AS IDX
+          ,MENU_ID
+          ,MENU_NM
+          ,UP_MENU_ID
+          ,UP_MENU_NM
+          ,DEPTH
+          ,MENU_TYPE
+          ,PGM_ID
+          ,ICON_CLASS
+          ,SORT_NO
+          ,USE_YN
+          ,APP_ID
+          ,IS_EXPANDED
+          ,IS_LEAF
+    FROM (
+        SELECT  T101.MENU_ID ,
+                T101.MENU_NM ,
+                T102.MENU_ID AS UP_MENU_ID ,
+                T102.MENU_NM AS UP_MENU_NM ,
+                T101.DEPTH ,
+                T101.MENU_TYPE ,
+                T101.PGM_ID ,
+                T101.ICON_CLASS ,
+                T101.USE_YN ,
+                T101.SORT_NO ,
+                T101.APP_ID,
+                'true' AS IS_EXPANDED ,
+                CASE
+                        WHEN COALESCE(INSTR(LEAD(SORT_PATH) OVER(ORDER BY SORT_PATH), SORT_PATH), 0) = 0
+                        THEN 'true'
+                        ELSE 'false'
+                END IS_LEAF
+        FROM    Q T101
+        LEFT OUTER JOIN PEN_MENU_M T102
+        ON (T102.MENU_ID = T101.UP_MENU_ID)        
+        ORDER BY SORT_PATH,
+                DEPTH
+     )
+    </select>
+    <select id="getMenuList2" resultType="hashmap" >
+            WITH Q(MENU_ID, MENU_NM, UP_MENU_ID, DEPTH, SORT_PATH, MENU_TYPE, PGM_ID, ICON_CLASS, SORT_NO, DEL_YN, USE_YN, APP_ID ) AS
+                (SELECT T1.MENU_ID MENU_ID,
+                        T1.MENU_NM MENU_NM,
+                        UP_MENU_ID,
+                        1 DEPTH,
+                        CAST(TO_CHAR (SORT_NO, '009') AS VARCHAR2(4000)) AS SORT_PATH,
+                        MENU_TYPE,
+                        PGM_ID,
+                        ICON_CLASS,
+                        SORT_NO,
+                        DEL_YN,
+                        USE_YN,
+                        APP_ID
+                FROM    PEN_MENU_M T1
+                WHERE   T1.UP_MENU_ID IS NULL
+                    AND T1.DEL_YN      = 'N'
+                    AND T1.USE_YN     = 'Y'
+                    AND T1.APP_ID=#{appId}
+                UNION ALL
+                SELECT  T1.MENU_ID MENU_ID,
+                        T1.MENU_NM MENU_NM,
+                        T1.UP_MENU_ID,
+                        1+Q.DEPTH DEPTH,
+                        CAST(Q.SORT_PATH ||TO_CHAR (T1.SORT_NO, '009') AS VARCHAR2(4000)) AS SORT_PATH,
+                        T1.MENU_TYPE,
+                        T1.PGM_ID,
+                        T1.ICON_CLASS,
+                        T1.SORT_NO,
+                        T1.DEL_YN,
+                        T1.USE_YN,
+                        T1.APP_ID
+                FROM    PEN_MENU_M T1,
+                        Q
+                WHERE   T1.UP_MENU_ID = Q.MENU_ID
+                    AND T1.DEL_YN     = 'N'
+                    AND T1.USE_YN     = 'Y'
+                    AND T1.APP_ID=#{appId}
+                )
+    SELECT ROWNUM AS IDX
+          ,MENU_ID
+          ,MENU_NM
+          ,UP_MENU_ID
+          ,UP_MENU_NM
+          ,DEPTH
+          ,MENU_TYPE
+          ,PGM_ID
+          ,ICON_CLASS
+          ,SORT_NO
+          ,USE_YN
+          ,APP_ID
+          ,IS_EXPANDED
+          ,IS_LEAF
+    FROM (
+        SELECT  T101.MENU_ID ,
+                T101.MENU_NM ,
+                T102.MENU_ID AS UP_MENU_ID ,
+                T102.MENU_NM AS UP_MENU_NM ,
+                T101.DEPTH ,
+                T101.MENU_TYPE ,
+                T101.PGM_ID ,
+                T101.ICON_CLASS ,
+                T101.USE_YN ,
+                T101.SORT_NO ,
+                T101.APP_ID,
+                'true' AS IS_EXPANDED ,
+                CASE
+                        WHEN COALESCE(INSTR(LEAD(SORT_PATH) OVER(ORDER BY SORT_PATH), SORT_PATH), 0) = 0
+                        THEN 'true'
+                        ELSE 'false'
+                END IS_LEAF
+        FROM    Q T101
+        LEFT OUTER JOIN PEN_MENU_M T102
+        ON (T102.MENU_ID = T101.UP_MENU_ID)        
+        ORDER BY SORT_PATH,
+                DEPTH
+     )
+    </select>    
+    <select id="getFolderMenu" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        SELECT 
+            T101.MENU_ID
+            ,T101.MENU_NM
+            ,T102.MENU_ID AS UP_MENU_ID
+            ,T102.MENU_NM AS UP_MENU_NM
+            ,T101.LVL AS LVL
+            ,T101.MENU_TYPE
+            ,T101.PGM_ID
+            ,T101.ICON_CLASS
+            ,T101.USE_YN
+            ,T101.SORT_NO
+            ,'true' AS IS_EXPANDED
+            ,CASE WHEN T101.IS_LEAF = 1 THEN 'true' ELSE 'false' END IS_LEAF    
+        FROM (
+            SELECT 
+                MENU_ID
+                , MENU_NM
+                , PGM_ID
+                , UP_MENU_ID
+                , ICON_CLASS
+                , USE_YN
+                , MENU_TYPE
+                , SORT_NO   
+                , LEVEL AS LVL
+                , SYS_CONNECT_BY_PATH(SORT_NO, '/') AS SORT_PATH
+                , CONNECT_BY_ISLEAF AS IS_LEAF
+            FROM PEN_MENU_M
+            WHERE DEL_YN = 'N'
+            AND APP_ID = #{appId}
+            START WITH UP_MENU_ID IS NULL
+            CONNECT BY PRIOR MENU_ID = UP_MENU_ID
+        ) T101
+        LEFT OUTER JOIN PEN_MENU_M T102 ON (T102.MENU_ID = T101.UP_MENU_ID)
+        WHERE T101.MENU_TYPE = 'FOLDER'
+        ORDER BY T101.SORT_PATH
+    </select>    
+</mapper>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PEN_OBJ_REQ_D">
+	<insert id="insert" parameterType="kr.co.penta.dataeye.common.entities.meta.PenObjReqD">
+		INSERT INTO PEN_OBJ_REQ_D
+		(
+			OBJ_TYPE_ID,     OBJ_ID,         REQ_ID,         STUS_ID,        DEL_YN,
+            CRET_DT,         CRETR_ID,       CHG_DT,         CHGR_ID,        STUS_CD,
+            STUS_USER_ID,    STUS_DESC,      STUS_DT,        STUS_LINK_ID
+		)
+		VALUES
+		(
+			#{OBJ_TYPE_ID, jdbcType=VARCHAR}, #{OBJ_ID, jdbcType=VARCHAR}, #{REQ_ID, jdbcType=VARCHAR}, #{STUS_ID, jdbcType=VARCHAR}, #{DEL_YN, jdbcType=CHAR}, 
+			<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRET_DT)'>
+				TO_TIMESTAMP(#{CRET_DT}, '${timestampFormat}'),
+			</if> 
+			<if test='!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRET_DT)'>
+				CURRENT_TIMESTAMP,
+			</if> 
+			<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRETR_ID)'>
+				#{CRETR_ID, jdbcType=VARCHAR},
+			</if> 
+			<if test='!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRETR_ID)'>
+				#{sessionInfo.userId, jdbcType=VARCHAR},
+			</if>
+			CURRENT_TIMESTAMP, 
+            #{sessionInfo.userId, jdbcType=VARCHAR}, 
+            #{STUS_CD, jdbcType=VARCHAR}, 
+            
+            #{sessionInfo.userId, jdbcType=VARCHAR}, 
+            #{STUS_DESC, jdbcType=VARCHAR}, 
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(STUS_DT)'>
+                TO_TIMESTAMP(#{STUS_DT}, '${timestampFormat}'),
+            </if> 
+            <if test='!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(STUS_DT)'>
+                CURRENT_TIMESTAMP,
+            </if>
+			#{STUS_LINK_ID, jdbcType=VARCHAR}
+		)
+	</insert>
+    <update id="update" parameterType="kr.co.penta.dataeye.common.entities.meta.PenObjReqD">
+        UPDATE PEN_OBJ_REQ_D
+        <set>
+            CHG_DT = CURRENT_TIMESTAMP,
+            CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR},
+            STUS_DT = CURRENT_TIMESTAMP,
+            DEL_YN = #{DEL_YN, jdbcType=CHAR},
+            STUS_CD = #{STUS_CD, jdbcType=VARCHAR},
+            STUS_USER_ID = #{sessionInfo.userId, jdbcType=VARCHAR},
+            STUS_DESC = #{STUS_DESC, jdbcType=VARCHAR},
+            STUS_LINK_ID = #{STUS_LINK_ID, jdbcType=VARCHAR},
+        </set>
+        WHERE OBJ_TYPE_ID = #{OBJ_TYPE_ID}
+          AND OBJ_ID = #{OBJ_ID}
+          AND REQ_ID = #{REQ_ID}
+          AND STUS_ID = #{STUS_ID}   
+    </update>
+</mapper>

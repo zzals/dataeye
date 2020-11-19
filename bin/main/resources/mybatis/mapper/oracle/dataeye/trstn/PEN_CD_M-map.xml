@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PEN_CD_M">
+	<insert id="insert" parameterType="hashMap">
+		INSERT INTO PEN_CD_M 
+        (
+            CD_GRP_ID,  CD_ID,          DEL_YN,     CRET_DT,        CRETR_ID,
+            CHG_DT,     CHGR_ID,        CD_NM,      CD_DESC,        SORT_NO,
+            USE_YN,     UP_CD_GRP_ID,   UP_CD_ID,   EFCT_ST_DATE,   EFCT_ED_DATE
+		)
+        VALUES
+        (
+            #{CD_GRP_ID, jdbcType=VARCHAR},             #{CD_ID, jdbcType=VARCHAR},                 #{DEL_YN, jdbcType=VARCHAR},        CURRENT_TIMESTAMP,                  #{sessionInfo.userId, jdbcType=VARCHAR},
+            CURRENT_TIMESTAMP,                          #{sessionInfo.userId, jdbcType=VARCHAR},    #{CD_NM, jdbcType=VARCHAR},         #{CD_DESC, jdbcType=VARCHAR},       #{SORT_NO, jdbcType=NUMERIC},
+            #{USE_YN, jdbcType=CHAR},                   #{UP_CD_GRP_ID, jdbcType=VARCHAR},          #{UP_CD_ID, jdbcType=VARCHAR},
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(EFCT_ST_DATE)'>
+                TO_DATE(#{EFCT_ST_DATE, jdbcType=VARCHAR}, 'YYYY-MM-DD'),
+            </if>
+            <if test='!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(EFCT_ST_DATE)'>
+                NULL,
+            </if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(EFCT_ED_DATE)'>
+                TO_DATE(#{EFCT_ED_DATE, jdbcType=VARCHAR}, 'YYYY-MM-DD')
+            </if>
+            <if test='!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(EFCT_ED_DATE)'>
+                NULL
+            </if>
+		)
+	</insert>
+    <delete id="delete" parameterType="hashMap">
+        DELETE FROM PEN_CD_M
+        WHERE CD_GRP_ID = #{cdGrpId}
+    </delete>
+</mapper>

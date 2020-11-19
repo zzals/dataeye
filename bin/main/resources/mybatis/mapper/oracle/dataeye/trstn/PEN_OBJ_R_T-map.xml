@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PEN_OBJ_R_T">
+	<insert id="insert" parameterType="kr.co.penta.dataeye.common.entities.meta.PenObjRT">
+		INSERT INTO PEN_OBJ_R_T
+		(
+			OBJ_TYPE_ID,	    OBJ_ID,	    REL_OBJ_TYPE_ID,	   REL_OBJ_ID,	    APRV_ID,        DEL_YN,
+			CRET_DT,	        CRETR_ID,	CHG_DT,                CHGR_ID,         REL_TYPE_ID,    OBJ_REL_ANALS_CD
+		)
+		VALUES
+		(
+			#{OBJ_TYPE_ID, jdbcType=VARCHAR}, #{OBJ_ID, jdbcType=VARCHAR}, #{REL_OBJ_TYPE_ID, jdbcType=VARCHAR}, #{REL_OBJ_ID, jdbcType=VARCHAR}, #{APRV_ID, jdbcType=VARCHAR}, #{DEL_YN, jdbcType=CHAR},
+			<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRET_DT)'>
+				TO_TIMESTAMP(#{CRET_DT, jdbcType=VARCHAR}, '${timestampFormat}'),
+			</if> 
+			<if test='!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRET_DT)'>
+				CURRENT_TIMESTAMP,
+			</if> 
+			<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRETR_ID)'>
+				#{CRETR_ID, jdbcType=VARCHAR},
+			</if> 
+			<if test='!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(CRETR_ID)'>
+				#{sessionInfo.userId, jdbcType=VARCHAR},
+			</if>
+			CURRENT_TIMESTAMP, #{sessionInfo.userId, jdbcType=VARCHAR}, #{REL_TYPE_ID, jdbcType=VARCHAR}, #{OBJ_REL_ANALS_CD, jdbcType=VARCHAR}
+		)
+	</insert>
+    <delete id="delete" parameterType="hashMap">
+        DELETE FROM PEN_OBJ_R_T
+        WHERE OBJ_TYPE_ID = #{objTypeId}
+            AND OBJ_ID = #{objId}
+            AND REL_OBJ_TYPE_ID = #{relObjTypeId}
+            AND REL_OBJ_ID = #{relObjId}
+            AND APRV_ID = #{aprvId}
+    </delete>
+    <update id="delYn" parameterType="hashmap">
+        UPDATE PEN_OBJ_R_T
+        <set>
+            DEL_YN = #{delYn},
+            CHG_DT = CURRENT_TIMESTAMP,
+            CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR}
+        </set>
+        WHERE OBJ_TYPE_ID = #{objTypeId}
+        AND OBJ_ID= #{objId}
+        AND APRV_ID= #{aprvId}
+    </update>
+    <insert id="approve" parameterType="kr.co.penta.dataeye.common.entities.CamelMap">
+        INSERT INTO PEN_OBJ_R
+		(
+			OBJ_TYPE_ID,	OBJ_ID,	    REL_OBJ_TYPE_ID,	   REL_OBJ_ID,	    DEL_YN,
+			CRET_DT,	    CRETR_ID,	CHG_DT,                CHGR_ID,         REL_TYPE_ID,
+            OBJ_REL_ANALS_CD
+		)
+        SELECT OBJ_TYPE_ID
+             , OBJ_ID
+             , REL_OBJ_TYPE_ID
+             , REL_OBJ_ID
+             , DEL_YN
+             , CRET_DT
+             , CRETR_ID
+             , CHG_DT
+             , CHGR_ID
+             , REL_TYPE_ID
+             , OBJ_REL_ANALS_CD 
+          FROM PEN_OBJ_R_T
+         WHERE APRV_ID = #{aprvId}
+    </insert>
+    <update id="updateObjIdKey" parameterType="hashmap">
+        UPDATE PEN_OBJ_R_T
+        <set>
+            DEL_YN = #{delYn},
+            CHG_DT = CURRENT_TIMESTAMP,
+            CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR},
+            OBJ_ID = #{OBJ_ID, jdbcType=VARCHAR}
+        </set>
+        WHERE OBJ_TYPE_ID = #{KEY_OBJ_TYPE_ID}
+        AND OBJ_ID= #{KEY_OBJ_ID}
+        AND APRV_ID= #{APRV_ID}
+    </update>
+    <update id="updateRelObjIdKey" parameterType="hashmap">
+        UPDATE PEN_OBJ_R_T
+        <set>
+            DEL_YN = #{delYn},
+            CHG_DT = CURRENT_TIMESTAMP,
+            CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR},
+            REL_OBJ_ID = #{OBJ_ID, jdbcType=VARCHAR}
+        </set>
+        WHERE REL_OBJ_TYPE_ID = #{KEY_REL_OBJ_TYPE_ID}
+        AND REL_OBJ_ID= #{KEY_REL_OBJ_ID}
+        AND APRV_ID= #{APRV_ID}
+    </update>
+	<delete id="deleteByAprvId" parameterType="hashMap">
+		DELETE FROM PEN_OBJ_R_T
+		WHERE APRV_ID = #{aprvId}
+	</delete>
+</mapper>

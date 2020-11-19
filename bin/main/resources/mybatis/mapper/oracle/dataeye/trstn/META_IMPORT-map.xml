@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="META_IMPORT">
+	<delete id="deletePEN_CD_GRP_M">
+		DELETE FROM PEN_CD_GRP_M
+	</delete>
+	<delete id="deletePEN_CD_M">
+		DELETE FROM PEN_CD_M
+	</delete>
+	<delete id="deletePEN_OBJ_TYPE_M">
+		DELETE FROM PEN_OBJ_TYPE_M
+	</delete>
+	<delete id="deletePEN_REL_TYPE_M">
+		DELETE FROM PEN_REL_TYPE_M
+	</delete>
+	<delete id="deletePEN_ATR_M">
+		DELETE FROM PEN_ATR_M
+	</delete>
+	<delete id="deletePEN_OBJ_M">
+		DELETE FROM PEN_OBJ_M
+		WHERE OBJ_TYPE_ID = #{objTypeId}
+	</delete>
+	<delete id="deletePEN_OBJ_D">
+		DELETE FROM PEN_OBJ_D
+		WHERE OBJ_TYPE_ID = #{objTypeId}
+	</delete>
+	<delete id="deletePEN_OBJ_R">
+		DELETE FROM PEN_OBJ_R
+		WHERE OBJ_TYPE_ID = #{objTypeId}
+		   OR REL_OBJ_TYPE_ID = #{objTypeId}
+	</delete>
+	
+	<insert id="insertPEN_CD_GRP_M" parameterType="hashMap">
+		INSERT INTO PEN_CD_GRP_M
+        (
+            CD_GRP_ID,
+			DEL_YN,
+			CRET_DT,
+			CRETR_ID,
+			CHG_DT,
+			CHGR_ID,
+			CD_GRP_NM,
+			CD_GRP_DESC,
+			UP_CD_GRP_ID,
+			EFCT_ST_DATE,
+			EFCT_ED_DATE
+		)
+        VALUES
+        (
+            #{CD_GRP_ID},
+			#{DEL_YN},
+			TO_TIMESTAMP(#{CRET_DT}, 'YYYYMMDDHH24MISS'),
+			#{CRETR_ID},
+			TO_TIMESTAMP(#{CHG_DT}, 'YYYYMMDDHH24MISS'),
+			#{CHGR_ID},
+			#{CD_GRP_NM},
+			#{CD_GRP_DESC},
+			#{UP_CD_GRP_ID},
+			TO_DATE(#{EFCT_ST_DATE}, 'YYYYMMDDHH24MISS'),
+			TO_DATE(#{EFCT_ED_DATE}, 'YYYYMMDDHH24MISS')
+		)
+	</insert>	
+	<insert id="insertPEN_CD_M" parameterType="hashMap">
+		INSERT INTO PEN_CD_M
+        (
+            CD_GRP_ID,
+			CD_ID,
+			DEL_YN,
+			CRET_DT,
+			CRETR_ID,
+			CHG_DT,
+			CHGR_ID,
+			CD_NM,
+			CD_DESC,
+			SORT_NO,
+			USE_YN,
+			UP_CD_GRP_ID,
+			UP_CD_ID,
+			EFCT_ST_DATE,
+			EFCT_ED_DATE
+		)
+        VALUES
+        (
+            #{CD_GRP_ID},
+			#{CD_ID},
+			#{DEL_YN},
+			TO_TIMESTAMP(#{CRET_DT}, 'YYYYMMDDHH24MISS'),
+			#{CRETR_ID},
+			TO_TIMESTAMP(#{CHG_DT}, 'YYYYMMDDHH24MISS'),
+			#{CHGR_ID},
+			#{CD_NM},
+			#{CD_DESC},
+			#{SORT_NO},
+			#{USE_YN},
+			#{UP_CD_GRP_ID},
+			#{UP_CD_ID},
+			TO_DATE(#{EFCT_ST_DATE}, 'YYYYMMDDHH24MISS'),
+			TO_DATE(#{EFCT_ED_DATE}, 'YYYYMMDDHH24MISS')
+		)
+	</insert>
+	<insert id="insertPEN_OBJ_TYPE_M" parameterType="hashMap">
+		INSERT INTO PEN_OBJ_TYPE_M
+        (
+            OBJ_TYPE_ID,
+			DEL_YN,
+			CRET_DT,
+			CRETR_ID,
+			CHG_DT,
+			CHGR_ID,
+			OBJ_TYPE_NM,
+			OBJ_TYPE_DESC,
+			SORT_NO,
+			UP_OBJ_TYPE_ID,
+			HIER_LEV_NO,
+			LST_LEV_YN,
+			ATR_ADM_CD,
+			STLM_YN,
+			HST_YN,
+			TAG_YN,
+			CMMT_YN
+		)
+        VALUES
+        (
+            #{OBJ_TYPE_ID},
+			#{DEL_YN},
+			TO_TIMESTAMP(#{CRET_DT}, 'YYYYMMDDHH24MISS'),
+			#{CRETR_ID},
+			TO_TIMESTAMP(#{CHG_DT}, 'YYYYMMDDHH24MISS'),
+			#{CHGR_ID},
+			#{OBJ_TYPE_NM},
+			#{OBJ_TYPE_DESC},
+			#{SORT_NO},
+			#{UP_OBJ_TYPE_ID},
+			#{HIER_LEV_NO},
+			#{LST_LEV_YN},
+			#{ATR_ADM_CD},
+			#{STLM_YN},
+			#{HST_YN},
+			#{TAG_YN},
+			#{CMMT_YN}
+		)
+	</insert>
+	<insert id="insertPEN_OBJ_TYPE_ATR_D" parameterType="hashMap">
+		INSERT INTO PEN_OBJ_TYPE_ATR_D
+        (
+            META_TYPE_CD,
+			OBJ_TYPE_ID,
+			ATR_ID_SEQ,
+			DEL_YN,
+			CRET_DT,
+			CRETR_ID,
+			CHG_DT,
+			CHGR_ID,
+			ATR_ID,
+			ATR_ALIAS_NM,
+			SORT_NO,
+			MULTI_ATR_YN,
+			CNCT_ATR_YN,
+			MAND_YN,
+			ATR_ADM_TGT_YN,
+			DEGR_NO,
+			INDC_YN,
+			FIND_TGT_NO,
+			AVAIL_CHK_PGM_ID,
+			UI_COMP_WIDTH_RADIO,
+			UI_COMP_HEIGHT_PX
+		)
+        VALUES
+        (
+            #{META_TYPE_CD},
+			#{OBJ_TYPE_ID},
+			#{ATR_ID_SEQ},
+			#{DEL_YN},
+			TO_TIMESTAMP(#{CRET_DT}, 'YYYYMMDDHH24MISS'),
+			#{CRETR_ID},
+			TO_TIMESTAMP(#{CHG_DT}, 'YYYYMMDDHH24MISS'),
+			#{CHGR_ID},
+			#{ATR_ID},
+			#{ATR_ALIAS_NM},
+			#{SORT_NO},
+			#{MULTI_ATR_YN},
+			#{CNCT_ATR_YN},
+			#{MAND_YN},
+			#{ATR_ADM_TGT_YN},
+			#{DEGR_NO},
+			#{INDC_YN},
+			#{FIND_TGT_NO},
+			#{AVAIL_CHK_PGM_ID},
+			#{UI_COMP_WIDTH_RADIO},
+			#{UI_COMP_HEIGHT_PX}
+		)
+	</insert>
+	<insert id="insertPEN_OBJ_M" parameterType="hashMap">
+		INSERT INTO PEN_OBJ_M
+        (
+            OBJ_TYPE_ID,
+			OBJ_ID,
+			DEL_YN,
+			CRET_DT,
+			CRETR_ID,
+			CHG_DT,
+			CHGR_ID,
+			ADM_OBJ_ID,
+			OBJ_NM,
+			OBJ_ABBR_NM,
+			OBJ_DESC,
+			PATH_OBJ_TYPE_ID,
+			PATH_OBJ_ID
+		)
+        VALUES
+        (
+            #{OBJ_TYPE_ID},
+			#{OBJ_ID},
+			#{DEL_YN},
+			TO_TIMESTAMP(#{CRET_DT}, 'YYYYMMDDHH24MISS'),
+			#{CRETR_ID},
+			TO_TIMESTAMP(#{CHG_DT}, 'YYYYMMDDHH24MISS'),
+			#{CHGR_ID},
+			#{ADM_OBJ_ID},
+			#{OBJ_NM},
+			#{OBJ_ABBR_NM},
+			#{OBJ_DESC},
+			#{PATH_OBJ_TYPE_ID},
+			#{PATH_OBJ_ID}
+		)
+	</insert>
+	<insert id="insertPEN_OBJ_D" parameterType="hashMap">
+		INSERT INTO PEN_OBJ_D
+        (
+            OBJ_TYPE_ID,
+			OBJ_ID,
+			ATR_ID_SEQ,
+			ATR_VAL_SEQ,
+			DEL_YN,
+			CRET_DT,
+			CRETR_ID,
+			CHG_DT,
+			CHGR_ID,
+			OBJ_ATR_VAL
+		)
+        VALUES
+        (
+            #{OBJ_TYPE_ID},
+			#{OBJ_ID},
+			#{ATR_ID_SEQ},
+			#{ATR_VAL_SEQ},
+			#{DEL_YN},
+			#{CRET_DT},
+			TO_TIMESTAMP(#{CRET_DT}, 'YYYYMMDDHH24MISS'),
+			#{CRETR_ID},
+			TO_TIMESTAMP(#{CHG_DT}, 'YYYYMMDDHH24MISS'),
+			#{OBJ_ATR_VAL}
+		)
+	</insert>
+	<insert id="insertPEN_OBJ_R" parameterType="hashMap">
+		INSERT INTO PEN_OBJ_R
+        (
+            OBJ_TYPE_ID,
+			OBJ_ID,
+			REL_OBJ_TYPE_ID,
+			REL_OBJ_ID,
+			DEL_YN,
+			CRET_DT,
+			CRETR_ID,
+			CHG_DT,
+			CHGR_ID,
+			REL_TYPE_ID,
+			OBJ_REL_ANALS_CD
+		)
+        VALUES
+        (
+            #{OBJ_TYPE_ID},
+			#{OBJ_ID},
+			#{REL_OBJ_TYPE_ID},
+			#{REL_OBJ_ID},
+			#{DEL_YN},
+			TO_TIMESTAMP(#{CRET_DT}, 'YYYYMMDDHH24MISS'),
+			#{CRETR_ID},
+			TO_TIMESTAMP(#{CHG_DT}, 'YYYYMMDDHH24MISS'),
+			#{CHGR_ID},
+			#{REL_TYPE_ID},
+			#{OBJ_REL_ANALS_CD}
+		)
+	</insert>
+</mapper>

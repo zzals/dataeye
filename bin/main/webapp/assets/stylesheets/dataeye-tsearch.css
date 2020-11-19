@@ -1,0 +1,190 @@
+.main-search-form {
+  border-radius: 3px;
+  border: 1px solid #374850;
+  margin: 10px 10px;
+}
+.main-search-form input[type="text"],
+.main-search-form .btn {
+  box-shadow: none;
+  background-color: #fff !important;
+  border: 1px solid transparent;
+  height: 35px;
+}
+.main-search-form input[type="text"] {
+  color: #666;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 2px;
+}
+.main-search-form input[type="text"]:focus,
+.main-search-form input[type="text"]:focus + .input-group-btn .btn {
+  background-color: #fff;
+  color: #666;
+}
+.main-search-form input[type="text"]:focus + .input-group-btn .btn {
+  border-left-color: #fff;
+}
+.main-search-form .btn {
+  color: #999;
+  border-top-left-radius: 0;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+  border-bottom-left-radius: 0;
+}
+
+#tsearch-content i.fa-list-ul {
+	margin-right:5px;
+	color:#ec068d;
+	font-size:18px;
+}
+
+#tsearch-content .box {
+	margin-bottom: 10px;		
+}
+#tsearch-content h5.box-title {
+	padding: 10px 10px 0 0px;
+	font-size:18px;
+	font-weight: bold;
+}
+#tsearch-content h5.box-title small {
+	margin-left: 10px;
+}
+#tsearch-content h5.box-title small i.fa-search {
+	margin-right: 5px;
+}
+#tsearch-content h5.box-title small label {
+	color: red;
+}
+#tsearch-content .box-header {
+	border-bottom: 1px solid #666;
+}
+#tsearch-content .box-body .noresult-out {
+	border-radius: 3px;
+    margin: 0 0 20px 0;
+    padding: 15px 0px 15px 0px;
+    text-align:center;
+}
+#tsearch-content .box-body .noresult-out i {
+	margin-right: 10px;
+}
+#tsearch-content .box-body .noresult-out h4 {
+	margin-top: 0;
+    font-size: 16px;
+    color: #092ebd;
+}
+
+#tsearch-content .item-box {
+    border: none;
+    box-shadow: none;
+    background: none;
+    margin-bottom: 0;
+    border-bottom: 1px solid #c5c9cc;
+}
+#tsearch-content .item-box a {
+	cursor: pointer;
+}
+#tsearch-content .item-box em {
+	color: red;
+	font-style: normal;
+}
+#tsearch-content .item-box:last-child {
+    border-bottom: none;
+}
+
+#tsearch-content .item-box .item-box-header {
+    padding: 0 0 0 0;
+    color: #444;
+    display: block;
+    position: relative;
+}
+
+#tsearch-content .item-box .item-box-header .item-box-title {
+    display: inline-block;
+    font-size: 14px;
+    margin: 0;
+    line-height: 1;
+    padding: 10px 0 10px 0px;
+    font-weight: bold;
+}
+#tsearch-content .item-box .item-box-header .item-box-title a {
+	text-decoration: underline;
+}
+#tsearch-content .item-box .item-box-header .item-box-title small {
+	margin-left: 10px;
+}
+
+#tsearch-content .item-box .itembox-body {
+    margin: 10px 0 0 0;
+    padding: 0;
+    background: #fff;
+    border-radius: 3px;
+}
+
+.tsearch-paging {
+	text-align: center;
+}
+
+.d3-treemap {
+	/* background: #fff; */
+}
+
+.d3-treemap .title {
+	font-weight: bold;
+	font-size: 24px;
+	text-align: center;
+	margin-top: 6px;
+	margin-bottom: 6px;
+}
+
+.d3-treemap text {
+	pointer-events: none;
+}
+
+.d3-treemap .grandparent text {
+	font-weight: bold;
+}
+
+.d3-treemap rect {
+	fill: none;
+	stroke: #fff;
+}
+
+.d3-treemap rect.parent, .d3-treemap .grandparent rect {
+	stroke-width: 2px;
+}
+
+.d3-treemap rect.parent {
+	pointer-events: none;
+}
+
+.d3-treemap .grandparent rect {
+	fill: orange;
+}
+
+.d3-treemap .grandparent:hover rect {
+	fill: #ee9700;
+}
+
+.d3-treemap .children rect.parent, .d3-treemap .grandparent rect {
+	cursor: pointer;
+}
+
+.d3-treemap .children rect.parent {
+	fill: #bbb;
+	fill-opacity: .5;
+}
+
+.d3-treemap .children:hover rect.child {
+	fill: #bbb;
+}
+
+div.bg{width:100%;height:100%; position:fixed; padding-top:150px;}
+div.bg .dot{width:100%;height:100%;background:url(../images/bg_dot.png) repeat left top;position:absolute;left:0;top:0;opacity: 0.7;}
+
+.search_more_btn {border:1px solid #999; background:#f5f5f5; padding:5px 10px; color:#666; }
+.search_more_btn:hover {color:#000; background:#efefef; border-color:#666;}
+
+.nav-tabs-custom > .nav-tabs {border-bottom:1px solid #ccc;}
+.nav-tabs-custom > .nav-tabs > li.active > a {border-left:1px solid #ccc !important; border-right:1px solid #ccc;}
+.nav-tabs-custom > .nav-tabs > li.active {border-top-color:#2c3e4f;}

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="common"> 
+	<sql id="pagingPerfixSql">
+		SELECT T101.*
+		FROM (
+		    SELECT ROW_NUMBER() OVER( 
+            <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(sidx)">
+                ORDER BY ${sidx} ${sord}
+            </if>
+            <if test="!@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(sidx)">
+                ORDER BY 1 ${sord}
+            </if>
+            ) AS RNUM
+		         , T101.*
+		    FROM (		
+	</sql>
+	<sql id="pagingSurfixSql">
+		    ) T101
+		) T101
+		WHERE T101.RNUM BETWEEN ${rows}*(${page}-1)+1 AND ${rows}*${page}		
+	</sql>
+    <select id="pagingList" resultType="hashmap">
+		<include refid="common.pagingPerfixSql"/>
+        ${MAIN_SQL}
+        <include refid="common.pagingSurfixSql" />
+    </select>
+    <select id="dynamicSql" resultType="hashmap">
+        ${SQL}
+    </select>
+    <select id="totalCount" resultType="int">
+        SELECT COUNT(1) 
+        FROM (${MAIN_SQL})
+    </select>
+    
+     <select id="getJdbcConnectInfo" resultType="Map">
+        SELECT MAX(CASE WHEN ATR_ID_SEQ = 101 THEN OBJ_ATR_VAL END)  AS DB_TYPE
+             , MAX(CASE WHEN ATR_ID_SEQ = 102 THEN OBJ_ATR_VAL END)  AS JDBC_DRIVER
+             , MAX(CASE WHEN ATR_ID_SEQ = 103 THEN OBJ_ATR_VAL END)  AS JDBC_URL
+             , MAX(CASE WHEN ATR_ID_SEQ = 104 THEN OBJ_ATR_VAL END)  AS DATABASE_USER
+             , MAX(CASE WHEN ATR_ID_SEQ = 105 THEN OBJ_ATR_VAL END)  AS DATABASE_PASSWORD
+		FROM PEN_OBJ_D        
+		WHERE OBJ_TYPE_ID = '900101L' AND OBJ_ID = #{jdbcId, jdbcType=VARCHAR}
+	</select>
+    <select id="findAllCdByGroup" resultType="kr.co.penta.dataeye.common.entities.meta.PenCdEntity">
+        SELECT T101.CD_GRP_ID AS CD_GRP_ID
+             , T101.CD_ID AS CD_ID
+             , T101.CD_NM AS CD_NM
+             , T101.CD_DESC AS CD_DESC
+        FROM PEN_CD_M T101
+        WHERE T101.DEL_YN = 'N'
+        AND T101.USE_YN = 'Y'
+        ORDER BY T101.CD_GRP_ID, T101.SORT_NO
+    </select>
+    <select id="objTypeInfo" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+        SELECT *
+        FROM PEN_OBJ_TYPE_M
+        WHERE LST_LEV_YN = 'Y'
+        ORDER BY OBJ_TYPE_ID
+    </select>
+</mapper>

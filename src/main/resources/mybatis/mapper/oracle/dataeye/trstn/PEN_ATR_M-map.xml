@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper 
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="PEN_ATR_M">
+	<insert id="insert" parameterType="hashMap">
+		INSERT INTO PEN_ATR_M
+        (
+            ATR_ID,         DEL_YN,     CRET_DT,        CRETR_ID,               CHG_DT,
+            CHGR_ID,        ATR_NM,     ATR_DESC,       DATA_TYPE_CD,           COL_LEN,
+            ATR_RFRN_CD,    SQL_SBST,   UI_COMP_CD,     UI_COMP_WIDTH_RADIO,    UI_COMP_HEIGHT_PX
+		)
+        VALUES
+        (
+            #{ATR_ID, jdbcType=VARCHAR},                #{DEL_YN, jdbcType=CHAR},        CURRENT_TIMESTAMP,                   #{sessionInfo.userId, jdbcType=VARCHAR},     CURRENT_TIMESTAMP,
+            #{sessionInfo.userId, jdbcType=VARCHAR},    #{ATR_NM, jdbcType=VARCHAR},     #{ATR_DESC, jdbcType=VARCHAR},       #{DATA_TYPE_CD, jdbcType=VARCHAR},           #{COL_LEN, jdbcType=NUMERIC},
+            #{ATR_RFRN_CD, jdbcType=VARCHAR},           #{SQL_SBST, jdbcType=VARCHAR},   #{UI_COMP_CD, jdbcType=VARCHAR},     #{UI_COMP_WIDTH_RADIO, jdbcType=VARCHAR},    #{UI_COMP_HEIGHT_PX, jdbcType=NUMERIC}
+		)
+	</insert>
+    <update id="update" parameterType="hashMap">
+        UPDATE PEN_ATR_M
+        <set>
+            CHG_DT = CURRENT_TIMESTAMP,
+            CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR},
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(ATR_NM)'>ATR_NM = #{ATR_NM, jdbcType=VARCHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(ATR_DESC)'>ATR_DESC = #{ATR_DESC, jdbcType=VARCHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(DATA_TYPE_CD)'>DATA_TYPE_CD = #{DATA_TYPE_CD, jdbcType=VARCHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(COL_LEN)'>COL_LEN = #{COL_LEN, jdbcType=NUMERIC},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(ATR_RFRN_CD)'>ATR_RFRN_CD = #{ATR_RFRN_CD, jdbcType=VARCHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(SQL_SBST)'>SQL_SBST = #{SQL_SBST, jdbcType=VARCHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(UI_COMP_CD)'>UI_COMP_CD = #{UI_COMP_CD, jdbcType=VARCHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(UI_COMP_WIDTH_RADIO)'>UI_COMP_WIDTH_RADIO = #{UI_COMP_WIDTH_RADIO, jdbcType=VARCHAR},</if>
+            <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(UI_COMP_HEIGHT_PX)'>UI_COMP_HEIGHT_PX = #{UI_COMP_HEIGHT_PX, jdbcType=NUMERIC},</if>
+        </set>
+        WHERE ATR_ID = #{ATR_ID}
+    </update>
+    <delete id="delete" parameterType="hashMap">
+        DELETE FROM PEN_ATR_M
+        WHERE ATR_ID = #{atrId}
+    </delete>
+</mapper>
