@@ -93,7 +93,7 @@ function openPwdChange() {
           	
           		<li class="ico"><a href="javascript:openHelp()" title="도움말"><i class="fa fa-info-circle" aria-hidden="true"  style="width:50px;"></i> <span style="font-size:11px; letter-spacing:-1; width:60px;">도움말</span></a></li>
           		
-          		<li class="ico"><a href="javascript:goLink('portal/notice/boardList', 'DATAEYE1_MENU_7ce36c54-5ff1-4b80-a51b-1bc1404fdf14');" title="공지사항"><i class="fa fa-fw fa-bell-o" style="width:50px;"></i><span style="font-size:11px; letter-spacing:-1; width:60px;">공지사항</span></a></li>
+          		<li class="ico"><a href="javascript:goLink('portal/message/boardList', 'DATAEYE1_MENU_df37cd18-7f6a-4648-bf34-e3443c11858d');" title="메세지"><i class="fa fa-fw fa-bell-o" style="width:50px;"></i><span style="font-size:11px; letter-spacing:-1; width:60px;">메세지</span></a></li>
           		<li class="ico"><a href="javascript:goLink('portal/faq/boardList', 'DATAEYE1_MENU_d596ebad-1410-4777-9b4a-09725495dbf6');" title="FAQ"><i class="fa fa-fw fa-question-circle-o" style="width:50px;"></i><span style="font-size:11px; letter-spacing:-1; width:60px;">FAQ</span></a></li>          		
           		<c:if test="${sessionScope[SessionInfoSupport.SESSION_USERINFO_NAME]['admin']}">
           			<li class="ico"><a href="<spring:url value="../admin/main"/>" title="Admin 홈"><i class="fa fa-fw fa-cogs"  style="width:50px;"></i><span style="font-size:11px; letter-spacing:-1; width:60px;">ADMIN</span></a></li>

@@ -8,10 +8,12 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -321,6 +323,31 @@ public class PortalBoardController {
 	        } catch (IOException ex) {
 	            System.out.println("IOException");
 	        }
+	    }
+	    
+	    @RequestMapping("/messageWriteProc")
+	    public ResponseEntity<StdResponse> messageWriteProc(MultipartHttpServletRequest request) throws IllegalStateException, IOException {
+		   StdResponse stdResponse = new StdResponse();
+		   
+		   HttpSession session = request.getSession(false);
+		   SessionInfo sessionInfo = SessionInfoSupport.getSessionInfo(session); //getSessionAttribute(request.getSession());
+		   
+		   String [] sendMothod =  request.getParameterValues("send_mothod");
+		   List<String> mothods = Arrays.asList(sendMothod);
+		   String mothodStr = mothods.stream().collect(Collectors.joining(","));
+
+		   Map<String,Object> paraMap = new HashMap<String,Object>();
+		   paraMap.put("title", (String)request.getParameter("title"));
+		   paraMap.put("cntnt", (String)request.getParameter("cntnt"));
+		   paraMap.put("send_type", (String)request.getParameter("send_type"));
+		   paraMap.put("writ_id", sessionInfo.getUserId());
+		   paraMap.put("send_target", (String)request.getParameter("send_target"));
+		   paraMap.put("send_mothod", mothodStr);
+		   paraMap.put("editor_type", (String)request.getParameter("editor_type"));
+		   
+		   portalBoardService.insertPortalMessage(paraMap);
+		
+		   return new ResponseEntity<StdResponse>(stdResponse.setSuccess(null), HttpStatus.OK);
 	    }
 
 }

@@ -128,4 +128,12 @@
 		</if>
 		ORDER BY T101.ATR_VAL_SEQ
     </select>
+    
+    <select id="getObjTypeAtrVal" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+		select M.*, D.atr_id_seq, D.obj_atr_val from O_DATAEYE_META.PEN_OBJ_M M
+		left join O_DATAEYE_META.PEN_OBJ_D D
+		on M.obj_id = D.obj_id
+		where M.obj_type_id = #{objTypeId}  
+		    and D.atr_id_seq = #{atrIdSeq}
+    </select>
 </mapper>

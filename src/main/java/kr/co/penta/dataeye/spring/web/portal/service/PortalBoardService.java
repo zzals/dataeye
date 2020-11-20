@@ -21,5 +21,8 @@ public interface PortalBoardService {
     Map<String,String> getPortalBoardFileInfo(String fileNo);
     Map<String,String> getPortalBoardFileInfo2(String boardNo);
     
+    //message
+    void insertPortalMessage(Map<String,Object> paraMap);
+    
 }
 

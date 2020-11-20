@@ -93,4 +93,10 @@ public class PortalBoardDaoImpl extends DataEyeDaoSupport implements PortalBoard
 		daoParam.put("brd_id",brd_id);
 		return sqlSession.selectOne("portal.board.getPortalBoardFileInfo2",daoParam );
 	}
+	
+	//message
+	@Override
+	public void insertPortalMessage(Map<String, Object> paraMap) {			
+		sqlSession.insert("portal.board.insertPortalMessage", paraMap);
+	}
 }

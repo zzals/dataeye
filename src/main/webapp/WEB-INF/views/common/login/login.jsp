@@ -39,11 +39,11 @@
 
     <form id="potalLogin" action="login/auth" method="post" onsubmit="return loginDo();">
       <div class="form-group has-feedback">
-        <input type="text" name="de_username" id="de_username" class="form-control" value="gyuho" placeholder="User Id">
+        <input type="text" name="de_username" id="de_username" class="form-control" value="" placeholder="User Id">
         <span class="glyphicon glyphicon-user form-control-feedback"></span>
       </div>
       <div class="form-group has-feedback">
-        <input type="password" name="de_pwd" id="de_pwd" class="form-control" value="admin" placeholder="Password">
+        <input type="password" name="de_pwd" id="de_pwd" class="form-control" value="" placeholder="Password">
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
       <div class="row">

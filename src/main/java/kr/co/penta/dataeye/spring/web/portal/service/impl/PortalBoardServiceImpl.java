@@ -91,5 +91,16 @@ public class PortalBoardServiceImpl implements PortalBoardService {
 		return portalBoardDao.getPortalBoardFileInfo2(brd_id);
 	}
 	
+	//message
+	@Override
+	public void insertPortalMessage(Map<String,Object> paraMap) {
+		
+		Date from = new Date();
+        SimpleDateFormat transFormat = new SimpleDateFormat("yyyyMMdd");
+		
+		paraMap.put("msg_id", transFormat.format(from) + UUID.randomUUID().toString().replace("-", ""));
+		
+		portalBoardDao.insertPortalMessage(paraMap);
+	}
 	
 }

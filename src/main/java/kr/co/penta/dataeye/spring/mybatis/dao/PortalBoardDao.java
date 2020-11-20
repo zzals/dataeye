@@ -27,5 +27,8 @@ public interface PortalBoardDao {
    
    Map<String,String> getPortalBoardFileInfo2(String boardNo);
    
+   // message 
+   void insertPortalMessage(Map<String,Object> paraMap);
+   
     
 }

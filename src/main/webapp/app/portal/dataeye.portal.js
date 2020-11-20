@@ -449,8 +449,9 @@ var cpu = new CurrentPageURL(contentLoad,defaultMenu);
 function contentLoad(post, curMenu){
 	let currentTarget;
 	let uparam = "#"+post.viewId+"%"+post.menuId;
-			window.history.pushState({page:post.menuId},null, uparam);
-			console.log(typeof post.menuId);
+      window.history.pushState({page:post.menuId},null, uparam);
+      
+  localStorage.setItem("menu_id", post.menuId);
 	if(typeof post.menuId != "undefined" && post.menuId != ""){
 			currentTarget = $("li[detag-menuid="+post.menuId+"]").children("a");
 	}
@@ -461,7 +462,6 @@ function contentLoad(post, curMenu){
 	  			
 	  			$(".content-wrapper").html(response);
 	  		} else {
-	  					console.log(curMenu);
       	  		DE.content.setHeader(curMenu);
       	  		$(window).trigger("resize");
 	  		}
