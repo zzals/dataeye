@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="recentUsgReport"> 	
+    
+    <select id="reportList" resultType="kr.co.penta.dataeye.common.entities.CamelMap">    
+		SELECT M01.OBJ_TYPE_ID      AS OBJ_TYPE_ID
+			     , M01.OBJ_ID           AS OBJ_ID
+			     , M01.OBJ_NM           AS OBJ_NM             --정형분석명\
+			     , CASE
+					WHEN (SELECT COUNT(USER_ID) FROM O_DATAEYE_META.PEN_SYS_USER_OBJ_FVRT_D WHERE DEL_YN = 'N' AND USER_ID = #{sessionInfo.userId} AND OBJ_TYPE_ID = M01.OBJ_TYPE_ID AND OBJ_ID = M01.OBJ_ID) > 0 THEN 'YES'
+					ELSE 'NO'
+			     END AS BOOKMARK_YN
+			     , CASE
+                    WHEN 
+                    (
+                        SELECT OBJ_TYPE_ID||OBJ_ID 
+                        FROM  ( 
+                            SELECT A.OBJ_TYPE_ID , A.OBJ_ID , NVL(C.USER_ID,A.PRIV_RCVR_ID) AS USER_ID
+                              FROM O_DATAEYE_META.PEN_SYS_PRIV_OBJ_R A
+                              LEFT OUTER JOIN O_DATAEYE_META.PEN_SYS_GRP_R B ON(A.PRIV_RCVR_ID = B.USER_GRP_ID AND A.PRIV_RCVR_GBN='G')
+                              LEFT OUTER JOIN O_DATAEYE_META.PEN_SYS_GRP_USER_R C  ON(B.REL_USER_GRP_ID = C.USER_GRP_ID )
+                        ) AUTH
+                        WHERE AUTH.USER_ID = #{sessionInfo.userId}
+                    ) = M01.OBJ_TYPE_ID||M01.OBJ_ID
+                    THEN 'YES'
+                    ELSE 'NO'
+                    END AS AUTH_YN
+			     , M01.OBJ_DESC         AS OBJ_DESC
+			     , M01.PATH_OBJ_TYPE_ID AS PATH_OBJ_TYPE_ID
+			     , M01.PATH_OBJ_ID      AS PATH_OBJ_ID
+			     , M02.OBJ_NM           AS PATH_OBJ_NM       --분류체계명			     
+			     , D101.OBJ_ATR_VAL     AS OBJ_ATR_VAL_101_CD
+			     , C1101.CD_NM          AS OBJ_ATR_VAL_101_NM --중요도			     
+			     , D102.OBJ_ATR_VAL     AS OBJ_ATR_VAL_102_CD
+			     , C1102.CD_NM          AS OBJ_ATR_VAL_102_NM --활용목적			     
+			     , D103.OBJ_ATR_VAL     AS OBJ_ATR_VAL_103_NM			     
+			     , D104.OBJ_ATR_VAL     AS OBJ_ATR_VAL_104_CD
+			     , C1103.CD_NM          AS OBJ_ATR_VAL_104_NM --활용주기			     
+			     , D105.OBJ_ATR_VAL     AS OBJ_ATR_VAL_105_CD
+			     , C1104.CD_NM          AS OBJ_ATR_VAL_105_NM --사용자구분			     
+			     , D106.OBJ_ATR_VAL     AS OBJ_ATR_VAL_106_CD
+			     , U01.USER_NM          AS OBJ_ATR_VAL_106_NM --담당자명
+			     , D107.OBJ_ATR_VAL     AS OBJ_ATR_VAL_107_CD --부서코드
+                 , D01.ORG_NM          AS OBJ_ATR_VAL_107_NM --부서명		
+                 , D109.OBJ_ATR_VAL     AS OBJ_ATR_VAL_109_NM
+			     , DD108.OBJ_ATR_VAL    AS DD108_ATR_VAL -- 인스턴스 연결정보
+                 , DD108.OBJ_TYPE_ID    AS DD108_OBJ_TYPE_ID -- 인스턴스 연결정보
+			     , D108.OBJ_ATR_VAL     AS  D108_ATR_VAL -- 인스턴스  	  
+			  FROM O_DATAEYE_META.PEN_OBJ_M M01
+			  LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_M M02  ON (M01.PATH_OBJ_TYPE_ID = M02.OBJ_TYPE_ID AND M01.PATH_OBJ_ID = M02.OBJ_ID)
+			  LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_M M03  ON (M02.PATH_OBJ_TYPE_ID = M03.OBJ_TYPE_ID AND M02.PATH_OBJ_ID = M03.OBJ_ID)
+			  LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_D D101 ON (M01.OBJ_TYPE_ID = D101.OBJ_TYPE_ID AND M01.OBJ_ID = D101.OBJ_ID AND D101.ATR_ID_SEQ = 101 AND D101.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_D D102 ON (M01.OBJ_TYPE_ID = D102.OBJ_TYPE_ID AND M01.OBJ_ID = D102.OBJ_ID AND D102.ATR_ID_SEQ = 102 AND D102.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_D D103 ON (M01.OBJ_TYPE_ID = D103.OBJ_TYPE_ID AND M01.OBJ_ID = D103.OBJ_ID AND D103.ATR_ID_SEQ = 103 AND D103.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_D D104 ON (M01.OBJ_TYPE_ID = D104.OBJ_TYPE_ID AND M01.OBJ_ID = D104.OBJ_ID AND D104.ATR_ID_SEQ = 104 AND D104.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_D D105 ON (M01.OBJ_TYPE_ID = D105.OBJ_TYPE_ID AND M01.OBJ_ID = D105.OBJ_ID AND D105.ATR_ID_SEQ = 105 AND D105.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_D D106 ON (M01.OBJ_TYPE_ID = D106.OBJ_TYPE_ID AND M01.OBJ_ID = D106.OBJ_ID AND D106.ATR_ID_SEQ = 106 AND D106.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_D D107 ON (M01.OBJ_TYPE_ID = D107.OBJ_TYPE_ID AND M01.OBJ_ID = D107.OBJ_ID AND D107.ATR_ID_SEQ = 107 AND D107.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_D D108 ON (M01.OBJ_TYPE_ID = D108.OBJ_TYPE_ID AND M01.OBJ_ID = D108.OBJ_ID AND D108.ATR_ID_SEQ = 108 AND D108.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_D D109 ON (M01.OBJ_TYPE_ID = D109.OBJ_TYPE_ID AND M01.OBJ_ID = D109.OBJ_ID AND D109.ATR_ID_SEQ = 109 AND D109.ATR_VAL_SEQ = 101)
+			  LEFT OUTER JOIN O_DATAEYE_META.PEN_CD_M C1101 ON (D101.OBJ_ATR_VAL = C1101.CD_ID AND C1101.CD_GRP_ID = 'BM_RPTIMP')
+			  LEFT OUTER JOIN O_DATAEYE_META.PEN_CD_M C1102 ON (D101.OBJ_ATR_VAL = C1102.CD_ID AND C1102.CD_GRP_ID = 'BM_RPTPUR')
+			  LEFT OUTER JOIN O_DATAEYE_META.PEN_CD_M C1103 ON (D101.OBJ_ATR_VAL = C1103.CD_ID AND C1103.CD_GRP_ID = 'BM_RPTRCYC')
+			  LEFT OUTER JOIN O_DATAEYE_META.PEN_CD_M C1104 ON (D101.OBJ_ATR_VAL = C1104.CD_ID AND C1104.CD_GRP_ID = 'BM_RPTUSRTP')			 
+			  LEFT OUTER JOIN O_DATAEYE_META.PEN_USER_M U01 ON (D106.OBJ_ATR_VAL = U01.USER_ID)
+			  LEFT OUTER JOIN O_DATAEYE_META.PEN_ORG_M D01 ON (D107.OBJ_ATR_VAL = D01.ORG_ID)
+			  LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_D DD108 ON (DD108.OBJ_ID = D108.OBJ_ATR_VAL AND DD108.OBJ_TYPE_ID IN('020500L','020600L') AND DD108.ATR_ID_SEQ = 101 AND DD108.ATR_VAL_SEQ = 101 )			  
+			 WHERE 1=1
+			   AND M01.OBJ_TYPE_ID = '010102L'
+			   AND M01.DEL_YN = 'N'
+		   	<if test='"_all".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+            	AND (
+	            	   UPPER(M01.OBJ_NM) LIKE '%'||UPPER(#{searchValue})||'%'
+	            	OR UPPER(U01.USER_NM) LIKE '%'||UPPER(#{searchValue})||'%'
+	            )
+            </if>
+            <if test='"OBJ_NM".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+				AND UPPER(M01.OBJ_NM) LIKE '%'||UPPER(#{searchValue})||'%'
+			</if>
+            <if test='"OBJ_ATR_VAL_106_NM".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+				AND UPPER(U01.USER_NM) LIKE '%'||UPPER(#{searchValue})||'%'
+			</if>
+			<if test=' @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(cateIds)'>
+				AND M01.PATH_OBJ_ID IN(${cateIds})
+			</if>    
+			<if test=' @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(sessionInfo.userId)'>
+			AND (M01.OBJ_TYPE_ID,M01.OBJ_ID) NOT IN
+            (	            
+	            SELECT OBJ_TYPE_ID, OBJ_ID FROM
+				(
+					SELECT OBJ_TYPE_ID, OBJ_ID, CRET_DT from O_DATAEYE_META.PEN_REPORT_HISTORY_D 
+					WHERE USER_ID = #{sessionInfo.userId}
+					ORDER BY CRET_DT DESC
+				) GROUP BY OBJ_TYPE_ID, OBJ_ID                   
+	          )
+			</if>
+		ORDER BY M01.OBJ_ID ASC       
+    </select>
+    
+    <insert id="insertReport" parameterType="hashmap">
+    	INSERT INTO O_DATAEYE_META.PEN_REPORT_HISTORY_D
+    		(USER_ID, SEQ_ID, DEL_YN, CRET_DT, CRETR_ID, 
+    			CHG_DT, CHGR_ID, OBJ_TYPE_ID, OBJ_ID)
+    	VALUES
+    		(#{sessionInfo.userId, jdbcType=VARCHAR}, #{seqId}, 'N', SYSDATE, #{sessionInfo.userId, jdbcType=VARCHAR}, 
+    			SYSDATE, #{sessionInfo.userId, jdbcType=VARCHAR}, #{objTypeId}, #{objId})
+    </insert>
+</mapper>
