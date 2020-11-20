@@ -15,18 +15,18 @@
                   , T104.CD_NM  AS UI_COMP_NM
                   , T101.UI_COMP_WIDTH_RADIO
                   , T101.UI_COMP_HEIGHT_PX
-        FROM PEN_ATR_M T101
-        LEFT OUTER JOIN PEN_CD_M T102
+        FROM O_DATAEYE_META.PEN_ATR_M T101
+        LEFT OUTER JOIN O_DATAEYE_META.PEN_CD_M T102
         ON (
             T101.DATA_TYPE_CD = T102.CD_ID 
             AND T102.CD_GRP_ID = 'SYS_DATATYP'
         )
-        LEFT OUTER JOIN PEN_CD_M T103
+        LEFT OUTER JOIN O_DATAEYE_META.PEN_CD_M T103
         ON (
             T101.ATR_RFRN_CD = T103.CD_ID 
             AND T103.CD_GRP_ID = 'SYS_REFTYPE'
         )
-        LEFT OUTER JOIN PEN_CD_M T104
+        LEFT OUTER JOIN O_DATAEYE_META.PEN_CD_M T104
         ON (
             T101.UI_COMP_CD = T104.CD_ID 
             AND T104.CD_GRP_ID = 'SYS_UI'
@@ -42,7 +42,7 @@
     </select>
     <select id="getDuplCntByAtrId" resultType="int" >
         SELECT COUNT(1) CNT
-        FROM PEN_ATR_M T101
+        FROM O_DATAEYE_META.PEN_ATR_M T101
         WHERE ATR_ID = #{atrId}
     </select>
 </mapper>

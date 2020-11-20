@@ -45,7 +45,7 @@
 			}
 		}
 		function goDetail(reportId) {
-			window.open('/dataeye_ebay/report/reportPrompt?reportId=' + reportId,'_new','')
+			window.open('/dataeye/report/reportPrompt?reportId=' + reportId,'_new','')
 		}
 
 		function goCate(no) {

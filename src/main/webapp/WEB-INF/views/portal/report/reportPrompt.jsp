@@ -56,7 +56,7 @@ String filterHtml = (String)request.getAttribute("filterHtml");
     		DE.contextPath = contextPath;
     	};
     })();
-    DE.setContextPath('/dataeye_ebay');    
+    DE.setContextPath('/dataeye');    
     //-->
 </script>
 <!-- jQuery -->
@@ -163,7 +163,7 @@ String filterHtml = (String)request.getAttribute("filterHtml");
   </style> 
     <script language="javascript">
  	function doProc() {
- 		//window.open('/dataeye_ebay/report/reportExec?reportId=<%=request.getParameter("reportId") %>','_blank','')
+ 		//window.open('/dataeye/report/reportExec?reportId=<%=request.getParameter("reportId") %>','_blank','')
 
  		$('#reportForm').attr("action", "reportExec?reportId=<%=request.getParameter("reportId") %>");
  	    $('#reportForm').attr("method", "post");
@@ -174,7 +174,7 @@ String filterHtml = (String)request.getAttribute("filterHtml");
 
   	function reportInfo(OBJ_TYPE_ID,OBJ_ID) {
   		DE.ui.open.popup(
-				"/dataeye_ebay/portal/view",
+				"/dataeye/portal/view",
 				[OBJ_TYPE_ID, OBJ_ID],
 				{
 					viewname:'common/metacore/objectInfoTab',

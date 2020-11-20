@@ -4,7 +4,7 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PEN_OBJ_D_T">
 	<insert id="insert" parameterType="hashMap">
-		INSERT INTO PEN_OBJ_D_T
+		INSERT INTO O_DATAEYE_META.PEN_OBJ_D_T
 		(
 			OBJ_TYPE_ID,     OBJ_ID,	 ATR_ID_SEQ,	   ATR_VAL_SEQ,	   APRV_ID,		DEL_YN,
 			CRET_DT,	     CRETR_ID,	 CHG_DT,	       CHGR_ID,        OBJ_ATR_VAL
@@ -28,7 +28,7 @@
 		)
 	</insert>
 	<update id="update" parameterType="kr.co.penta.dataeye.common.entities.meta.PenObjDT">
-		UPDATE PEN_OBJ_D_T
+		UPDATE O_DATAEYE_META.PEN_OBJ_D_T
 		<set>
 			CHG_DT = CURRENT_TIMESTAMP,
 			CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR},
@@ -46,7 +46,7 @@
 		</if>
 	</update>
 	<update id="updateKey" parameterType="kr.co.penta.dataeye.common.entities.meta.PenObjDT">
-		UPDATE PEN_OBJ_D_T
+		UPDATE O_DATAEYE_META.PEN_OBJ_D_T
 		<set>
 			CHG_DT = CURRENT_TIMESTAMP,
 			CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR},
@@ -59,7 +59,7 @@
 	</update>
 	<delete id="delete" parameterType="hashMap">
 		<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(objTypeId) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(objId)'>
-			DELETE FROM PEN_OBJ_D_T T101
+			DELETE FROM O_DATAEYE_META.PEN_OBJ_D_T T101
 			WHERE T101.OBJ_TYPE_ID = #{objTypeId}
 				AND T101.OBJ_ID = #{objId}
 				AND T101.APRV_ID = #{aprvId}
@@ -71,11 +71,11 @@
 			</if>
 		</if>
         <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(objTypeId) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(pathObjId)'>
-			DELETE FROM PEN_OBJ_D_T T101
+			DELETE FROM O_DATAEYE_META.PEN_OBJ_D_T T101
 			WHERE T101.OBJ_TYPE_ID = #{objTypeId}
 			  	AND T101.OBJ_ID IN (
 			  		SELECT OBJ_ID
-			  		FROM PEN_OBJ_M
+			  		FROM O_DATAEYE_META.PEN_OBJ_M
 			  		WHERE OBJ_TYPE_ID = #{objTypeId}
 			  		AND PATH_OBJ_ID = #{pathObjId}
 			  	)
@@ -92,7 +92,7 @@
 		</if>
 	</delete>
 	<update id="delYn" parameterType="hashMap">
-		UPDATE PEN_OBJ_D_T
+		UPDATE O_DATAEYE_META.PEN_OBJ_D_T
 		<set>
 			DEL_YN = #{delYn},
 			CHG_DT = CURRENT_TIMESTAMP,
@@ -103,7 +103,7 @@
 			AND APRV_ID = #{aprvId}
 	</update>
     <insert id="approve" parameterType="kr.co.penta.dataeye.common.entities.CamelMap">
-        INSERT INTO PEN_OBJ_D
+        INSERT INTO O_DATAEYE_META.PEN_OBJ_D
 		(
 			OBJ_TYPE_ID,     OBJ_ID,	 ATR_ID_SEQ,	ATR_VAL_SEQ,	DEL_YN,
 			CRET_DT,	     CRETR_ID,	 CHG_DT,		CHGR_ID,		OBJ_ATR_VAL
@@ -118,18 +118,18 @@
              , CHG_DT
              , CHGR_ID
              , OBJ_ATR_VAL 
-         FROM PEN_OBJ_D_T
+         FROM O_DATAEYE_META.PEN_OBJ_D_T
         WHERE APRV_ID = #{aprvId}
     </insert>
 	<delete id="removeObjDAtrRange" parameterType="hashMap">
-		DELETE FROM PEN_OBJ_D_T
+		DELETE FROM O_DATAEYE_META.PEN_OBJ_D_T
 		WHERE OBJ_TYPE_ID = #{objTypeId}
 			AND OBJ_ID = #{objId}
 			AND ATR_ID_SEQ = #{atrIdSeq}
 			AND ATR_VAL_SEQ BETWEEN #{beginAtrValSeq} AND #{endAtrValSeq}
 	</delete>
 	<delete id="deleteByAprvId" parameterType="hashMap">
-		DELETE FROM PEN_OBJ_D_T
+		DELETE FROM O_DATAEYE_META.PEN_OBJ_D_T
 		WHERE APRV_ID = #{aprvId}
 	</delete>
 </mapper>

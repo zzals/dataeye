@@ -37,7 +37,7 @@ function openPwdChange() {
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
     	<div class="top_logo" style="position:relative; z-index:150;">
-    	<a href="/dataeye_ebay/portal/main2"><img src="../assets/images/dataeye_logo.png"></a>
+    	<a href="/dataeye/portal/main2"><img src="../assets/images/dataeye_logo.png"></a>
     	</div>
       <!-- Sidebar toggle button-->
       <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">

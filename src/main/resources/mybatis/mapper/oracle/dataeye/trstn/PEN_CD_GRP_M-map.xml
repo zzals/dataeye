@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PEN_CD_GRP_M">
 	<insert id="insert" parameterType="hashMap">
-		INSERT INTO PEN_CD_GRP_M 
+		INSERT INTO O_DATAEYE_META.PEN_CD_GRP_M 
         (
             CD_GRP_ID,      DEL_YN,     CRET_DT,        CRETR_ID,       CHG_DT,
             CHGR_ID,        CD_GRP_NM,  CD_GRP_DESC,    UP_CD_GRP_ID,   EFCT_ST_DATE,
@@ -29,7 +29,7 @@
 		)
 	</insert>
     <update id="update" parameterType="hashMap">
-        UPDATE PEN_CD_GRP_M
+        UPDATE O_DATAEYE_META.PEN_CD_GRP_M
         <set>
             CHG_DT = CURRENT_TIMESTAMP,
             CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR},
@@ -53,7 +53,7 @@
         WHERE CD_GRP_ID = #{CD_GRP_ID}
     </update>
     <delete id="delete" parameterType="hashMap">
-        DELETE FROM PEN_CD_GRP_M
+        DELETE FROM O_DATAEYE_META.PEN_CD_GRP_M
         WHERE CD_GRP_ID = #{cdGrpId}
     </delete>
 </mapper>

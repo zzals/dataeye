@@ -13,8 +13,8 @@ spring:
       #url: jdbc:oracle:thin:@192.168.100.75:1521:DE
       #url: jdbc:oracle:thin:@localhost:1521:orcl
       url: jdbc:oracle:thin:@192.168.217.120:1521/BIDEVDB
-      username: O_DATAEYE_META
-      password: DrpUgqk7wAeJbVNpFltfYiz/mkrFX+UCvy3UgD75GFdXM2k5xyTVyjey8UF1Y2Vu
+      username: S_APP_DATAEYE
+      password: NVYlQ3HVBjkd7sOcgJ1L/dTql1WzchDIB63gNqzxdvS7Su9ElXPsTARczb1DHo6E
       driver-class-name: oracle.jdbc.driver.OracleDriver
       test-while-idle: true
       test-on-borrow: true
@@ -30,7 +30,7 @@ spring:
           
 server:
   port: 9999
-  context-path: /dataeye_ebay
+  context-path: /dataeye
   session:
     timeout: 3600
 #    cookie:

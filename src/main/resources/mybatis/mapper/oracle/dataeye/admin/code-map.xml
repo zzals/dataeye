@@ -32,7 +32,7 @@
                     , T101.EFCT_ED_DATE
                     , 1 AS LVL
                     , CD_GRP_NM AS SORT_PATH
-            FROM PEN_CD_GRP_M T101
+            FROM O_DATAEYE_META.PEN_CD_GRP_M T101
             <where>
                 T101.UP_CD_GRP_ID IS NULL
                 <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(delYn)'>
@@ -54,7 +54,7 @@
                     , T101.EFCT_ED_DATE
                     , 1+T102.LVL AS LVL
                     , T102.SORT_PATH||'/'||T101.CD_GRP_NM AS SORT_PATH
-            FROM PEN_CD_GRP_M T101
+            FROM O_DATAEYE_META.PEN_CD_GRP_M T101
             INNER JOIN CD_GRP_M T102
             ON (
                 T101.UP_CD_GRP_ID = T102.CD_GRP_ID
@@ -95,8 +95,8 @@
             , T102.CD_GRP_NM    AS UP_CD_GRP_NM
             , T101.EFCT_ST_DATE
             , T101.EFCT_ED_DATE
-        FROM PEN_CD_GRP_M T101
-        LEFT OUTER JOIN PEN_CD_GRP_M T102
+        FROM O_DATAEYE_META.PEN_CD_GRP_M T101
+        LEFT OUTER JOIN O_DATAEYE_META.PEN_CD_GRP_M T102
         ON (
             T101.UP_CD_GRP_ID = T102.CD_GRP_ID
         )
@@ -123,7 +123,7 @@
            , T101.UP_CD_ID
            , TO_CHAR(T101.EFCT_ST_DATE,'YYYY-MM-DD') AS EFCT_ST_DATE
            , TO_CHAR(T101.EFCT_ED_DATE,'YYYY-MM-DD') AS EFCT_ED_DATE
-        FROM PEN_CD_M T101
+        FROM O_DATAEYE_META.PEN_CD_M T101
         <where>
             <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(cdGrpId)'>
                 AND T101.CD_GRP_ID = #{cdGrpId}
@@ -133,17 +133,17 @@
     </select>
     <select id="getDuplCntByCdGrpId" resultType="int" >
         SELECT COUNT(1) CNT
-        FROM PEN_CD_GRP_M T101
+        FROM O_DATAEYE_META.PEN_CD_GRP_M T101
         WHERE CD_GRP_ID = #{cdGrpId}
     </select>
     <select id="getDuplCntByCdId" resultType="int" >
         SELECT COUNT(1) CNT
-        FROM PEN_CD_M T101
+        FROM O_DATAEYE_META.PEN_CD_M T101
         WHERE CD_ID = #{cdId}
     </select>
     <select id="getChildCntByCdGrpId" resultType="int" >
         SELECT COUNT(1) CNT
-        FROM PEN_CD_GRP_M T101
+        FROM O_DATAEYE_META.PEN_CD_GRP_M T101
         WHERE UP_CD_GRP_ID = #{cdGrpId}
     </select>
 </mapper>

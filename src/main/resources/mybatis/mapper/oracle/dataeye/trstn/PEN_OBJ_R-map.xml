@@ -4,7 +4,7 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PEN_OBJ_R">
 	<insert id="insert" parameterType="kr.co.penta.dataeye.common.entities.meta.PenObjR">
-		INSERT INTO PEN_OBJ_R
+		INSERT INTO O_DATAEYE_META.PEN_OBJ_R
 		(
 			OBJ_TYPE_ID,	OBJ_ID,	    REL_OBJ_TYPE_ID,	   REL_OBJ_ID,	    DEL_YN,
 			CRET_DT,	    CRETR_ID,	CHG_DT,                CHGR_ID,         REL_TYPE_ID,
@@ -29,7 +29,7 @@
 		)
 	</insert>
 	<update id="updateDelYn" parameterType="hashMap">
-		UPDATE PEN_OBJ_R
+		UPDATE O_DATAEYE_META.PEN_OBJ_R
 		SET DEL_YN = 'Y',
 			CHG_DT = CURRENT_TIMESTAMP,
 			CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR}
@@ -37,7 +37,7 @@
 		  AND OBJ_ID = #{objId}
 	</update>
     <update id="updateDelYnRel" parameterType="hashMap">
-        UPDATE PEN_OBJ_R
+        UPDATE O_DATAEYE_META.PEN_OBJ_R
 		SET DEL_YN = 'Y',
 			CHG_DT = CURRENT_TIMESTAMP,
 			CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR}
@@ -45,7 +45,7 @@
           AND REL_OBJ_ID = #{relObjId}
     </update>
     <update id="updateDelYnAll" parameterType="hashMap">
-        UPDATE PEN_OBJ_R
+        UPDATE O_DATAEYE_META.PEN_OBJ_R
 		SET DEL_YN = 'Y',
 			CHG_DT = CURRENT_TIMESTAMP,
 			CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR}
@@ -53,7 +53,7 @@
            OR (REL_OBJ_TYPE_ID = #{objTypeId} AND REL_OBJ_ID = #{objId})
     </update>
     <delete id="remove" parameterType="hashMap">
-        DELETE FROM PEN_OBJ_R T101
+        DELETE FROM O_DATAEYE_META.PEN_OBJ_R T101
         WHERE T101.OBJ_TYPE_ID = #{objTypeId}
         AND T101.OBJ_ID = #{objId}
         <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(relObjTypeId)'>
@@ -68,7 +68,7 @@
         <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(upRelTypeId)'>
             AND T101.REL_TYPE_ID IN (
                 SELECT REL_TYPE_ID 
-                FROM PEN_REL_TYPE_M
+                FROM O_DATAEYE_META.PEN_REL_TYPE_M
                 WHERE UP_REL_TYPE_ID = #{upRelTypeId}
             )
         </if>
@@ -79,7 +79,7 @@
         </if>
     </delete>
     <delete id="removeByRel" parameterType="hashMap">
-        DELETE FROM PEN_OBJ_R T101
+        DELETE FROM O_DATAEYE_META.PEN_OBJ_R T101
         WHERE T101.REL_OBJ_TYPE_ID = #{relObjTypeId}
         AND T101.REL_OBJ_ID = #{relObjId}
         <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(objTypeId)'>
@@ -93,7 +93,7 @@
         <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(upRelTypeId)'>
             AND T101.REL_TYPE_ID IN (
                 SELECT REL_TYPE_ID 
-                FROM PEN_REL_TYPE_M
+                FROM O_DATAEYE_META.PEN_REL_TYPE_M
                 WHERE UP_REL_TYPE_ID = #{upRelTypeId}
             )
         </if>
@@ -104,38 +104,38 @@
         </if>
     </delete>
     <delete id="removeAll" parameterType="hashMap">
-        DELETE FROM PEN_OBJ_R T101
+        DELETE FROM O_DATAEYE_META.PEN_OBJ_R T101
         WHERE (T101.OBJ_TYPE_ID = #{objTypeId} AND T101.OBJ_ID = #{objId})
            OR (T101.REL_OBJ_TYPE_ID = #{objTypeId} AND T101.REL_OBJ_ID = #{objId})
     </delete>
     <update id="deleteInheritanceObjR" parameterType="hashmap">
-        UPDATE PEN_OBJ_R
+        UPDATE O_DATAEYE_META.PEN_OBJ_R
         SET DEL_YN = 'Y'
         WHERE OBJ_TYPE_ID = #{objTypeId}        
         AND OBJ_ID= #{objId}
         AND REL_TYPE_ID IN (
             SELECT REL_TYPE_ID
-            FROM PEN_REL_TYPE_M
+            FROM O_DATAEYE_META.PEN_REL_TYPE_M
             WHERE OBJ_TYPE_ID =#{objTypeId}
             AND META_REL_CD = 'IR'
         )
     </update>
     <delete id="removeInheritanceObjR" parameterType="kr.co.penta.dataeye.common.entities.CamelMap">
-        DELETE FROM PEN_OBJ_R
+        DELETE FROM O_DATAEYE_META.PEN_OBJ_R
         WHERE OBJ_TYPE_ID = #{objTypeId}        
         AND OBJ_ID= #{objId}
         AND REL_TYPE_ID IN (
             SELECT REL_TYPE_ID
-            FROM PEN_REL_TYPE_M
+            FROM O_DATAEYE_META.PEN_REL_TYPE_M
             WHERE OBJ_TYPE_ID =#{objTypeId}
             AND META_REL_CD = 'IR'
         )
     </delete>
     <delete id="clearObjR" parameterType="kr.co.penta.dataeye.common.entities.CamelMap">
-        DELETE FROM PEN_OBJ_R T101
+        DELETE FROM O_DATAEYE_META.PEN_OBJ_R T101
         WHERE EXISTS (
             SELECT 1
-            FROM PEN_REL_TYPE_M T102
+            FROM O_DATAEYE_META.PEN_REL_TYPE_M T102
             <if test='"DOWN".equals(relDv)'>
                 WHERE  T101.REL_TYPE_ID = T102.REL_TYPE_ID
                 AND T101.REL_OBJ_TYPE_ID = T102.REL_OBJ_TYPE_ID
@@ -155,17 +155,17 @@
         )
     </delete>
     <delete id="removeRefPath" parameterType="hashMap">
-	    DELETE FROM PEN_OBJ_R
+	    DELETE FROM O_DATAEYE_META.PEN_OBJ_R
 		WHERE (OBJ_TYPE_ID, OBJ_ID) IN (
-		    SELECT OBJ_TYPE_ID, OBJ_ID FROM PEN_OBJ_M
+		    SELECT OBJ_TYPE_ID, OBJ_ID FROM O_DATAEYE_META.PEN_OBJ_M
 		    WHERE PATH_OBJ_TYPE_ID = #{pathObjTypeId}
 		    AND PATH_OBJ_ID = #{pathObjId}
 		)
     </delete>
     <delete id="removeByRelRefPath" parameterType="hashMap">
-		DELETE FROM PEN_OBJ_R
+		DELETE FROM O_DATAEYE_META.PEN_OBJ_R
 		WHERE (REL_OBJ_TYPE_ID, REL_OBJ_ID) IN (
-		    SELECT OBJ_TYPE_ID, OBJ_ID FROM PEN_OBJ_M
+		    SELECT OBJ_TYPE_ID, OBJ_ID FROM O_DATAEYE_META.PEN_OBJ_M
 		    WHERE PATH_OBJ_TYPE_ID = #{pathObjTypeId}
 		    AND PATH_OBJ_ID = #{pathObjId}
 		)

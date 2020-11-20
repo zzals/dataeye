@@ -4,7 +4,7 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PEN_OBJ_R_H">
 	<insert id="insert" parameterType="hashMap">
-		INSERT INTO PEN_OBJ_R_H
+		INSERT INTO O_DATAEYE_META.PEN_OBJ_R_H
 		(
 			OBJ_TYPE_ID,     OBJ_ID, 		REL_OBJ_TYPE_ID,   REL_OBJ_ID,  HST_SEQ,
             HST_CRET_DT,     HST_CRETR_ID,  REQ_SEQ,           DEL_YN,      CRET_DT,
@@ -25,7 +25,7 @@
              , T101.CHGR_ID
              , T101.REL_TYPE_ID
              , T101.OBJ_REL_ANALS_CD
-		FROM PEN_OBJ_R T101
+		FROM O_DATAEYE_META.PEN_OBJ_R T101
         WHERE T101.OBJ_TYPE_ID = #{objTypeId} 
           AND T101.OBJ_ID = #{objId}
           AND T101.REL_OBJ_TYPE_ID = #{relObjTypeId} 
@@ -33,7 +33,7 @@
           AND T101.DEL_YN = 'N'
 	</insert>
     <insert id="insertAll" parameterType="hashMap">
-        INSERT INTO PEN_OBJ_R_H
+        INSERT INTO O_DATAEYE_META.PEN_OBJ_R_H
         (
             OBJ_TYPE_ID,     OBJ_ID,        REL_OBJ_TYPE_ID,   REL_OBJ_ID,  HST_SEQ,
             HST_CRET_DT,     HST_CRETR_ID,  REQ_SEQ,           DEL_YN,      CRET_DT,
@@ -54,7 +54,7 @@
              , T101.CHGR_ID
              , T101.REL_TYPE_ID
              , T101.OBJ_REL_ANALS_CD
-        FROM PEN_OBJ_R T101
+        FROM O_DATAEYE_META.PEN_OBJ_R T101
         WHERE T101.DEL_YN = 'N'
           AND (
                 (T101.OBJ_TYPE_ID = #{objTypeId} AND T101.OBJ_ID = #{objId})

@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PEN_OBJ_TYPE_UI_D">
 	<insert id="insert" parameterType="hashMap">
-		INSERT INTO PEN_OBJ_TYPE_UI_D 
+		INSERT INTO O_DATAEYE_META.PEN_OBJ_TYPE_UI_D 
         (
             OBJ_TYPE_ID,    UI_ID_SEQ,      DEL_YN,     CRET_DT,        CRETR_ID,
             CHG_DT,         CHGR_ID,        UI_ID,      UI_ALIAS_NM,    SORT_NO,
@@ -18,7 +18,7 @@
 		)
 	</insert>
     <delete id="delete" parameterType="hashMap">
-        DELETE FROM PEN_OBJ_TYPE_UI_D T101
+        DELETE FROM O_DATAEYE_META.PEN_OBJ_TYPE_UI_D T101
         <where>
             T101.OBJ_TYPE_ID = #{objTypeId}
             <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(uiIdSeq)">

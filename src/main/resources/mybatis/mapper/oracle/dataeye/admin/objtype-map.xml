@@ -17,8 +17,8 @@
                    , T101.HST_YN AS "HST_YN"
                    , T101.TAG_YN AS "TAG_YN"
                    , T101.CMMT_YN AS "CMMT_YN"
-        FROM PEN_OBJ_TYPE_M T101
-        LEFT OUTER JOIN PEN_OBJ_TYPE_M T102
+        FROM O_DATAEYE_META.PEN_OBJ_TYPE_M T101
+        LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_TYPE_M T102
         ON (
             T101.UP_OBJ_TYPE_ID = T102.OBJ_TYPE_ID
         )
@@ -26,7 +26,7 @@
             SELECT 
                 CD_ID
                 ,CD_NM
-            FROM PEN_CD_M
+            FROM O_DATAEYE_META.PEN_CD_M
             WHERE CD_GRP_ID = 'SYS_ATRMA'
         ) T103 ON (T103.CD_ID = T101.ATR_ADM_CD)
         <where>
@@ -67,8 +67,8 @@
             END   AS "UI_COMP_WIDTH_RADIO_DISP"
             , T101.UI_COMP_HEIGHT_PX AS "UI_COMP_HEIGHT_PX"
             , CASE WHEN T101.UI_COMP_HEIGHT_PX IS NOT NULL THEN T101.UI_COMP_HEIGHT_PX||' px' END AS "UI_COMP_HEIGHT_PX_DISP"
-        FROM PEN_OBJ_TYPE_ATR_D T101
-        LEFT OUTER JOIN PEN_ATR_M T102 ON (T102.ATR_ID = T101.ATR_ID)
+        FROM O_DATAEYE_META.PEN_OBJ_TYPE_ATR_D T101
+        LEFT OUTER JOIN O_DATAEYE_META.PEN_ATR_M T102 ON (T102.ATR_ID = T101.ATR_ID)
 		<where>
             <if test='objTypeId != null and !"".equals(objTypeId)'> 
                 T101.OBJ_TYPE_ID = #{objTypeId}
@@ -80,7 +80,7 @@
     
      <select id="getDuplCntByObjTypeId" resultType="int" >
         SELECT COUNT(1) CNT
-        FROM PEN_OBJ_TYPE_M T101
+        FROM O_DATAEYE_META.PEN_OBJ_TYPE_M T101
         WHERE OBJ_TYPE_ID = #{objTypeId}
     </select> 
     
@@ -88,7 +88,7 @@
            SELECT  OBJ_TYPE_ID AS "OBJ_TYPE_ID"
 		          ,OBJ_TYPE_NM AS "OBJ_TYPE_NM"
 		          ,HIER_LEV_NO AS "HIER_LEV_NO"
-		  FROM PEN_OBJ_TYPE_M 
+		  FROM O_DATAEYE_META.PEN_OBJ_TYPE_M 
 		  WHERE LST_LEV_YN='N'
 		  ORDER BY OBJ_TYPE_ID ASC
     </select> 

@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PEN_CD_M">
 	<insert id="insert" parameterType="hashMap">
-		INSERT INTO PEN_CD_M 
+		INSERT INTO O_DATAEYE_META.PEN_CD_M 
         (
             CD_GRP_ID,  CD_ID,          DEL_YN,     CRET_DT,        CRETR_ID,
             CHG_DT,     CHGR_ID,        CD_NM,      CD_DESC,        SORT_NO,
@@ -30,7 +30,7 @@
 		)
 	</insert>
     <delete id="delete" parameterType="hashMap">
-        DELETE FROM PEN_CD_M
+        DELETE FROM O_DATAEYE_META.PEN_CD_M
         WHERE CD_GRP_ID = #{cdGrpId}
     </delete>
 </mapper>

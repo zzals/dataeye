@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PEN_OBJ_BR_RSLT_MNG_D">
 	<insert id="insert" parameterType="hashMap">
-		INSERT INTO PEN_OBJ_BR_RSLT_MNG_D
+		INSERT INTO O_DATAEYE_META.PEN_OBJ_BR_RSLT_MNG_D
         (
             OBJ_TYPE_ID, OBJ_ID, BR_SEQ, DEL_YN, CRET_DT,
             CRETR_ID, CHG_DT, CHGR_ID, RSLT_OPIN_CD, RSLT_OPIN_USER_ID,
@@ -18,7 +18,7 @@
 		)
 	</insert>
     <update id="updateOpin" parameterType="hashMap">
-        UPDATE PEN_OBJ_BR_RSLT_MNG_D
+        UPDATE O_DATAEYE_META.PEN_OBJ_BR_RSLT_MNG_D
         <set>
             CHG_DT = CURRENT_TIMESTAMP,
             CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR},
@@ -32,7 +32,7 @@
           AND BR_SEQ = #{brSeq}
     </update>
     <update id="updateCnfr" parameterType="hashMap">
-        UPDATE PEN_OBJ_BR_RSLT_MNG_D
+        UPDATE O_DATAEYE_META.PEN_OBJ_BR_RSLT_MNG_D
         <set>
             CHG_DT = CURRENT_TIMESTAMP,
             CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR},

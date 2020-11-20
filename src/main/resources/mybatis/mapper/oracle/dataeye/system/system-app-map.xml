@@ -7,7 +7,7 @@
              , T101.DEL_YN
              , T101.APP_DESC
              , T101.USE_YN
-        FROM PEN_APP_M T101
+        FROM O_DATAEYE_META.PEN_APP_M T101
         <where>
             <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
                 AND T101.${searchKey} LIKE  '%'||#{searchValue}||'%'
@@ -20,7 +20,7 @@
     <select id="getSimpleApp" resultType="kr.co.penta.dataeye.common.entities.CamelMap" >
         SELECT T101.APP_ID
              , T101.APP_NM
-        FROM PEN_APP_M T101
+        FROM O_DATAEYE_META.PEN_APP_M T101
         <where>
             T101.DEL_YN = 'N'
             AND T101.USE_YN = 'Y'
@@ -29,7 +29,7 @@
     </select>
     <select id="getAppDuplCnt" resultType="int" >
         SELECT COUNT(1) CNT
-        FROM PEN_APP_M T101
+        FROM O_DATAEYE_META.PEN_APP_M T101
         WHERE APP_ID = #{appId}
     </select>
 </mapper>

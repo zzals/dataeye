@@ -70,7 +70,7 @@
     		DE.contextPath = contextPath;
     	};
     })();
-    DE.setContextPath('/dataeye_ebay');    
+    DE.setContextPath('/dataeye');    
     //-->
 </script>
 <!-- jQuery -->
@@ -217,7 +217,7 @@
 		<div class="container-fluid">		
 			<div class="panel panel-default">				
   				<div class="panel-body">  				           		
-						<iframe src="" width="100%" height="800px" frameborder=0 framespacing=0 marginheight=0 marginwidth=0 scrolling=no vspace=0 name="ifrm" id="ifrm"></iframe>
+						<iframe src="" width="100%" height="655px" name="ifrm" id="ifrm" frameborder="0"></iframe>
 						<form id="mstrForm" action="http://192.168.100.73:8080/MicroStrategy/_custom/jsp/sso.jsp" method="post">
 						<input type="hidden" name="uid" id="uid" value="<c:out value="${sessionScope[SessionInfoSupport.SESSION_USERINFO_NAME]['userId']}"/>" />
 						<input type="hidden" name="returnUrl" id="returnUrl" value="<c:out value='${connUrl}' />" />

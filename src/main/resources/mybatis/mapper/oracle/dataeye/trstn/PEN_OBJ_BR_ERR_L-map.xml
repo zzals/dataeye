@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PEN_OBJ_BR_ERR_L">
 	<insert id="insert" parameterType="hashMap">
-		INSERT INTO PEN_OBJ_BR_ERR_L
+		INSERT INTO O_DATAEYE_META.PEN_OBJ_BR_ERR_L
         (
             OBJ_TYPE_ID,    OBJ_ID,     ERR_SEQ,    BR_SEQ,     DEL_YN,
             CRET_DT,        CRETR_ID,   CHG_DT,     CHGR_ID,    ERR_ID,

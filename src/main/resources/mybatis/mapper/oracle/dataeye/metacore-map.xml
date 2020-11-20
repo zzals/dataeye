@@ -25,8 +25,8 @@
             ,T102.UI_COMP_CD AS UI_COMP_CD
             ,CASE WHEN T102.UI_COMP_WIDTH_RADIO IS NULL THEN T101.UI_COMP_WIDTH_RADIO ELSE T102.UI_COMP_WIDTH_RADIO END AS UI_COMP_WIDTH_RADIO
             ,CASE WHEN T102.UI_COMP_HEIGHT_PX IS NULL THEN T101.UI_COMP_HEIGHT_PX ELSE T102.UI_COMP_HEIGHT_PX END AS UI_COMP_HEIGHT_PX
-        FROM  PEN_OBJ_TYPE_ATR_D T101
-              INNER JOIN PEN_ATR_M T102 ON T101.ATR_ID = T102.ATR_ID
+        FROM  O_DATAEYE_META.PEN_OBJ_TYPE_ATR_D T101
+              INNER JOIN O_DATAEYE_META.PEN_ATR_M T102 ON T101.ATR_ID = T102.ATR_ID
         WHERE T101.OBJ_TYPE_ID = #{objTypeId}  
             AND T101.META_TYPE_CD = 'O'
         ORDER BY T101.SORT_NO
@@ -67,9 +67,9 @@
                 ,T102.CRET_DT
                 ,T102.CRETR_ID
                 ,T101.SORT_NO
-            FROM PEN_OBJ_M T102
-                 INNER JOIN PEN_OBJ_TYPE_ATR_D T101 ON T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
-                 LEFT OUTER JOIN PEN_OBJ_D T107 
+            FROM O_DATAEYE_META.PEN_OBJ_M T102
+                 INNER JOIN O_DATAEYE_META.PEN_OBJ_TYPE_ATR_D T101 ON T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+                 LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_D T107 
                     ON T107.OBJ_TYPE_ID = T102.OBJ_TYPE_ID 
                     AND T107.OBJ_ID = T102.OBJ_ID
                     AND T107.ATR_ID_SEQ = T101.ATR_ID_SEQ
@@ -96,13 +96,13 @@
                    , T101.ATR_ADM_CD
                    , T101.STLM_YN
                    , T101.HST_YN
-        FROM PEN_OBJ_TYPE_M T101
+        FROM O_DATAEYE_META.PEN_OBJ_TYPE_M T101
         WHERE T101.OBJ_TYPE_ID = #{objTypeId}
         ORDER BY T101.SORT_NO
     </select>
     <select id="getObjM" resultType="kr.co.penta.dataeye.common.entities.meta.PenObjM">
         SELECT T101.*
-        FROM PEN_OBJ_M T101
+        FROM O_DATAEYE_META.PEN_OBJ_M T101
         WHERE T101.OBJ_TYPE_ID = #{objTypeId}
         <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(objId)"> 
           AND T101.OBJ_ID = #{objId}
@@ -116,27 +116,27 @@
     </select>
     <select id="getObjMCretInfo" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
         SELECT CRET_DT, CRETR_ID
-        FROM PEN_OBJ_M
+        FROM O_DATAEYE_META.PEN_OBJ_M
         WHERE OBJ_TYPE_ID = #{objTypeId}
         AND OBJ_ID = #{objId}
     </select>
     <select id="getObjMReqCretInfo" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
         SELECT CRET_DT, CRETR_ID
-        FROM PEN_OBJ_M_T
+        FROM O_DATAEYE_META.PEN_OBJ_M_T
         WHERE OBJ_TYPE_ID = #{objTypeId}
         AND OBJ_ID = #{objId}
         AND APRV_ID = #{aprvId}
     </select>
     <select id="getObjDCretInfo" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
         SELECT CRET_DT, CRETR_ID
-        FROM PEN_OBJ_D
+        FROM O_DATAEYE_META.PEN_OBJ_D
         WHERE OBJ_TYPE_ID = #{objTypeId}
         AND OBJ_ID = #{objId}
         AND ROWNUM = 1
     </select>
     <select id="getRelTypeM" resultType="kr.co.penta.dataeye.common.entities.meta.PenRelTypeM">
         SELECT *
-        FROM PEN_REL_TYPE_M
+        FROM O_DATAEYE_META.PEN_REL_TYPE_M
         <where>
             <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(relTypeId)"> 
                 AND REL_TYPE_ID = #{relTypeId} 
@@ -158,7 +158,7 @@
     </select>
     <select id="getObjR" resultType="kr.co.penta.dataeye.common.entities.meta.PenObjR">
         SELECT *
-        FROM PEN_OBJ_R
+        FROM O_DATAEYE_META.PEN_OBJ_R
         WHERE OBJ_TYPE_ID = #{objTypeId}
         AND OBJ_ID = #{objId}
         AND REL_OBJ_TYPE_ID = #{relObjTypeId}
@@ -169,13 +169,13 @@
     </select>
     <select id="getInheritanceObjR" resultType="kr.co.penta.dataeye.common.entities.meta.PenObjR">
         SELECT *
-        FROM PEN_OBJ_R
+        FROM O_DATAEYE_META.PEN_OBJ_R
         WHERE OBJ_TYPE_ID = #{objTypeId}
         AND OBJ_ID= #{objId}
         AND DEL_YN = 'N'
         AND REL_TYPE_ID IN (
             SELECT REL_TYPE_ID
-            FROM PEN_REL_TYPE_M
+            FROM O_DATAEYE_META.PEN_REL_TYPE_M
             WHERE OBJ_TYPE_ID =#{objTypeId}
             AND META_REL_CD = 'IR'
             AND DEL_YN = 'N'
@@ -187,10 +187,10 @@
             <!-- SELECT  T101.REL_TYPE_ID
                   , T101.DOWN_REL_TYPE_NM AS REL_TYPE_NM
                   , 'DOWN' AS REL_DV
-            FROM PEN_REL_TYPE_M T101
+            FROM O_DATAEYE_META.PEN_REL_TYPE_M T101
             WHERE REL_TYPE_ID IN (
                 SELECT UP_REL_TYPE_ID 
-                FROM PEN_REL_TYPE_M T101
+                FROM O_DATAEYE_META.PEN_REL_TYPE_M T101
                 WHERE OBJ_TYPE_ID = #{objTypeId}
                 AND META_REL_CD NOT IN ('PT', 'IR')
                 AND DEL_YN = 'N'
@@ -200,38 +200,38 @@
             SELECT T101.REL_TYPE_ID
                  , T101.UP_REL_TYPE_NM AS REL_TYPE_NM
                  , 'UP' AS REL_DV
-            FROM PEN_REL_TYPE_M T101
+            FROM O_DATAEYE_META.PEN_REL_TYPE_M T101
             WHERE REL_TYPE_ID IN (
                 SELECT UP_REL_TYPE_ID 
-                FROM PEN_REL_TYPE_M T101
+                FROM O_DATAEYE_META.PEN_REL_TYPE_M T101
                 WHERE REL_OBJ_TYPE_ID = #{objTypeId}
                 AND META_REL_CD NOT IN ('PT', 'IR')
                 AND DEL_YN = 'N'
                 AND ATR_ADM_CD = 1
             ) -->
             SELECT DISTINCT 'DOWN' AS REL_DV, DOWN_REL_TYPE_NM AS REL_TYPE_NM, UP_REL_TYPE_ID, META_REL_CD
-			  FROM PEN_REL_TYPE_M T101
+			  FROM O_DATAEYE_META.PEN_REL_TYPE_M T101
 			 WHERE OBJ_TYPE_ID = #{objTypeId}
 			 AND META_REL_CD = 'UD'
 			AND DEL_YN = 'N'
 			AND ATR_ADM_CD = 1
 			UNION ALL
 			SELECT DISTINCT 'UP' AS REL_DV, UP_REL_TYPE_NM AS REL_TYPE_NM, UP_REL_TYPE_ID, META_REL_CD
-			  FROM PEN_REL_TYPE_M T101
+			  FROM O_DATAEYE_META.PEN_REL_TYPE_M T101
 			 WHERE REL_OBJ_TYPE_ID = #{objTypeId}
 			   AND META_REL_CD = 'UD'
 			   AND DEL_YN = 'N'
 			   AND ATR_ADM_CD = 1
 			UNION ALL
 			SELECT DISTINCT 'DOWN' AS REL_DV, DOWN_REL_TYPE_NM AS REL_TYPE_NM, UP_REL_TYPE_ID, META_REL_CD
-			  FROM PEN_REL_TYPE_M T101
+			  FROM O_DATAEYE_META.PEN_REL_TYPE_M T101
 			 WHERE OBJ_TYPE_ID = #{objTypeId}
 			 AND META_REL_CD = 'FT'
 			AND DEL_YN = 'N'
 			AND ATR_ADM_CD = 1
 			UNION ALL
 			SELECT DISTINCT 'UP' AS REL_DV, UP_REL_TYPE_NM AS REL_TYPE_NM, UP_REL_TYPE_ID, META_REL_CD
-			  FROM PEN_REL_TYPE_M T101
+			  FROM O_DATAEYE_META.PEN_REL_TYPE_M T101
 			 WHERE REL_OBJ_TYPE_ID = #{objTypeId}
 			 AND META_REL_CD = 'FT'
 			AND DEL_YN = 'N'
@@ -243,7 +243,7 @@
                 T101.REL_TYPE_ID, 
                 T101.DOWN_REL_TYPE_NM AS REL_TYPE_NM, 
                 'PT' AS REL_DV 
-            FROM PEN_REL_TYPE_M T101
+            FROM O_DATAEYE_META.PEN_REL_TYPE_M T101
             WHERE REL_OBJ_TYPE_ID = #{objTypeId}
             AND META_REL_CD = 'PT'
             UNION ALL
@@ -251,10 +251,10 @@
                 T101.REL_TYPE_ID, 
                 T101.DOWN_REL_TYPE_NM, 
                 'DOWN' AS REL_DV
-            FROM PEN_REL_TYPE_M T101
+            FROM O_DATAEYE_META.PEN_REL_TYPE_M T101
             WHERE REL_TYPE_ID IN (
                 SELECT UP_REL_TYPE_ID 
-                FROM PEN_REL_TYPE_M T101
+                FROM O_DATAEYE_META.PEN_REL_TYPE_M T101
                 WHERE OBJ_TYPE_ID = #{objTypeId}
                 AND META_REL_CD NOT IN ('PT', 'IR', 'FT')
                 AND DEL_YN = 'N'
@@ -265,10 +265,10 @@
                 T101.REL_TYPE_ID, 
                 T101.UP_REL_TYPE_NM, 
                 'UP' AS REL_DV
-            FROM PEN_REL_TYPE_M T101
+            FROM O_DATAEYE_META.PEN_REL_TYPE_M T101
             WHERE REL_TYPE_ID IN (
                 SELECT UP_REL_TYPE_ID 
-                FROM PEN_REL_TYPE_M T101
+                FROM O_DATAEYE_META.PEN_REL_TYPE_M T101
                 WHERE REL_OBJ_TYPE_ID = #{objTypeId}
                 AND META_REL_CD NOT IN ('PT', 'IR', 'FT')
                 AND DEL_YN = 'N'
@@ -279,7 +279,7 @@
                 'IMPCT' AS REL_TYPE_NM, 
                 '영향도' AS REL_TYPE_NM, 
                 'IMPCT' REL_DEV
-            FROM PEN_REL_TYPE_M T101
+            FROM O_DATAEYE_META.PEN_REL_TYPE_M T101
             WHERE (OBJ_TYPE_ID = #{objTypeId} OR REL_OBJ_TYPE_ID = #{objTypeId})
             AND META_REL_CD =  'FT'
             AND DEL_YN = 'N'
@@ -289,12 +289,12 @@
     <select id="getRelObjTypeFilter" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
         SELECT DISTINCT T102.OBJ_TYPE_ID
              , '['||T103.OBJ_TYPE_NM||'] '||T102.OBJ_TYPE_NM    AS OBJ_TYPE_NM
-        FROM PEN_OBJ_TYPE_M T102
-        INNER JOIN PEN_OBJ_TYPE_M T103
+        FROM O_DATAEYE_META.PEN_OBJ_TYPE_M T102
+        INNER JOIN O_DATAEYE_META.PEN_OBJ_TYPE_M T103
         ON (
             T102.UP_OBJ_TYPE_ID = T103.OBJ_TYPE_ID
         )
-        INNER JOIN PEN_REL_TYPE_M T101
+        INNER JOIN O_DATAEYE_META.PEN_REL_TYPE_M T101
         ON (
             <if test='"DOWN".equals(relDv)'>
             	T102.OBJ_TYPE_ID = T101.REL_OBJ_TYPE_ID
@@ -319,13 +319,13 @@
                    , T102.OBJ_ID    AS PATH_OBJ_ID
                    , T102.OBJ_NM    AS PATH_OBJ_NM
                    , T103.REL_TYPE_ID
-        FROM PEN_OBJ_M T101
-        LEFT OUTER JOIN PEN_OBJ_M T102
+        FROM O_DATAEYE_META.PEN_OBJ_M T101
+        LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_M T102
         ON (
             T101.PATH_OBJ_TYPE_ID = T102.OBJ_TYPE_ID
             AND T101.PATH_OBJ_ID = T102.OBJ_ID
         )
-        INNER JOIN PEN_REL_TYPE_M T103
+        INNER JOIN O_DATAEYE_META.PEN_REL_TYPE_M T103
         ON (
             T101.OBJ_TYPE_ID = CASE WHEN #{relDv} = 'UP' THEN T103.OBJ_TYPE_ID ELSE T103.REL_OBJ_TYPE_ID END
             AND #{objTypeId} = CASE WHEN #{relDv} = 'UP' THEN T103.REL_OBJ_TYPE_ID ELSE T103.OBJ_TYPE_ID END
@@ -357,8 +357,8 @@
                        , T104.OBJ_ID    AS PATH_OBJ_ID
                        , T104.OBJ_NM    AS PATH_OBJ_NM
                        , T102.REL_TYPE_ID
-            FROM PEN_OBJ_R T101
-            INNER JOIN PEN_REL_TYPE_M T102
+            FROM O_DATAEYE_META.PEN_OBJ_R T101
+            INNER JOIN O_DATAEYE_META.PEN_REL_TYPE_M T102
             ON (
                 T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
                 AND T101.REL_OBJ_TYPE_ID = T102.REL_OBJ_TYPE_ID
@@ -367,13 +367,13 @@
                 AND T102.META_REL_CD = #{metaRelCd}
                 AND T102.DEL_YN = 'N'
             )
-            INNER JOIN PEN_OBJ_M T103
+            INNER JOIN O_DATAEYE_META.PEN_OBJ_M T103
             ON (
                 T101.REL_OBJ_TYPE_ID = T103.OBJ_TYPE_ID
                 AND T101.REL_OBJ_ID = T103.OBJ_ID
                 AND T103.DEL_YN = 'N'
             )
-            LEFT OUTER JOIN PEN_OBJ_M T104
+            LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_M T104
             ON (
                 T103.PATH_OBJ_TYPE_ID = T104.OBJ_TYPE_ID
                 AND T103.PATH_OBJ_ID = T104.OBJ_ID
@@ -391,8 +391,8 @@
                        , T104.OBJ_ID    AS PATH_OBJ_ID
                        , T104.OBJ_NM    AS PATH_OBJ_NM
                        , T102.REL_TYPE_ID
-            FROM PEN_OBJ_R T101
-            INNER JOIN PEN_REL_TYPE_M T102
+            FROM O_DATAEYE_META.PEN_OBJ_R T101
+            INNER JOIN O_DATAEYE_META.PEN_REL_TYPE_M T102
             ON (
                 T101.REL_TYPE_ID = T102.REL_TYPE_ID
                 AND T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
@@ -402,13 +402,13 @@
                 AND T102.META_REL_CD = #{metaRelCd}                
                 AND T102.DEL_YN = 'N'
             )
-            INNER JOIN PEN_OBJ_M T103
+            INNER JOIN O_DATAEYE_META.PEN_OBJ_M T103
             ON (
                 T101.OBJ_TYPE_ID = T103.OBJ_TYPE_ID
                 AND T101.OBJ_ID = T103.OBJ_ID
                 AND T103.DEL_YN = 'N'
             )
-            LEFT OUTER JOIN PEN_OBJ_M T104
+            LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_M T104
             ON (
                 T103.PATH_OBJ_TYPE_ID = T104.OBJ_TYPE_ID
                 AND T103.PATH_OBJ_ID = T104.OBJ_ID
@@ -424,8 +424,8 @@
                    , T101.OBJ_ID
                    , T101.OBJ_NM
                    , T101.OBJ_DESC
-        FROM PEN_OBJ_M T101
-        INNER JOIN PEN_REL_TYPE_M T102
+        FROM O_DATAEYE_META.PEN_OBJ_M T101
+        INNER JOIN O_DATAEYE_META.PEN_REL_TYPE_M T102
         ON (
             T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
             AND T102.REL_TYPE_ID = #{relTypeId}
@@ -448,20 +448,20 @@
                    , '${upId}' AS UP_ID
                    , 'false' AS IS_EXPANDED
                    , 'false' AS IS_LEAF
-        FROM PEN_OBJ_R T101
-        INNER JOIN PEN_REL_TYPE_M T102
+        FROM O_DATAEYE_META.PEN_OBJ_R T101
+        INNER JOIN O_DATAEYE_META.PEN_REL_TYPE_M T102
         ON (
             T101.REL_OBJ_TYPE_ID = T102.REL_OBJ_TYPE_ID
             AND T101.REL_TYPE_ID = T102.REL_TYPE_ID
             AND T102.META_REL_CD = #{metaRelCd}
         )
-        INNER JOIN PEN_OBJ_M T103
+        INNER JOIN O_DATAEYE_META.PEN_OBJ_M T103
         ON (
             T101.OBJ_TYPE_ID = T103.OBJ_TYPE_ID
             AND T101.OBJ_ID = T103.OBJ_ID
             AND T103.DEL_YN = 'N'
         )
-        LEFT OUTER JOIN PEN_OBJ_M T104
+        LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_M T104
         ON (
             T103.PATH_OBJ_TYPE_ID = T104.OBJ_TYPE_ID
             AND T103.PATH_OBJ_ID = T104.OBJ_ID
@@ -484,20 +484,20 @@
                    , '${upId}' AS UP_ID
                    , 'false' AS IS_EXPANDED
                    , 'false' AS IS_LEAF
-        FROM PEN_OBJ_R T101
-        INNER JOIN PEN_REL_TYPE_M T102
+        FROM O_DATAEYE_META.PEN_OBJ_R T101
+        INNER JOIN O_DATAEYE_META.PEN_REL_TYPE_M T102
         ON (
             T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
             AND T101.REL_TYPE_ID = T102.REL_TYPE_ID
             AND T102.META_REL_CD = #{metaRelCd}
         )
-        INNER JOIN PEN_OBJ_M T103
+        INNER JOIN O_DATAEYE_META.PEN_OBJ_M T103
         ON (
             T101.REL_OBJ_TYPE_ID = T103.OBJ_TYPE_ID
             AND T101.REL_OBJ_ID = T103.OBJ_ID
             AND T103.DEL_YN = 'N'
         )
-        LEFT OUTER JOIN PEN_OBJ_M T104
+        LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_M T104
         ON (
             T103.PATH_OBJ_TYPE_ID = T104.OBJ_TYPE_ID
             AND T103.PATH_OBJ_ID = T104.OBJ_ID
@@ -516,21 +516,21 @@
                      , T104.OBJ_TYPE_ID AS PATH_OBJ_TYPE_ID
                      , T104.OBJ_ID AS PATH_OBJ_ID
                      , T104.OBJ_NM AS PATH_OBJ_NM
-            FROM PEN_REL_TYPE_M T101
-            INNER JOIN PEN_OBJ_R T102
+            FROM O_DATAEYE_META.PEN_REL_TYPE_M T101
+            INNER JOIN O_DATAEYE_META.PEN_OBJ_R T102
             ON (
                 T101.REL_OBJ_TYPE_ID = T102.REL_OBJ_TYPE_ID
                 AND T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
                 AND T102.OBJ_TYPE_ID = #{objTypeId}
                 AND T102.OBJ_ID = #{objId}
             )
-            INNER JOIN PEN_OBJ_M T103
+            INNER JOIN O_DATAEYE_META.PEN_OBJ_M T103
             ON (
                 T102.REL_OBJ_TYPE_ID = T103.OBJ_TYPE_ID
                 AND T102.REL_OBJ_ID = T103.OBJ_ID
                 AND T103.DEL_YN = 'N'
             )
-            LEFT OUTER JOIN PEN_OBJ_M T104
+            LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_M T104
             ON (
                 T103.PATH_OBJ_TYPE_ID = T104.OBJ_TYPE_ID
                 AND T103.PATH_OBJ_ID = T104.OBJ_ID
@@ -547,21 +547,21 @@
                      , T104.OBJ_TYPE_ID AS PATH_OBJ_TYPE_ID
                      , T104.OBJ_ID AS PATH_OBJ_ID
                      , T104.OBJ_NM AS PATH_OBJ_NM
-            from PEN_REL_TYPE_M T101
-            INNER JOIN PEN_OBJ_R T102
+            from O_DATAEYE_META.PEN_REL_TYPE_M T101
+            INNER JOIN O_DATAEYE_META.PEN_OBJ_R T102
             ON (
                 T101.REL_OBJ_TYPE_ID = T102.REL_OBJ_TYPE_ID
                 AND T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
                 AND T102.REL_OBJ_TYPE_ID = #{objTypeId}
                 AND T102.REL_OBJ_ID = #{objId}
             )
-            INNER JOIN PEN_OBJ_M T103
+            INNER JOIN O_DATAEYE_META.PEN_OBJ_M T103
             ON (
                 T102.OBJ_TYPE_ID = T103.OBJ_TYPE_ID
                 AND T102.OBJ_ID = T103.OBJ_ID
                 AND T103.DEL_YN = 'N'
             )
-            LEFT OUTER JOIN PEN_OBJ_M T104
+            LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_M T104
             ON (
                 T103.PATH_OBJ_TYPE_ID = T104.OBJ_TYPE_ID
                 AND T103.PATH_OBJ_ID = T104.OBJ_ID
@@ -576,21 +576,21 @@
         WITH BAS_INFO (ID, PID, OBJ_TYPE_ID, OBJ_ID, OBJ_NM, LVL, REL_DIV)
         AS (
             SELECT T101.OBJ_TYPE_ID||T101.OBJ_ID AS ID, NULL AS PID, T101.OBJ_TYPE_ID, T101.OBJ_ID, T101.OBJ_NM, 1 LVL, 'ROOT' REL_DEV
-            FROM PEN_OBJ_M T101
+            FROM O_DATAEYE_META.PEN_OBJ_M T101
             WHERE T101.OBJ_TYPE_ID  = #{objTypeId}
             AND T101.OBJ_ID  = #{objId}
             AND T101.DEL_YN = 'N'
         ), IMPACT_INFO (ID, PID, OBJ_TYPE_ID, OBJ_ID, OBJ_NM, LVL, REL_DEV)
         AS (
             SELECT  T101.OBJ_TYPE_ID||T101.OBJ_ID AS ID, T103.ID AS PID, T101.OBJ_TYPE_ID, T101.OBJ_ID, T101.OBJ_NM, 2 LVL, 'UP' REL_DEV
-            FROM PEN_OBJ_M T101
-            INNER JOIN PEN_OBJ_R T102
+            FROM O_DATAEYE_META.PEN_OBJ_M T101
+            INNER JOIN O_DATAEYE_META.PEN_OBJ_R T102
             ON (
                 T101.OBJ_TYPE_ID = T102.REL_OBJ_TYPE_ID
                 AND T101.OBJ_ID = T102.REL_OBJ_ID
                 AND T102.REL_TYPE_ID IN (
                     SELECT REL_TYPE_ID 
-                    FROM PEN_REL_TYPE_M
+                    FROM O_DATAEYE_META.PEN_REL_TYPE_M
                     WHERE OBJ_TYPE_ID = #{objTypeId}
                     AND META_REL_CD = 'FT'
                 )
@@ -604,14 +604,14 @@
         ), LINEAGE_INFO (ID, PID, OBJ_TYPE_ID, OBJ_ID, OBJ_NM, LVL, REL_DEV)
         AS (
             SELECT  T101.OBJ_TYPE_ID||T101.OBJ_ID AS ID, T103.ID AS PID, T101.OBJ_TYPE_ID, T101.OBJ_ID, T101.OBJ_NM, 2 LVL, 'DOWN' REL_DEV
-            FROM PEN_OBJ_M T101
-            INNER JOIN PEN_OBJ_R T102
+            FROM O_DATAEYE_META.PEN_OBJ_M T101
+            INNER JOIN O_DATAEYE_META.PEN_OBJ_R T102
             ON (
                 T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
                 AND T101.OBJ_ID = T102.OBJ_ID
                 AND T102.REL_TYPE_ID IN (
                     SELECT REL_TYPE_ID 
-                    FROM PEN_REL_TYPE_M
+                    FROM O_DATAEYE_META.PEN_REL_TYPE_M
                     WHERE REL_OBJ_TYPE_ID = #{objTypeId}
                     AND META_REL_CD = 'FT'
                 )
@@ -649,8 +649,8 @@
             SELECT T101.REL_OBJ_ID AS OBJ_ID
                   ,T101.REL_OBJ_TYPE_ID AS OBJ_TYPE_ID
                   ,T101.REL_TYPE_ID AS REL_TYPE_ID
-            FROM  PEN_OBJ_R T101
-                  INNER JOIN PEN_REL_TYPE_M T102
+            FROM  O_DATAEYE_META.PEN_OBJ_R T101
+                  INNER JOIN O_DATAEYE_META.PEN_REL_TYPE_M T102
                   ON  T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID 
                   AND T101.REL_OBJ_TYPE_ID = T102.REL_OBJ_TYPE_ID 
                   AND T102.META_REL_CD IN ('FT','MP','CR','DR') 
@@ -680,8 +680,8 @@
             SELECT T101.OBJ_ID AS OBJ_ID
                   ,T101.OBJ_TYPE_ID AS OBJ_TYPE_ID
                   ,T101.REL_TYPE_ID AS REL_TYPE_ID
-            FROM  PEN_OBJ_R T101
-                  INNER JOIN PEN_REL_TYPE_M T102
+            FROM  O_DATAEYE_META.PEN_OBJ_R T101
+                  INNER JOIN O_DATAEYE_META.PEN_REL_TYPE_M T102
                   ON  T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID 
                   AND T101.REL_OBJ_TYPE_ID = T102.REL_OBJ_TYPE_ID 
                   AND T102.META_REL_CD IN ('FT','MP','CR','DR') 
@@ -706,11 +706,11 @@
              
         </if>
         ) T101
-        INNER JOIN PEN_OBJ_M T102 
+        INNER JOIN O_DATAEYE_META.PEN_OBJ_M T102 
         ON T101.OBJ_ID = T102.OBJ_ID 
         AND T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
         AND T102.DEL_YN = 'N'
-        INNER JOIN PEN_OBJ_TYPE_M T103 ON T101.OBJ_TYPE_ID = T103.OBJ_TYPE_ID 
+        INNER JOIN O_DATAEYE_META.PEN_OBJ_TYPE_M T103 ON T101.OBJ_TYPE_ID = T103.OBJ_TYPE_ID 
          
         ORDER BY T103.SORT_NO, T102.OBJ_NM
     </select>
@@ -718,8 +718,8 @@
         SELECT T102.OBJ_TYPE_ID
                    , T102.OBJ_ID
                    , T102.OBJ_NM
-        FROM PEN_OBJ_R T101
-        INNER JOIN PEN_OBJ_M T102
+        FROM O_DATAEYE_META.PEN_OBJ_R T101
+        INNER JOIN O_DATAEYE_META.PEN_OBJ_M T102
         ON (
             T102.OBJ_TYPE_ID = T101.OBJ_TYPE_ID
             AND T102.OBJ_ID = T101.OBJ_ID
@@ -734,8 +734,8 @@
         SELECT T102.OBJ_TYPE_ID
                    , T102.OBJ_ID
                    , T102.OBJ_NM
-        FROM PEN_OBJ_R T101
-        INNER JOIN PEN_OBJ_M T102
+        FROM O_DATAEYE_META.PEN_OBJ_R T101
+        INNER JOIN O_DATAEYE_META.PEN_OBJ_M T102
         ON (
             T102.OBJ_TYPE_ID = T101.OBJ_TYPE_ID
             AND T102.OBJ_ID = T101.OBJ_ID
@@ -748,14 +748,14 @@
     </select>
     <select id="getWordLengthDesc" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
         SELECT T101.* 
-        FROM PEN_OBJ_M T101
+        FROM O_DATAEYE_META.PEN_OBJ_M T101
         WHERE T101.OBJ_TYPE_ID = '010301L'
         AND T101.DEL_YN = 'N'
         ORDER BY LENGTH(T101.OBJ_NM) DESC, T101.OBJ_NM DESC 
     </select>
     <select id="getObjUiInfo" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
         SELECT T101.*
-        FROM PEN_UI_M T101
+        FROM O_DATAEYE_META.PEN_UI_M T101
         WHERE UI_ID = #{uiId}
     </select>
 </mapper>

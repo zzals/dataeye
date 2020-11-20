@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PEN_APRV_F">
     <insert id="insert" parameterType="kr.co.penta.dataeye.common.entities.meta.PenAprvM">
-        INSERT INTO PEN_APRV_F (
+        INSERT INTO O_DATAEYE_META.PEN_APRV_F (
             APRV_ID, APRV_DETL_ID, FILE_NO, DEL_YN, CRET_DT, CRETR_ID, CHG_DT, CHGR_ID
             , FILE_ID, FILE_NM, FILE_SIZE, FILE_TYPE, FILE_PATH
         )
@@ -29,11 +29,11 @@
     </insert>
 
     <delete id="delete" parameterType="hashMap">
-        DELETE FROM PEN_APRV_F
+        DELETE FROM O_DATAEYE_META.PEN_APRV_F
         WHERE APRV_ID = #{aprvId} AND APRV_DETL_ID = #{aprvDetlId} AND FILE_NO = #{fileNo} AND CRETR_ID = #{userId}
     </delete>
     <delete id="deleteByAprvId" parameterType="hashMap">
-        DELETE FROM PEN_APRV_F
+        DELETE FROM O_DATAEYE_META.PEN_APRV_F
         WHERE APRV_ID = #{aprvId}
     </delete>
 </mapper>

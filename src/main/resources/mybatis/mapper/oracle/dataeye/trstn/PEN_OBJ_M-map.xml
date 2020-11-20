@@ -4,7 +4,7 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PEN_OBJ_M">
 	<insert id="insert" parameterType="kr.co.penta.dataeye.common.entities.meta.PenObjM">
-		INSERT INTO PEN_OBJ_M
+		INSERT INTO O_DATAEYE_META.PEN_OBJ_M
 		(
 			OBJ_TYPE_ID, 			OBJ_ID, 				DEL_YN, 				CRET_DT, 												CRETR_ID,
 			CHG_DT, 										CHGR_ID, 		ADM_OBJ_ID, 
@@ -30,7 +30,7 @@
 		)
 	</insert>
     <update id="update" parameterType="kr.co.penta.dataeye.common.entities.meta.PenObjM">
-        UPDATE PEN_OBJ_M
+        UPDATE O_DATAEYE_META.PEN_OBJ_M
         <set>
             CHG_DT = CURRENT_TIMESTAMP,
             CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR},
@@ -46,7 +46,7 @@
           AND OBJ_ID = #{objId}
     </update>
 	<delete id="remove" parameterType="hashMap">
-		DELETE FROM PEN_OBJ_M
+		DELETE FROM O_DATAEYE_META.PEN_OBJ_M
 		WHERE
 		<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(objTypeId) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(objId)'>
 	  		    OBJ_TYPE_ID = #{objTypeId}
@@ -80,7 +80,7 @@
         </if> -->
 	</delete>
 	<update id="updateDelYn" parameterType="hashMap">
-		UPDATE PEN_OBJ_M
+		UPDATE O_DATAEYE_META.PEN_OBJ_M
 		SET DEL_YN = 'Y',
 			CHG_DT = CURRENT_TIMESTAMP,
 			CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR}

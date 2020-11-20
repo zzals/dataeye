@@ -52,7 +52,7 @@
 		    USER_ID CODE,
 		    EMAIL_ADDR EMAIL,
 		    HP_NO MOBILE
-		FROM PEN_USER_M
+		FROM O_DATAEYE_META.PEN_USER_M
     </sql>
     
     <select id="getAprvMInfo" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
@@ -60,7 +60,7 @@
             T01.APRV_REQ_DT, T01.LAST_LINE_ID, T01.LAST_STUS_CD, T01.APRV_OBJ_ID, T01.APRV_LINK_ID,
             T01.OBJ_TYPE_ID, T01.OBJ_ID, T01.APRV_REQR_CD, T01.APRV_ATR01_VAL, T02.USER_NM, T02.CODE,
             T02.EMAIL, T02.MOBILE, T03.ADM_OBJ_ID, T03.OBJ_NM, T03.OBJ_ABBR_NM, T03.OBJ_DESC
-        FROM PEN_APRV_M T01
+        FROM O_DATAEYE_META.PEN_APRV_M T01
             LEFT JOIN (
                 <include refid="aprv.ptlComUser"/>
             ) T02 ON (T02.LOGIN_ID = T01.APRV_REQR_ID)
@@ -72,7 +72,7 @@
                     OBJ_NM,
                     OBJ_ABBR_NM,
                     OBJ_DESC
-                FROM PEN_OBJ_M_T
+                FROM O_DATAEYE_META.PEN_OBJ_M_T
             ) T03 ON (T03.OBJ_TYPE_ID = T01.OBJ_TYPE_ID AND T03.OBJ_ID = T01.OBJ_ID AND T03.APRV_ID = T01.APRV_ID)
         WHERE T01.APRV_ID = #{aprvId} AND T01.APRV_REQR_ID = #{userId} 
         AND T01.DEL_YN = 'N'
@@ -83,15 +83,15 @@
             T01.APRV_REQ_DT, T01.LAST_LINE_ID, T01.LAST_STUS_CD, T01.OBJ_TYPE_ID, T01.OBJ_ID, T01.APRV_REQR_CD,
             T02.SB_YN, T02.DS_YN, T03.APRV_LINE_ID, T03.APRV_PRCS_SORT_NO, T04.USER_NM, T04.CODE, T04.EMAIL,
             T04.MOBILE, T05.ADM_OBJ_ID, T05.OBJ_NM, T05.OBJ_ABBR_NM, T05.OBJ_DESC
-        FROM PEN_APRV_M T01
+        FROM O_DATAEYE_META.PEN_APRV_M T01
             LEFT JOIN (
                 SELECT T101.OBJ_TYPE_ID,
                     T101.OBJ_ID,
                     T101.APRV_ID,
                     MAX(CASE WHEN T102.ATR_ID_SEQ = 106 THEN T102.OBJ_ATR_VAL END) AS SB_YN,  /* 샌드박스 할당 여부 01, 03 */
                     MAX(CASE WHEN T102.ATR_ID_SEQ = 107 THEN T102.OBJ_ATR_VAL END) AS DS_YN   /* 분석가 지원 여부 Y, N */
-                FROM PEN_OBJ_M_T T101
-                    LEFT JOIN PEN_OBJ_D_T T102 ON (T102.OBJ_TYPE_ID = T101.OBJ_TYPE_ID
+                FROM O_DATAEYE_META.PEN_OBJ_M_T T101
+                    LEFT JOIN O_DATAEYE_META.PEN_OBJ_D_T T102 ON (T102.OBJ_TYPE_ID = T101.OBJ_TYPE_ID
                         AND T102.OBJ_ID = T102.OBJ_ID
                         AND T102.APRV_ID = T101.APRV_ID
                     )
@@ -100,7 +100,7 @@
                 AND T02.OBJ_ID = T01.OBJ_ID
                 AND T02.APRV_ID = T01.APRV_ID
             )
-            INNER JOIN PEN_APRV_D T03 ON (T03.APRV_ID = T01.APRV_ID AND T03.APRV_DETL_ID = #{aprvDetlId} AND T03.APRV_RSLT_CD = '10' AND T03.DEL_YN = 'N')
+            INNER JOIN O_DATAEYE_META.PEN_APRV_D T03 ON (T03.APRV_ID = T01.APRV_ID AND T03.APRV_DETL_ID = #{aprvDetlId} AND T03.APRV_RSLT_CD = '10' AND T03.DEL_YN = 'N')
             LEFT JOIN (
                 <include refid="aprv.ptlComUser"/>
             ) T04 ON (T04.LOGIN_ID = T01.APRV_REQR_ID)
@@ -112,7 +112,7 @@
                     OBJ_NM,
                     OBJ_ABBR_NM,
                     OBJ_DESC
-                FROM PEN_OBJ_M_T
+                FROM O_DATAEYE_META.PEN_OBJ_M_T
             ) T05 ON (T05.OBJ_TYPE_ID = T01.OBJ_TYPE_ID
                 AND T05.OBJ_ID = T01.OBJ_ID
                 AND T05.APRV_ID = T01.APRV_ID
@@ -124,15 +124,15 @@
         SELECT T01.APRV_ID, T01.CRET_DT, T01.CRETR_ID, T01.APRV_DESC, T01.APRV_TYPE_CD, T01.APRV_REQR_ID,
             T01.APRV_REQ_DT, T01.LAST_LINE_ID, T01.LAST_STUS_CD, T01.OBJ_TYPE_ID, T01.OBJ_ID, T02.SB_YN, T02.DS_YN,
             T03.APRV_LINE_ID, T03.APRV_PRCS_SORT_NO, T03.APRV_RSLT_CD
-        FROM PEN_APRV_M T01
+        FROM O_DATAEYE_META.PEN_APRV_M T01
             LEFT JOIN (
                 SELECT T101.OBJ_TYPE_ID,
                     T101.OBJ_ID,
                     T101.APRV_ID,
                     MAX(CASE WHEN T102.ATR_ID_SEQ = 106 THEN T102.OBJ_ATR_VAL END) AS SB_YN,  /* 샌드박스 할당 여부 01, 03 */
                     MAX(CASE WHEN T102.ATR_ID_SEQ = 107 THEN T102.OBJ_ATR_VAL END) AS DS_YN   /* 분석가 지원 여부 Y, N */
-                FROM PEN_OBJ_M_T T101
-                    LEFT JOIN PEN_OBJ_D_T T102 ON (T102.OBJ_TYPE_ID = T101.OBJ_TYPE_ID
+                FROM O_DATAEYE_META.PEN_OBJ_M_T T101
+                    LEFT JOIN O_DATAEYE_META.PEN_OBJ_D_T T102 ON (T102.OBJ_TYPE_ID = T101.OBJ_TYPE_ID
                         AND T102.OBJ_ID = T102.OBJ_ID
                         AND T102.APRV_ID = T101.APRV_ID
                     )
@@ -141,7 +141,7 @@
                 AND T02.OBJ_ID = T01.OBJ_ID
                 AND T02.APRV_ID = T01.APRV_ID
             )
-            INNER JOIN PEN_APRV_D T03 ON (T03.APRV_ID = T01.APRV_ID
+            INNER JOIN O_DATAEYE_META.PEN_APRV_D T03 ON (T03.APRV_ID = T01.APRV_ID
                 AND T03.APRV_DETL_ID = #{aprvDetlId}
                 AND T03.APRV_USER_ID = #{userId}
                 AND T03.DEL_YN = 'N'
@@ -153,7 +153,7 @@
         SELECT T01.APRV_ID, T01.CRET_DT, T01.CRETR_ID, T01.APRV_NM, T01.APRV_DESC, T01.APRV_TYPE_CD, T01.APRV_REQR_ID,
             T01.APRV_REQ_DT,T01.LAST_LINE_ID, T01.LAST_STUS_CD, T01.APRV_OBJ_ID,  T01.OBJ_TYPE_ID,
             T01.OBJ_ID, T01.APRV_REQR_CD
-        FROM PEN_APRV_M T01
+        FROM O_DATAEYE_META.PEN_APRV_M T01
         WHERE T01.APRV_ID = #{aprvId} AND T01.DEL_YN = 'N'
     </select>
 
@@ -205,15 +205,15 @@
                     '&apos;', ''''
                 ) AS MAIL_BODY
             ]]>
-            FROM PEN_OBJ_M T101
+            FROM O_DATAEYE_META.PEN_OBJ_M T101
                 INNER JOIN (
                     SELECT OBJ_TYPE_ID, OBJ_ID, OBJ_NM
-                    FROM PEN_OBJ_M
+                    FROM O_DATAEYE_META.PEN_OBJ_M
                     WHERE OBJ_TYPE_ID = '902001L' AND ADM_OBJ_ID = #{aprvTypeCd} AND DEL_YN = 'N'
                 ) T102 ON (T101.PATH_OBJ_TYPE_ID = T102.OBJ_TYPE_ID
                     AND T101.PATH_OBJ_ID = T102.OBJ_ID
                 )
-                LEFT JOIN PEN_OBJ_D T103 ON (T103.OBJ_TYPE_ID = T101.OBJ_TYPE_ID
+                LEFT JOIN O_DATAEYE_META.PEN_OBJ_D T103 ON (T103.OBJ_TYPE_ID = T101.OBJ_TYPE_ID
                     AND T103.OBJ_ID = T101.OBJ_ID
                 )
             WHERE T101.DEL_YN = 'N'
@@ -233,7 +233,7 @@
 
     <select id="getAprvDInfo" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
         SELECT T01.APRV_ID, T01.APRV_DETL_ID, T01.APRV_USER_ID, T02.USER_NM, T02.CODE, T02.EMAIL, T02.MOBILE
-        FROM PEN_APRV_D T01
+        FROM O_DATAEYE_META.PEN_APRV_D T01
             LEFT JOIN (
                 <include refid="aprv.ptlComUser"/>
             ) T02 ON (T02.LOGIN_ID = T01.APRV_USER_ID)
@@ -246,7 +246,7 @@
 
     <select id="getAprvDaInfo" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
         SELECT T01.APRV_ID, T01.APRV_DETL_ID, T01.APRV_USER_ID, T02.USER_NM, T02.CODE, T02.EMAIL, T02.MOBILE
-        FROM PEN_APRV_D T01
+        FROM O_DATAEYE_META.PEN_APRV_D T01
             LEFT JOIN (
                 <include refid="aprv.ptlComUser"/>
             ) T02 ON (T02.LOGIN_ID = T01.APRV_USER_ID)
@@ -270,7 +270,7 @@
             T02.CODE,
             T02.EMAIL,
             T02.MOBILE
-        FROM PEN_APRV_D T01
+        FROM O_DATAEYE_META.PEN_APRV_D T01
             LEFT JOIN (
                 <include refid="aprv.ptlComUser"/>
             ) T02 ON (T02.LOGIN_ID = T01.APRV_USER_ID)
@@ -284,26 +284,26 @@
             E.EMAIL_ADDR AS EMAIL,
             E.HP_NO MOBILE,
             E.USER_NM NAME
-        FROM PEN_OBJ_M_T A
-            JOIN PEN_OBJ_M B ON (B.OBJ_TYPE_CD IN ('010201L', '010205L')
+        FROM O_DATAEYE_META.PEN_OBJ_M_T A
+            JOIN O_DATAEYE_META.PEN_OBJ_M B ON (B.OBJ_TYPE_CD IN ('010201L', '010205L')
                 AND A.ADM_OBJ_ID = B.OBJ_ID
                 AND B.DEL_YN = 'N'
             )
-            LEFT JOIN PEN_OBJ_D C ON (B.OBJ_TYPE_ID = C.OBJ_TYPE_ID
+            LEFT JOIN O_DATAEYE_META.PEN_OBJ_D C ON (B.OBJ_TYPE_ID = C.OBJ_TYPE_ID
                 AND B.OBJ_ID = C.OBJ_ID
                 AND C.OBJ_TYPE_ID IN ('010201L', '010205L')
                 AND C.ATR_ID_SEQ = 106
                 AND C.ATR_VAL_SEQ = 101
                 AND C.DEL_YN = 'N'
             )
-            LEFT JOIN PEN_OBJ_D D ON (C.OBJ_TYPE_ID = D.OBJ_TYPE_ID
+            LEFT JOIN O_DATAEYE_META.PEN_OBJ_D D ON (C.OBJ_TYPE_ID = D.OBJ_TYPE_ID
                 AND C.OBJ_ID = D.OBJ_ID
                 AND D.OBJ_TYPE_ID IN ('010201L', '010205L')
                 AND D.ATR_ID_SEQ = 114
                 AND D.ATR_VAL_SEQ = 101
                 AND D.DEL_YN = 'N'
             )
-            LEFT JOIN PEN_USER_M E ON (D.OBJ_ATR_VAL = E.USER_ID)
+            LEFT JOIN O_DATAEYE_META.PEN_USER_M E ON (D.OBJ_ATR_VAL = E.USER_ID)
         WHERE A.OBJ_TYPE_ID = '060104L',
             AND A.APRV_ID = #{aprvId}
             AND A.DEL_YN = 'N'
@@ -340,7 +340,7 @@
                     APRV_DESC,
                     APRV_DT,
                     APRV_RSLT_CD
-                FROM PEN_APRV_D
+                FROM O_DATAEYE_META.PEN_APRV_D
                 WHERE APRV_ID = #{aprvId}
                     AND APRV_LINE_ID = #{aprvLineMngrId}
                     AND APRV_RSLT_CD IN ('40', '41', '50')
@@ -361,7 +361,7 @@
                 APRV_DESC,
                 ARPV_DT,
                 APRV_RSLT_CD
-            FROM PEN_APRV_D
+            FROM O_DATAEYE_META.PEN_APRV_D
             WHERE APRV_ID = #{aprvId} AND APRV_LINE_ID = #{aprvLineId}
             <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(rtyMode)">
                 AND APRV_RSLT_CD IN ('10', '40', '41', '42', '50')
@@ -381,7 +381,7 @@
             T3.APRV_ID AS DS_APRV_ID,
             T3.APRV_DESC AS DS_APRV_DESC,
             T1.APRV_REQR_ID AS SJT_APRV_REQR_ID
-        FROM PEN_APRV_M T1
+        FROM O_DATAEYE_META.PEN_APRV_M T1
             LEFT OUTER JOIN (
                 SELECT APRV_ID,
                     APRV_DESC,
@@ -395,7 +395,7 @@
                         LAST_STUS_CD,
                         OBJ_TYPE_ID,
                         OBJ_ID
-                    FROM PEN_APRV_M
+                    FROM O_DATAEYE_META.PEN_APRV_M
                     WHERE APRV_TYPE_CD = 'SB_REQ' AND APRV_REQR_CD = '10'
                         AND OBJ_TYPE_ID = #{objTypeId}
                         AND OBJ_ID = #{objId}
@@ -416,7 +416,7 @@
                         LAST_STUS_CD,
                         OBJ_TYPE_ID,
                         OBJ_ID
-                    FROM PEN_APRV_M
+                    FROM O_DATAEYE_META.PEN_APRV_M
                     WHERE APRV_TYPE_CD = 'SJT_MEM_REQ'
                         AND OBJ_TYPE_ID = #{objTypeId}
                         AND OBJ_ID = #{objId}
@@ -434,24 +434,24 @@
         {call
             declare
             begin
-                DELETE FROM PEN_OBJ_M
+                DELETE FROM O_DATAEYE_META.PEN_OBJ_M
                 WHERE (OBJ_TYPE_ID, OBJ_ID) IN (
                     SELECT OBJ_TYPE_ID, OBJ_ID
-                    FROM PEN_OBJ_M_T
+                    FROM O_DATAEYE_META.PEN_OBJ_M_T
                     WHERE APRV_ID = #{aprvId}
                 );
 
-                DELETE FROM PEN_OBJ_D
+                DELETE FROM O_DATAEYE_META.PEN_OBJ_D
                 WHERE (OBJ_TYPE_ID, OBJ_ID) IN (
                     SELECT OBJ_TYPE_ID, OBJ_ID
-                    FROM PEN_OBJ_M_T
+                    FROM O_DATAEYE_META.PEN_OBJ_M_T
                     WHERE APRV_ID = #{aprvId}
                 );
 
-                DELETE FROM PEN_OBJ_R
+                DELETE FROM O_DATAEYE_META.PEN_OBJ_R
                 WHERE (OBJ_TYPE_ID, OBJ_ID, REL_OBJ_TYPE_ID, REL_OBJ_ID) IN (
                     SELECT OBJ_TYPE_ID, OBJ_ID, REL_OBJ_TYPE_ID, REL_OBJ_ID
-                    FROM PEN_OBJ_R_T
+                    FROM O_DATAEYE_META.PEN_OBJ_R_T
                     WHERE APRV_ID = #{aprvId}
                 );
             end
@@ -459,32 +459,32 @@
     </delete>
 
     <delete id="deleteAprvPenM">
-        DELETE FROM PEN_OBJ_M
+        DELETE FROM O_DATAEYE_META.PEN_OBJ_M
 	    WHERE (OBJ_TYPE_ID, OBJ_ID) IN (
 	        SELECT OBJ_TYPE_ID, OBJ_ID
-	        FROM PEN_OBJ_M_T
+	        FROM O_DATAEYE_META.PEN_OBJ_M_T
 	        WHERE APRV_ID = #{aprvId}
 	    )
     </delete>
     <delete id="deleteAprvPenD">
-        DELETE FROM PEN_OBJ_D
+        DELETE FROM O_DATAEYE_META.PEN_OBJ_D
 		WHERE (OBJ_TYPE_ID, OBJ_ID) IN (
 		    SELECT OBJ_TYPE_ID, OBJ_ID
-		    FROM PEN_OBJ_M_T
+		    FROM O_DATAEYE_META.PEN_OBJ_M_T
 		    WHERE APRV_ID = #{aprvId}
 		)
     </delete>
     <delete id="deleteAprvPenR">
-    	DELETE FROM PEN_OBJ_R
+    	DELETE FROM O_DATAEYE_META.PEN_OBJ_R
 	    WHERE (OBJ_TYPE_ID, OBJ_ID, REL_OBJ_TYPE_ID, REL_OBJ_ID) IN (
 	        SELECT OBJ_TYPE_ID, OBJ_ID, REL_OBJ_TYPE_ID, REL_OBJ_ID
-	        FROM PEN_OBJ_R_T
+	        FROM O_DATAEYE_META.PEN_OBJ_R_T
 	        WHERE APRV_ID = #{aprvId}
 	    )
     </delete>
 
     <update id="updateExecPenObjD">
-        UPDATE PEN_OBJ_D
+        UPDATE O_DATAEYE_META.PEN_OBJ_D
         <set>
             OBJ_ATR_VAL = '20'
         </set>
@@ -492,7 +492,7 @@
     </update>
 
     <insert id="insertRsltPenObjD">
-        INSERT INTO PEN_APRV_D (
+        INSERT INTO O_DATAEYE_META.PEN_APRV_D (
             APRV_ID, APRV_DETL_ID, DEL_YN, CRET_DT, CRETR_ID, CHG_DT,
             CHGR_ID, APRV_LINE_ID, APRV_PRCS_SORT_NO, APRV_PRCS_NM,
             APRV_USER_ID, APRV_DESC, REAL_APRV_USER_ID, APRV_DT,
@@ -529,15 +529,15 @@
             '' AS APRV_ATR08_VAL,
             '' AS APRV_ATR09_VAL,
             '' AS APRV_ATR10_VAL
-        FROM PEN_APRV_M T1
-            INNER JOIN PEN_OBJ_M T2 ON T1.OBJ_ID = T2.OBJ_ID
+        FROM O_DATAEYE_META.PEN_APRV_M T1
+            INNER JOIN O_DATAEYE_META.PEN_OBJ_M T2 ON T1.OBJ_ID = T2.OBJ_ID
                 AND T2.OBJ_TYPE_ID = '060101L'
                 AND T2.DEL_YN = 'N'
-            INNER JOIN PEN_OBJ_R T3 ON T3.REL_OBJ_ID = T2.OBJ_ID
+            INNER JOIN O_DATAEYE_META.PEN_OBJ_R T3 ON T3.REL_OBJ_ID = T2.OBJ_ID
                 AND T3.REL_OBJ_TYPE_ID = T2.OBJ_TYPE_ID
                 AND T3.OBJ_TYPE_ID = '050202L'
                 AND T3.DEL_YN = 'N'
-            INNER JOIN PEN_OBJ_D T4 ON T3.OBJ_ID = T4.OBJ_ID
+            INNER JOIN O_DATAEYE_META.PEN_OBJ_D T4 ON T3.OBJ_ID = T4.OBJ_ID
                 AND T3.OBJ_TYPE_ID = T4.OBJ_TYPE_ID
         WHERE 1=1
             AND T1.APRV_ID = #{aprvId}
@@ -571,30 +571,30 @@
                 B.OBJ_TYPE_ID AS OBJ_TYPE_ID,
                 B.OBJ_ID AS OBJ_ID,
                 ROW_NUMBER() OVER(PARTITION BY A.APRV_ID, A.APRV_REQR_ID, B.OBJ_TYPE_ID ORDER BY B.OBJ_ID) AS RN
-            FROM PEN_APRV_M A
-                JOIN PEN_APRV_D AA ON (A.APRV_ID = AA.APRV_ID
+            FROM O_DATAEYE_META.PEN_APRV_M A
+                JOIN O_DATAEYE_META.PEN_APRV_D AA ON (A.APRV_ID = AA.APRV_ID
                     AND A.LAST_LINE_ID = AA.APRV_DETL_ID
                     AND AA.DEL_YN = 'N'
                 )
-                LEFT JOIN PEN_OBJ_M_T B ON (A.APRV_ID = B.APRV_ID
+                LEFT JOIN O_DATAEYE_META.PEN_OBJ_M_T B ON (A.APRV_ID = B.APRV_ID
                     AND B.DEL_YN = 'N'
                     AND B.OBJ_TYPE_ID IN ('060101L', '060103L', '060104L', '060109L', '050202L', '060106L')
                 )
-                LEFT JOIN PEN_OBJ_M_T C ON (A.OBJ_TYPE_ID = C.OBJ_TYPE_ID
+                LEFT JOIN O_DATAEYE_META.PEN_OBJ_M_T C ON (A.OBJ_TYPE_ID = C.OBJ_TYPE_ID
                     AND A.OBJ_ID = C.OBJ_ID
                     AND C.DEL_YN = 'N'
                 )
-                LEFT JOIN PEN_OBJ_M C1 ON (A.OBJ_TYPE_ID = C1.OBJ_TYPE_ID
+                LEFT JOIN O_DATAEYE_META.PEN_OBJ_M C1 ON (A.OBJ_TYPE_ID = C1.OBJ_TYPE_ID
                     AND A.OBJ_ID = C1.OBJ_ID
                     AND C1.DEL_YN = 'N'
                 )
-                LEFT JOIN PEN_USER_M D ON (A.APRV_REQR_ID = D.USER_ID)
+                LEFT JOIN O_DATAEYE_META.PEN_USER_M D ON (A.APRV_REQR_ID = D.USER_ID)
                 LEFT JOIN (
                     SELECT OBJ_NM, ADM_OBJ_ID
-                    FROM PEN_OBJ_M
+                    FROM O_DATAEYE_META.PEN_OBJ_M
                     WHERE OBJ_TYPE_ID = '902001L' AND DEL_YN = 'N'
                 ) E ON (A.APRV_TYPE_CD = E.ADM_OBJ_ID)
-                LEFT JOIN PEN_CD_M M ON (M.CD_GRP_ID = 'SYS_STLMSTATUS'
+                LEFT JOIN O_DATAEYE_META.PEN_CD_M M ON (M.CD_GRP_ID = 'SYS_STLMSTATUS'
                     AND A.LAST_STUS_CD = M.CD_ID
                     AND M.DEL_YN = 'N'
                     AND M.USE_YN = 'Y'
@@ -635,8 +635,8 @@
             NVL(CEIL(T1.FILE_SIZE / 1024), 0) || 'KB' AS APND_FILE_SIZ_NM,
             T1.FILE_TYPE AS APND_FILE_EXTS_NM,
             T1.FILE_PATH AS APND_FILE_PATH_NM
-        FROM PEN_APRV_F T1
-            INNER JOIN PEN_APRV_D T2 ON T1.APRV_ID = T2.APRV_ID
+        FROM O_DATAEYE_META.PEN_APRV_F T1
+            INNER JOIN O_DATAEYE_META.PEN_APRV_D T2 ON T1.APRV_ID = T2.APRV_ID
                 AND T1.APRV_DETL_ID = T2.APRV_DETL_ID
         WHERE T1.APRV_ID = #{aprvId}
         ORDER BY T1.APRV_DETL_ID
@@ -644,7 +644,7 @@
 
     <select id="getAprvUserMaxFileNo" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
         SELECT NVL(MAX(FILE_NO), 0) AS FILE_NO
-        FROM PEN_ARPV_F
+        FROM O_DATAEYE_META.PEN_ARPV_F
         WHERE APRV_ID = #{aprvId} AND APRV_DETL_ID = #{aprvDetlId} AND CRETR_ID = #{userId}
     </select>
 
@@ -654,8 +654,8 @@
             A.USER_ID CODE,
             B.EMAIL_ADDR AS EMAIL,
             B.HP_NO AS MOBILE
-        FROM PEN_SYS_GRP_USER_R A
-            JOIN PEN_USER_M B ON (A.USER_ID = B.USER_ID)
+        FROM O_DATAEYE_META.PEN_SYS_GRP_USER_R A
+            JOIN O_DATAEYE_META.PEN_USER_M B ON (A.USER_ID = B.USER_ID)
         WHERE A.USER_GRP_ID = #{userGrpId}
     </select>
 </mapper>

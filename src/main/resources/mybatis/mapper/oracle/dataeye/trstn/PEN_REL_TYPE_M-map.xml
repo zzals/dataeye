@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PEN_REL_TYPE_M">
 	<insert id="insert" parameterType="hashMap">
-		INSERT INTO PEN_REL_TYPE_M
+		INSERT INTO O_DATAEYE_META.PEN_REL_TYPE_M
         (
             REL_TYPE_ID,    DEL_YN,             CRET_DT,            CRETR_ID,           CHG_DT,
             CHGR_ID,        REL_TYPE_NM,        DOWN_REL_TYPE_NM,   UP_REL_TYPE_NM,     REL_TYPE_DESC,  
@@ -19,7 +19,7 @@
 	</insert>
     
     <delete id="delete" parameterType="hashMap">
-        DELETE FROM PEN_REL_TYPE_M
+        DELETE FROM O_DATAEYE_META.PEN_REL_TYPE_M
         WHERE REL_TYPE_ID = #{relTypeId}
     </delete>
 </mapper>

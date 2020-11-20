@@ -61,4 +61,4 @@ spring:
       max-request-size: -1
   profiles:
     active: development
-    include: development-oracle, dataeye-development, search-development, development-mstr
+    include: development-oracle, dataeye-development, search-development, development-mstr, development-customizing

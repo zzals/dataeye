@@ -29,13 +29,13 @@
 	<script type="text/javascript">
 
 	function goDetail(taskId) {
-		window.open('/dataeye_ebay/task/taskDetail?taskId=' + taskId,'_new','')
+		window.open('/dataeye/task/taskDetail?taskId=' + taskId,'_new','')
 	}
 	
 
 	function taskInfo(OBJ_TYPE_ID,OBJ_ID) {
   		DE.ui.open.popup(
-				"/dataeye_ebay/portal/view",
+				"/dataeye/portal/view",
 				[OBJ_TYPE_ID, OBJ_ID],
 				{
 					viewname:'common/metacore/objectInfoTab',

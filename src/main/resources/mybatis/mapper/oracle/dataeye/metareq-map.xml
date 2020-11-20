@@ -5,20 +5,20 @@
 <mapper namespace="metareq">
     <select id="getObjMTCretInfo" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
         SELECT CRET_DT, CRETR_ID
-        FROM PEN_OBJ_M_T
+        FROM O_DATAEYE_META.PEN_OBJ_M_T
         WHERE OBJ_TYPE_ID = #{objTypeId}
         AND OBJ_ID = #{objId}
     </select>
     <select id="getObjDTCretInfo" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
         SELECT CRET_DT, CRETR_ID
-        FROM PEN_OBJ_D_T
+        FROM O_DATAEYE_META.PEN_OBJ_D_T
         WHERE OBJ_TYPE_ID = #{objTypeId}
         AND OBJ_ID = #{objId}
         AND ROWNUM = 1
     </select>
     <select id="getObjRT" resultType="kr.co.penta.dataeye.common.entities.meta.PenObjRT">
         SELECT *
-        FROM PEN_OBJ_R_T
+        FROM O_DATAEYE_META.PEN_OBJ_R_T
         WHERE OBJ_TYPE_ID = #{objTypeId}
         AND OBJ_ID = #{objId}
         AND REL_OBJ_TYPE_ID = #{relObjTypeId}
@@ -63,9 +63,9 @@
                 ,T102.CRET_DT
                 ,T102.CRETR_ID
                 ,T101.SORT_NO
-            FROM PEN_OBJ_M_T T102
-                 INNER JOIN PEN_OBJ_TYPE_ATR_D T101 ON T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
-                 LEFT OUTER JOIN PEN_OBJ_D_T T107 
+            FROM O_DATAEYE_META.PEN_OBJ_M_T T102
+                 INNER JOIN O_DATAEYE_META.PEN_OBJ_TYPE_ATR_D T101 ON T101.OBJ_TYPE_ID = T102.OBJ_TYPE_ID
+                 LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_D_T T107 
                     ON T107.OBJ_TYPE_ID = T102.OBJ_TYPE_ID 
                     AND T107.OBJ_ID = T102.OBJ_ID
                     AND T107.ATR_ID_SEQ = T101.ATR_ID_SEQ
@@ -80,7 +80,7 @@
     </select>
     <select id="getObjM" resultType="kr.co.penta.dataeye.common.entities.meta.PenObjM">
         SELECT T101.*
-        FROM PEN_OBJ_M_T T101
+        FROM O_DATAEYE_META.PEN_OBJ_M_T T101
         WHERE T101.OBJ_TYPE_ID = #{objTypeId}
         <if test="@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(objId)"> 
           AND T101.OBJ_ID = #{objId}

@@ -119,36 +119,6 @@
           WHERE RNUM <![CDATA[ <= ]]> #{endNum}
     ) WHERE RNUM <![CDATA[ >= ]]>  #{startNum}    
     </select>
-    
-    <select id="getFaqList" resultType="kr.co.penta.dataeye.common.entities.CamelMap">      
-	SELECT * FROM (
-	        SELECT * FROM (
-	        		 SELECT  ROWNUM RNUM
-		                ,BRD_ID
-				        ,BRD_NM
-						,BRD_SBST
-                FROM (
-				        SELECT A.BRD_ID
-						       ,A.BRD_NM 
-						       ,A.BRD_SBST
-						FROM  O_DATAEYE_META.PEN_BBS_BRD_M A
-						WHERE A.DEL_YN = 'N'
-						    AND A.BRD_TYPE_ID = #{brd_type_id}								
-			            <if test='"_all".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
-			            	AND (A.BRD_NM LIKE '%'||UPPER(#{searchValue})||'%' OR A.BRD_SBST LIKE '%'||UPPER(#{searchValue})||'%')
-			            </if>
-			            <if test='"TITLE".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
-							AND A.BRD_NM LIKE '%'||UPPER(#{searchValue})||'%'
-						</if>
-			            <if test='"CONT".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
-							AND A.BRD_SBST LIKE '%'||UPPER(#{searchValue})||'%'
-						</if>			                
-						ORDER BY A.CRET_DT DESC       
-				) 
-          ) PAGETABLE 
-          WHERE RNUM <![CDATA[ <= ]]> #{endNum}
-    ) WHERE RNUM <![CDATA[ >= ]]>  #{startNum}    
-    </select>
         
     <select id="getBoardReplyList" resultType="kr.co.penta.dataeye.common.entities.CamelMap">    			
 	    SELECT BRD_TYPE_ID

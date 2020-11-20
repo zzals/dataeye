@@ -89,7 +89,7 @@
 
   	function openHelp(id) {
 		 DE.ui.open.popup(
-					"/dataeye_ebay/portal/view",
+					"/dataeye/portal/view",
 					["", ""],
 					{
 						viewname:'common/metacore/objectInfoHelpTab',

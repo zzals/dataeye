@@ -4,7 +4,7 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PEN_OBJ_REQ_D">
 	<insert id="insert" parameterType="kr.co.penta.dataeye.common.entities.meta.PenObjReqD">
-		INSERT INTO PEN_OBJ_REQ_D
+		INSERT INTO O_DATAEYE_META.PEN_OBJ_REQ_D
 		(
 			OBJ_TYPE_ID,     OBJ_ID,         REQ_ID,         STUS_ID,        DEL_YN,
             CRET_DT,         CRETR_ID,       CHG_DT,         CHGR_ID,        STUS_CD,
@@ -41,7 +41,7 @@
 		)
 	</insert>
     <update id="update" parameterType="kr.co.penta.dataeye.common.entities.meta.PenObjReqD">
-        UPDATE PEN_OBJ_REQ_D
+        UPDATE O_DATAEYE_META.PEN_OBJ_REQ_D
         <set>
             CHG_DT = CURRENT_TIMESTAMP,
             CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR},

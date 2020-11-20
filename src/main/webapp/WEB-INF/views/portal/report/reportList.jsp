@@ -2,6 +2,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ page import="kr.co.penta.dataeye.spring.web.session.SessionInfoSupport"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -46,7 +47,10 @@
 		}
 	}
 	function goDetail(reportId) {
-		window.open('../report/reportPrompt?reportId=' + reportId,'report' + reportId,'')
+		//window.open('../report/reportPrompt?reportId=' + reportId,'report' + reportId,'');
+		$('#reportDiv').show();
+		$('.content-header, .content').hide();
+		$('#reportFrame').attr('src','../report/reportExec?reportId=' + reportId);
 	}
 
 	function goCate(no) {
@@ -125,21 +129,24 @@
 					        var OBJ_NM = 	cutString(item["OBJ_NM"],13);
 					        var OBJ_DESC = 	cutString(item["OBJ_DESC"],40);
 					        var BOOKMARK_YN = 	item["BOOKMARK_YN"];
+					        var AUTH_YN = 	item["AUTH_YN"];
 							
 				        	cardHtml = cardHtml +  "<div class=\"card_Area\" style=\"width:"+card_width+"px;\">";
 
-				        	if(BOOKMARK_YN == 'YES'){
-				        		cardHtml = cardHtml +  "<div class=\"ribbon_active\" title=\"즐겨찾기\" onclick=\"cancelBookmark(this,'" + item["OBJ_TYPE_ID"] + "','" + item["OBJ_ID"] + "')\"><i class=\"fa fa-star\"></i></div>";
+				        	/**/
+				        	//cardHtml = cardHtml +  "<div class=\"ribbon\" title=\"즐겨찾기\"><i class=\"fa fa-star\"></i></div>";
+				        	if(AUTH_YN == 'YES'){
+				        		if(BOOKMARK_YN == 'YES'){
+					        		cardHtml = cardHtml +  "<div class=\"ribbon_active\" title=\"즐겨찾기\" onclick=\"cancelBookmark(this,'" + item["OBJ_TYPE_ID"] + "','" + item["OBJ_ID"] + "')\"><i class=\"fa fa-star\"></i></div>";
+					        	} else{
+					        		cardHtml = cardHtml +  "<div class=\"ribbon\" title=\"즐겨찾기\" onclick=\"goBookmark(this,'" + item["OBJ_TYPE_ID"] + "','" + item["OBJ_ID"] + "')\"><i class=\"fa fa-star\"></i></div>";
+							    }
+				        		cardHtml = cardHtml +  "<div class=\"cardList_title\" onclick=\"goDetail('" + item["OBJ_ID"] + "')\" style=\"cursor:pointer\" >[" + item["PATH_OBJ_NM"] + "] " + OBJ_NM +  " </div>";
 				        	} else{
-				        		cardHtml = cardHtml +  "<div class=\"ribbon\" title=\"즐겨찾기\" onclick=\"goBookmark(this,'" + item["OBJ_TYPE_ID"] + "','" + item["OBJ_ID"] + "')\"><i class=\"fa fa-star\"></i></div>";
+				        		cardHtml = cardHtml +  "<div class=\"ribbon\" title=\"즐겨찾기\" onclick=\"javascript:alert('해당보고서의 실행 권한이 없습니다.');\"><i class=\"fa fa-lock\"></i></div>";
+				        		cardHtml = cardHtml +  "<div class=\"cardList_title\" onclick=\"javascript:alert('해당보고서의 실행 권한이 없습니다.');\" style=\"cursor:pointer\" >[" + item["PATH_OBJ_NM"] + "] " + OBJ_NM +  " </div>";
 						    }
-				        	cardHtml = cardHtml +  "<div class=\"ribbon\" title=\"즐겨찾기\"><i class=\"fa fa-star\"></i></div>";
-				        	if(BOOKMARK_YN == 'YES'){
-				        		cardHtml = cardHtml +  "<div class=\"ribbon_active\" title=\"즐겨찾기\" onclick=\"cancelBookmark(this,'" + item["OBJ_TYPE_ID"] + "','" + item["OBJ_ID"] + "')\"><i class=\"fa fa-star\"></i></div>";
-				        	} else{
-				        		cardHtml = cardHtml +  "<div class=\"ribbon\" title=\"즐겨찾기\" onclick=\"goBookmark(this,'" + item["OBJ_TYPE_ID"] + "','" + item["OBJ_ID"] + "')\"><i class=\"fa fa-star\"></i></div>";
-						    }
-				        	cardHtml = cardHtml +  "<div class=\"cardList_title\" onclick=\"goDetail('" + item["OBJ_ID"] + "')\" style=\"cursor:pointer\" >[" + item["PATH_OBJ_NM"] + "] " + OBJ_NM +  " </div>";
+				        	
 
 				        	if(item["DD108_OBJ_TYPE_ID"]=="020600L") {
 				        		/*cardHtml = cardHtml +  "<div class=\"cardList_IMG effect\"><img src=\"../assets/images/cognos.png\"></div>";*/
@@ -153,9 +160,8 @@
 				        	cardHtml = cardHtml +  "</div>";
 				        	cardHtml = cardHtml +  "<div class=\"cardList_line\"></div>";
 				        	cardHtml = cardHtml +  "<div class=\"cardList_per_Area\">";
-				        	cardHtml = cardHtml +  "	<div class=\"per\">담당자</div>";
-				        	//cardHtml = cardHtml +  "	<div class=\"per_name\">홍길동 <span class=\"phone\">(부서 / 전화번호)</span></div>";
-				        	cardHtml = cardHtml +  "	<div class=\"per_name\">" + strVal(item["OBJ_ATR_VAL_106_NM"]) + " </span></div>";
+				        	cardHtml = cardHtml +  "	<div class=\"per\">담당부서</div>";
+				        	cardHtml = cardHtml +  "	<div class=\"per_name\">" + strVal(item["OBJ_ATR_VAL_107_NM"]) + " </span></div>";
 				        	cardHtml = cardHtml +  "</div>";
 				        	cardHtml = cardHtml +  "</div>";
 				        	
@@ -257,62 +263,19 @@
 		}
 	}
 
-	/*function goBookmark(object,objTypeId,objId){
-		var cf = confirm("해당 보고서를 즐겨찾기 하시겠습니까?");
-		var formData = new FormData();
- 		formData.append("objTypeId",objTypeId);
- 		formData.append("objId",objId); 		
- 		
-		if(cf) {	 		
-			$.ajax({
-				url: '/dataeye/portal/bookmark/proc',              
-				processData: false,
-				contentType: false,
-				data: formData,
-				type: 'POST',
-				success: function(result){
-					alert("등록 되었습니다.");
-					if(!$(object).hasClass('fa-star')){
-						goLink('portal/report/reportList');
-					}else{
-						gridLoad();
-					}
-				}
-			});
-		}
+	function hideReportDiv(){
+		$('#reportDiv').hide();
+		$('.content-header, .content').show();
+		$('#reportFrame').attr('src','');
 	}
-
-	function cancelBookmark(object,objTypeId,objId){
-		var cf = confirm("해당 보고서를 즐겨찾기 취소 하시겠습니까?");
-		var formData = new FormData();
- 		formData.append("objTypeId",objTypeId);
- 		formData.append("objId",objId);
- 		formData.append("delYn","Y");		
- 		
-		if(cf) {	 		
-			$.ajax({
-				url: '/dataeye/portal/bookmark/update',              
-				processData: false,
-				contentType: false,
-				data: formData,
-				type: 'POST',
-				success: function(result){
-					alert("취소 되었습니다.");
-					if(!$(object).hasClass('fa-star2')){
-						goLink('portal/report/reportList');
-					}else{
-						gridLoad();
-					}
-					
-				}
-			});
-		}
-	}*/
 </script>
 </head>
 
 <body>
-
+<div id="reportDiv" style="display:none;">
+<a href="javascript:hideReportDiv();" style="position: absolute;right: 10px;padding: 20px 0;">닫기</a>
+<iframe src="" width="100%" height="900px" name="reportFrame" id="reportFrame" frameborder="0"></iframe>
+</div>
 <section class="content-header">
       <h1><i class="glyphicon glyphicon-list-alt"></i> &nbsp;정형보고서</h1>
       <ol class="breadcrumb"><li><a href="#"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;정형보고서</a></li></ol>
@@ -326,6 +289,7 @@
 	    	<div class="row">
 	    		<div class="col-xs-12">
 					<div class="box">
+						
 			            <div class="box-body dashboard">			             						              
 								  	<div id="DataSet_Main" style="margin-top:0px;">
 					                <ul class="DataSet_panel">
@@ -350,8 +314,14 @@
 					                    	</div>
 					                    </li>
 					                </ul>
+					                
 					            </div>
-					            
+					            <c:if test="${sessionScope[SessionInfoSupport.SESSION_USERINFO_NAME]['admin']}">
+					            <div style="right: 0;text-align: right;padding-top:10px;">
+									<button type="button" id="btnInsert" class="btn btn-default">등록</button>
+									<button type="button" id="btnUpdate" class="btn btn-default">수정</button>
+								  </div>
+								  </c:if>
 							</div>							
 		            	</div>
 		            	<!-- /.box-body -->

@@ -41,7 +41,7 @@
              , MAX(CASE WHEN ATR_ID_SEQ = 103 THEN OBJ_ATR_VAL END)  AS JDBC_URL
              , MAX(CASE WHEN ATR_ID_SEQ = 104 THEN OBJ_ATR_VAL END)  AS DATABASE_USER
              , MAX(CASE WHEN ATR_ID_SEQ = 105 THEN OBJ_ATR_VAL END)  AS DATABASE_PASSWORD
-		FROM PEN_OBJ_D        
+		FROM O_DATAEYE_META.PEN_OBJ_D        
 		WHERE OBJ_TYPE_ID = '900101L' AND OBJ_ID = #{jdbcId, jdbcType=VARCHAR}
 	</select>
     <select id="findAllCdByGroup" resultType="kr.co.penta.dataeye.common.entities.meta.PenCdEntity">
@@ -49,14 +49,14 @@
              , T101.CD_ID AS CD_ID
              , T101.CD_NM AS CD_NM
              , T101.CD_DESC AS CD_DESC
-        FROM PEN_CD_M T101
+        FROM O_DATAEYE_META.PEN_CD_M T101
         WHERE T101.DEL_YN = 'N'
         AND T101.USE_YN = 'Y'
         ORDER BY T101.CD_GRP_ID, T101.SORT_NO
     </select>
     <select id="objTypeInfo" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
         SELECT *
-        FROM PEN_OBJ_TYPE_M
+        FROM O_DATAEYE_META.PEN_OBJ_TYPE_M
         WHERE LST_LEV_YN = 'Y'
         ORDER BY OBJ_TYPE_ID
     </select>

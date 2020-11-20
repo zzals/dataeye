@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PEN_SQL_POOL_M">
 	<insert id="insert" parameterType="hashMap">
-		INSERT INTO PEN_SQL_POOL_M 
+		INSERT INTO O_DATAEYE_META.PEN_SQL_POOL_M 
         (
             SQL_ID,     DEL_YN,     CRET_DT,        CRETR_ID,   CHG_DT,
             CHGR_ID,    SQL_NM,     SQL_TYPE_CD,    SQL_SBST,   GRID_OPTS,
@@ -19,7 +19,7 @@
 		)
 	</insert>
     <update id="update" parameterType="hashMap">
-        UPDATE PEN_SQL_POOL_M
+        UPDATE O_DATAEYE_META.PEN_SQL_POOL_M
         <set>
             CHG_DT = CURRENT_TIMESTAMP,
             CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR},
@@ -36,7 +36,7 @@
         WHERE SQL_ID = #{SQL_ID}
     </update>
     <delete id="delete" parameterType="hashMap">
-        DELETE FROM PEN_SQL_POOL_M
+        DELETE FROM O_DATAEYE_META.PEN_SQL_POOL_M
         WHERE SQL_ID = #{sqlId}
     </delete>
 </mapper>

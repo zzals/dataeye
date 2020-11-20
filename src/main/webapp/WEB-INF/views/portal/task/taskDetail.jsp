@@ -16,7 +16,7 @@
 <title>DataEye</title>
 <link rel="shortcut icon" href="${pageContext.request.contextPath}/assets/images/icon/favicon_32_deye.ico"/>
 <!-- Bootstrap 3.3.7 -->
-<link type="text/css" rel="stylesheet" href="/dataeye_ebay/webjars/bootstrap/3.3.7/css/bootstrap.min.css">
+<link type="text/css" rel="stylesheet" href="/dataeye/webjars/bootstrap/3.3.7/css/bootstrap.min.css">
 <!-- Font Awesome -->
 <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/assets/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
 <!-- jquery-ui 1.10.3 -->
@@ -30,8 +30,8 @@
 <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/assets/javascripts-lib/select2/select2.css">
 <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/assets/stylesheets/dataeye-main.css">
 <!-- Theme style -->
-<link type="text/css" rel="stylesheet" href="/dataeye_ebay/theme/kcis/stylesheets/dataeye-main.css">
-<link type="text/css" rel="stylesheet" href="/dataeye_ebay/theme/kcis/stylesheets/dataeye-objectinfo.css"/>
+<link type="text/css" rel="stylesheet" href="/dataeye/theme/kcis/stylesheets/dataeye-main.css">
+<link type="text/css" rel="stylesheet" href="/dataeye/theme/kcis/stylesheets/dataeye-objectinfo.css"/>
 
 <!-- DataEye main Skins. Choose a skin from the css/skins
  	folder instead of downloading all of them to reduce the load. -->
@@ -160,7 +160,7 @@
 
   	function datasetInfo(OBJ_TYPE_ID,OBJ_ID) {
   		DE.ui.open.popup(
-				"/dataeye_ebay/portal/view",
+				"/dataeye/portal/view",
 				[OBJ_TYPE_ID, OBJ_ID],
 				{
 					viewname:'common/metacore/objectInfoTab',

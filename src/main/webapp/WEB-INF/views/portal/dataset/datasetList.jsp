@@ -49,7 +49,7 @@
 			}
 		}
 		function goDetail(datasetId) {
-			window.open('/dataeye_ebay/dataset/datasetDetail?datasetId=' + datasetId,'dataset' + datasetId,'')
+			window.open('/dataeye/dataset/datasetDetail?datasetId=' + datasetId,'dataset' + datasetId,'')
 		}
 	function goCate(no) {
 			

@@ -24,7 +24,7 @@ String datasetSampleDiv = (String)request.getAttribute("datasetSampleDiv");
 <title>DataEye</title>
 <link rel="shortcut icon" href="${pageContext.request.contextPath}/assets/images/icon/favicon_32_deye.ico"/>
 <!-- Bootstrap 3.3.7 -->
-<link type="text/css" rel="stylesheet" href="/dataeye_ebay/webjars/bootstrap/3.3.7/css/bootstrap.min.css">
+<link type="text/css" rel="stylesheet" href="/dataeye/webjars/bootstrap/3.3.7/css/bootstrap.min.css">
 <!-- Font Awesome -->
 <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/assets/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
 <!-- jquery-ui 1.10.3 -->
@@ -38,8 +38,8 @@ String datasetSampleDiv = (String)request.getAttribute("datasetSampleDiv");
 <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/assets/javascripts-lib/select2/select2.css">
 <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/assets/stylesheets/dataeye-main.css">
 <!-- Theme style -->
-<link type="text/css" rel="stylesheet" href="/dataeye_ebay/theme/kcis/stylesheets/dataeye-main.css">
-<link type="text/css" rel="stylesheet" href="/dataeye_ebay/theme/kcis/stylesheets/dataeye-objectinfo.css"/>
+<link type="text/css" rel="stylesheet" href="/dataeye/theme/kcis/stylesheets/dataeye-main.css">
+<link type="text/css" rel="stylesheet" href="/dataeye/theme/kcis/stylesheets/dataeye-objectinfo.css"/>
 
 <!-- DataEye main Skins. Choose a skin from the css/skins
  	folder instead of downloading all of them to reduce the load. -->
@@ -168,7 +168,7 @@ String datasetSampleDiv = (String)request.getAttribute("datasetSampleDiv");
 
   	function datasetInfo(OBJ_TYPE_ID,OBJ_ID) {
   		DE.ui.open.popup(
-				"/dataeye_ebay/portal/view",
+				"/dataeye/portal/view",
 				[OBJ_TYPE_ID, OBJ_ID],
 				{
 					viewname:'common/metacore/objectInfoTab',
@@ -327,7 +327,7 @@ String datasetSampleDiv = (String)request.getAttribute("datasetSampleDiv");
 			</div>
 			
 		<iframe name="sampleIFrm" id="sampleIFrm" width="0" height="0" style="display:none"></iframe>
-		<form name="frm" method="post" action="/dataeye_ebay/jqgrid/excelExport" target="sampleIFrm">
+		<form name="frm" method="post" action="/dataeye/jqgrid/excelExport" target="sampleIFrm">
 			<input type="hidden" name="gridParam" id="gridParam">
 			<input type="hidden" name="file" id="file">
 		</form>		
@@ -381,7 +381,7 @@ $(document).ready(function() {
 		%>
 			
 			$("#sampleData").jqGrid({
-			   	url:'/dataeye_ebay/dataset/datasetSampleData?datasetId=<%=request.getParameter("datasetId")%>&cnt=' + cnt,
+			   	url:'/dataeye/dataset/datasetSampleData?datasetId=<%=request.getParameter("datasetId")%>&cnt=' + cnt,
 				datatype: "json",			
 			
 		<%
@@ -418,7 +418,7 @@ $(document).ready(function() {
 				} else  {
 			%>
 			$("#sampleData").jqGrid({
-			   	url:'/dataeye_ebay/dataset/datasetSampleFileData?datasetId=<%=request.getParameter("datasetId")%>&cnt=' + cnt,
+			   	url:'/dataeye/dataset/datasetSampleFileData?datasetId=<%=request.getParameter("datasetId")%>&cnt=' + cnt,
 				datatype: "json",
 				colModel:[
 				<%

@@ -22,8 +22,8 @@
                     WHEN T101.ATR_ADM_CD = '1' THEN 'REL'
                     WHEN T101.ATR_ADM_CD = '2' THEN 'SQL POOL'
              END AS ATR_ADM_NM
-        FROM PEN_REL_TYPE_M T101
-        LEFT OUTER JOIN PEN_REL_TYPE_M T102
+        FROM O_DATAEYE_META.PEN_REL_TYPE_M T101
+        LEFT OUTER JOIN O_DATAEYE_META.PEN_REL_TYPE_M T102
         ON (
             T101.UP_REL_TYPE_ID = T102.REL_TYPE_ID
         )

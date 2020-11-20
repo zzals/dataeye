@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PEN_MENU_M">
 	<insert id="insert" parameterType="hashMap">
-		INSERT INTO PEN_MENU_M 
+		INSERT INTO O_DATAEYE_META.PEN_MENU_M 
         (
             MENU_ID,      DEL_YN,     CRET_DT,        CRETR_ID,       CHG_DT,
             CHGR_ID,       MENU_ADM_ID,    MENU_NM,     MENU_DESC,
@@ -20,7 +20,7 @@
 		)
 	</insert>
     <update id="update" parameterType="hashMap">
-        UPDATE PEN_MENU_M
+        UPDATE O_DATAEYE_META.PEN_MENU_M
         <set>
             CHG_DT = CURRENT_TIMESTAMP,
             CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR},
@@ -39,7 +39,7 @@
         WHERE MENU_ID = #{MENU_ID}
     </update>
     <delete id="delete" parameterType="hashMap">
-        DELETE FROM PEN_MENU_M
+        DELETE FROM O_DATAEYE_META.PEN_MENU_M
         WHERE MENU_ID = #{menuId}
     </delete>
 </mapper>

@@ -61,7 +61,7 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/security/spring-security-config/4.1.3.RELEASE/spring-security-config-4.1.3.RELEASE.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/security/spring-security-core/4.1.3.RELEASE/spring-security-core-4.1.3.RELEASE.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/security/spring-security-web/4.1.3.RELEASE/spring-security-web-4.1.3.RELEASE.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="C:\Users\pst1615\Documents\workspace-spring-tool-suite-4-4.7\dataeye\lib\ojdbc6.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\Users\pst1552\git\dataeye\lib\ojdbc7.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-configuration-processor/1.4.1.RELEASE/spring-boot-configuration-processor-1.4.1.RELEASE.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/json/json/20140107/json-20140107.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/springframework/boot/spring-boot-starter-data-rest/1.4.1.RELEASE/spring-boot-starter-data-rest-1.4.1.RELEASE.jar" enabled="true" runInBatchMode="false"/>
@@ -158,23 +158,23 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/commons-dbcp/commons-dbcp/1.4/commons-dbcp-1.4.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/commons-pool/commons-pool/1.6/commons-pool-1.6.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/jasig/cas/client/cas-client-core/3.2.1/cas-client-core-3.2.1.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="C:\Users\pst1615\Documents\workspace-spring-tool-suite-4-4.7\dataeye\lib\WebXMLUtils.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="C:\Users\pst1615\Documents\workspace-spring-tool-suite-4-4.7\dataeye\lib\WebTransform.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="C:\Users\pst1615\Documents\workspace-spring-tool-suite-4-4.7\dataeye\lib\WebObjects.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="C:\Users\pst1615\Documents\workspace-spring-tool-suite-4-4.7\dataeye\lib\WebBeans.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="C:\Users\pst1615\Documents\workspace-spring-tool-suite-4-4.7\dataeye\lib\WebApp.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="C:\Users\pst1615\Documents\workspace-spring-tool-suite-4-4.7\dataeye\lib\com.sun.jersey.jersey-core-1.4.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="C:\Users\pst1615\Documents\workspace-spring-tool-suite-4-4.7\dataeye\lib\JavaWebAPI.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="C:\Users\pst1615\Documents\workspace-spring-tool-suite-4-4.7\dataeye\lib\javax.ws.rs-api-2.0-m02.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="C:\Users\pst1615\Documents\workspace-spring-tool-suite-4-4.7\dataeye\lib\jersey-client-1.19.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="C:\Users\pst1615\Documents\workspace-spring-tool-suite-4-4.7\dataeye\lib\jersey-multipart-1.18.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="C:\Users\pst1615\Documents\workspace-spring-tool-suite-4-4.7\dataeye\lib\jjwt-0.9.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="C:\Users\pst1615\Documents\workspace-spring-tool-suite-4-4.7\dataeye\lib\mssql-jdbc-7.2.1.jre8.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="C:\Users\pst1615\Documents\workspace-spring-tool-suite-4-4.7\dataeye\lib\nzjdbc.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="C:\Users\pst1615\Documents\workspace-spring-tool-suite-4-4.7\dataeye\lib\penta-aria-cipher-1.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="C:\Users\pst1615\Documents\workspace-spring-tool-suite-4-4.7\dataeye\lib\WebUtils.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="C:\Users\pst1615\Documents\workspace-spring-tool-suite-4-4.7\dataeye\lib\WebPlatform.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="EXTJAR" id="C:\Users\pst1615\Documents\workspace-spring-tool-suite-4-4.7\dataeye\lib\db2jcc4.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\Users\pst1552\git\dataeye\lib\WebXMLUtils.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\Users\pst1552\git\dataeye\lib\WebTransform.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\Users\pst1552\git\dataeye\lib\WebObjects.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\Users\pst1552\git\dataeye\lib\WebBeans.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\Users\pst1552\git\dataeye\lib\WebApp.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\Users\pst1552\git\dataeye\lib\com.sun.jersey.jersey-core-1.4.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\Users\pst1552\git\dataeye\lib\JavaWebAPI.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\Users\pst1552\git\dataeye\lib\javax.ws.rs-api-2.0-m02.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\Users\pst1552\git\dataeye\lib\jersey-client-1.19.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\Users\pst1552\git\dataeye\lib\jersey-multipart-1.18.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\Users\pst1552\git\dataeye\lib\jjwt-0.9.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\Users\pst1552\git\dataeye\lib\mssql-jdbc-7.2.1.jre8.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\Users\pst1552\git\dataeye\lib\nzjdbc.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\Users\pst1552\git\dataeye\lib\penta-aria-cipher-1.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\Users\pst1552\git\dataeye\lib\WebUtils.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\Users\pst1552\git\dataeye\lib\WebPlatform.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="C:\Users\pst1552\git\dataeye\lib\db2jcc4.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/jasypt/jasypt-spring31/1.9.2/jasypt-spring31-1.9.2.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/jasypt/jasypt/1.9.2/jasypt-1.9.2.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/bouncycastle/bcprov-jdk15on/1.55/bcprov-jdk15on-1.55.jar" enabled="true" runInBatchMode="false"/>

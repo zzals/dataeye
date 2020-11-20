@@ -165,7 +165,8 @@ function openPwdChange() {
 				 <ul id="tui2" >
       			  <li detag-menuid="12"><a href="javascript:goLink('portal/report/bookmarkReportList');"><i class="glyphicon glyphicon-list-alt" aria-hidden="true"></i>&nbsp;즐겨찾기</a></li>
 				  <li detag-menuid="14"><a href="javascript:goLink('portal/mypage/myTaskList');"><i class="glyphicon glyphicon-list-alt" aria-hidden="true"></i>&nbsp;비정형 분석</a></li>				  
-				  <li detag-menuid="14"><a href="javascript:goLink('mstr/latest/reportList');"><i class="glyphicon glyphicon-list-alt" aria-hidden="true"></i>&nbsp;최근 조회 보고서</a></li>
+				  <!-- <li detag-menuid="14"><a href="javascript:goLink('mstr/latest/reportList');"><i class="glyphicon glyphicon-list-alt" aria-hidden="true"></i>&nbsp;최근 조회 보고서</a></li> -->
+				  <li detag-menuid="14"><a href="javascript:goLink('portal/report/recentUsgReportList');"><i class="glyphicon glyphicon-list-alt" aria-hidden="true"></i>&nbsp;최근 조회 보고서</a></li>
 				 </ul>
       		</div>      		
     </section>

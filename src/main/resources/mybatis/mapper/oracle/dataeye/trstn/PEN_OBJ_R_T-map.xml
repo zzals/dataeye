@@ -4,7 +4,7 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PEN_OBJ_R_T">
 	<insert id="insert" parameterType="kr.co.penta.dataeye.common.entities.meta.PenObjRT">
-		INSERT INTO PEN_OBJ_R_T
+		INSERT INTO O_DATAEYE_META.PEN_OBJ_R_T
 		(
 			OBJ_TYPE_ID,	    OBJ_ID,	    REL_OBJ_TYPE_ID,	   REL_OBJ_ID,	    APRV_ID,        DEL_YN,
 			CRET_DT,	        CRETR_ID,	CHG_DT,                CHGR_ID,         REL_TYPE_ID,    OBJ_REL_ANALS_CD
@@ -28,7 +28,7 @@
 		)
 	</insert>
     <delete id="delete" parameterType="hashMap">
-        DELETE FROM PEN_OBJ_R_T
+        DELETE FROM O_DATAEYE_META.PEN_OBJ_R_T
         WHERE OBJ_TYPE_ID = #{objTypeId}
             AND OBJ_ID = #{objId}
             AND REL_OBJ_TYPE_ID = #{relObjTypeId}
@@ -36,7 +36,7 @@
             AND APRV_ID = #{aprvId}
     </delete>
     <update id="delYn" parameterType="hashmap">
-        UPDATE PEN_OBJ_R_T
+        UPDATE O_DATAEYE_META.PEN_OBJ_R_T
         <set>
             DEL_YN = #{delYn},
             CHG_DT = CURRENT_TIMESTAMP,
@@ -47,7 +47,7 @@
         AND APRV_ID= #{aprvId}
     </update>
     <insert id="approve" parameterType="kr.co.penta.dataeye.common.entities.CamelMap">
-        INSERT INTO PEN_OBJ_R
+        INSERT INTO O_DATAEYE_META.PEN_OBJ_R
 		(
 			OBJ_TYPE_ID,	OBJ_ID,	    REL_OBJ_TYPE_ID,	   REL_OBJ_ID,	    DEL_YN,
 			CRET_DT,	    CRETR_ID,	CHG_DT,                CHGR_ID,         REL_TYPE_ID,
@@ -64,11 +64,11 @@
              , CHGR_ID
              , REL_TYPE_ID
              , OBJ_REL_ANALS_CD 
-          FROM PEN_OBJ_R_T
+          FROM O_DATAEYE_META.PEN_OBJ_R_T
          WHERE APRV_ID = #{aprvId}
     </insert>
     <update id="updateObjIdKey" parameterType="hashmap">
-        UPDATE PEN_OBJ_R_T
+        UPDATE O_DATAEYE_META.PEN_OBJ_R_T
         <set>
             DEL_YN = #{delYn},
             CHG_DT = CURRENT_TIMESTAMP,
@@ -80,7 +80,7 @@
         AND APRV_ID= #{APRV_ID}
     </update>
     <update id="updateRelObjIdKey" parameterType="hashmap">
-        UPDATE PEN_OBJ_R_T
+        UPDATE O_DATAEYE_META.PEN_OBJ_R_T
         <set>
             DEL_YN = #{delYn},
             CHG_DT = CURRENT_TIMESTAMP,
@@ -92,7 +92,7 @@
         AND APRV_ID= #{APRV_ID}
     </update>
 	<delete id="deleteByAprvId" parameterType="hashMap">
-		DELETE FROM PEN_OBJ_R_T
+		DELETE FROM O_DATAEYE_META.PEN_OBJ_R_T
 		WHERE APRV_ID = #{aprvId}
 	</delete>
 </mapper>

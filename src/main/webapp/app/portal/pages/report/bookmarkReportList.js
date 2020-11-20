@@ -22,8 +22,9 @@
         { index:'ICON', name: 'ICON', label: '구분', width: 50, align:'left',formatter: iconFormat},   
 	    { index:'OBJ_NM', name: 'OBJ_NM', label: '정형분석명', width: 400, align:'left',formatter: titleFormat,unformat:titleUnFormat},            	
       	{ index:'OBJ_ATR_VAL_101_NM', name: 'OBJ_ATR_VAL_101_NM', label: '중요도', width: 100, align:'center' 	},
-      	{ index:'OBJ_ATR_VAL_102_NM', name: 'OBJ_ATR_VAL_102_NM', label: '활용목적', width:100, align:'center'},
+      	{ index:'OBJ_ATR_VAL_102_NM', name: 'OBJ_ATR_VAL_102_NM', label: '활용목적', width:100, align:'center', hidden:true},
       	{ index:'OBJ_ATR_VAL_104_NM', name: 'OBJ_ATR_VAL_104_NM', label: '활용주기', width: 100, align:'center'},
+      	{ index:'OBJ_ATR_VAL_107_NM', name: 'OBJ_ATR_VAL_107_NM', label: '담당부서', width:100, align:'center'},
       	{ index:'OBJ_ATR_VAL_105_NM', name: 'OBJ_ATR_VAL_105_NM', label: '사용자구분', width: 150, align:'left'},
       	{ index:'OBJ_TYPE_ID', name: 'OBJ_TYPE_ID', label: 'OBJ_TYPE_ID', hidden:true},
         { index:'OBJ_ID', name: 'OBJ_ID', label: 'OBJ_ID', hidden:true},
@@ -64,10 +65,10 @@
 	
 	function titleFormat (cellvalue, options, rowObject){
 		var link = "/dataeye/report/reportPrompt?reportId=" + rowObject["OBJ_ID"];
-		var htmlStr = "<span class=\"fav_star\"><i class=\"fa fa-star\" onclick=\"goBookmark(this,'" + rowObject["OBJ_TYPE_ID"] + "','" + rowObject["OBJ_ID"] + "')\"></i></a>&nbsp;<a class=\"dynamicLink\" href=\"#\" onClick=\"window.open('" + link + "')\" >" + cellvalue + "</a>";
+		var htmlStr = "<span class=\"fav_star\"><i class=\"fa fa-star\" onclick=\"goBookmark(this,'" + rowObject["OBJ_TYPE_ID"] + "','" + rowObject["OBJ_ID"] + "')\"></i></a>&nbsp;<a class=\"dynamicLink\" href=\"#\" onClick=\"goDetail('"+rowObject["OBJ_ID"]+"');\" >" + cellvalue + "</a>";
 		
 		if(rowObject["BOOKMARK_YN"] == 'YES'){
-			htmlStr = "<span class=\"fav_star\"><i class=\"fa fa-star2\" onclick=\"cancelBookmark(this,'" + rowObject["OBJ_TYPE_ID"] + "','" + rowObject["OBJ_ID"] + "')\"></i></a>&nbsp;<a class=\"dynamicLink\" href=\"#\" onClick=\"window.open('" + link + "')\" >" + cellvalue + "</a>";
+			htmlStr = "<span class=\"fav_star\"><i class=\"fa fa-star2\" onclick=\"cancelBookmark(this,'" + rowObject["OBJ_TYPE_ID"] + "','" + rowObject["OBJ_ID"] + "')\"></i></a>&nbsp;<a class=\"dynamicLink\" href=\"#\" onClick=\"goDetail('"+rowObject["OBJ_ID"]+"');\" >" + cellvalue + "</a>";
 		}
 		return htmlStr;
 	}
@@ -80,9 +81,9 @@
 		
 		var img = ""
 		if(rowObject["DD108_OBJ_TYPE_ID"] == "020600L"){
-			 img = "<span class=\"effect2\"><img src=\"/dataeye_ebay/assets/images/tableau_icon.gif\" width=\"18px\"></span>"			
+			 img = "<span class=\"effect2\"><img src=\"/dataeye/assets/images/tableau_icon.gif\" width=\"18px\"></span>"			
 		} else {
-			 img = "<span class=\"effect2\"><img src=\"/dataeye_ebay/assets/images/mstr_icon.gif\" width=\"18px\" class=\"effect\"></span>"			
+			 img = "<span class=\"effect2\"><img src=\"/dataeye/assets/images/mstr_icon.gif\" width=\"18px\" class=\"effect\"></span>"			
 		}
 		return img;
 	}

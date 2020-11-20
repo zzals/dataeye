@@ -5,7 +5,7 @@
 <mapper namespace="PEN_OBJ_TYPE_M">
 	<insert id="insert" parameterType="hashMap">
 		
-		INSERT INTO PEN_OBJ_TYPE_M (
+		INSERT INTO O_DATAEYE_META.PEN_OBJ_TYPE_M (
 			OBJ_TYPE_ID,
 			DEL_YN,
 			CRET_DT,
@@ -35,7 +35,7 @@
 		)
 	</insert>
 	<update id="update" parameterType="hashMap">
-        UPDATE PEN_OBJ_TYPE_M
+        UPDATE O_DATAEYE_META.PEN_OBJ_TYPE_M
         <set>
             CHG_DT=CURRENT_TIMESTAMP,
             <if test="DEL_YN != null">DEL_YN=#{DEL_YN, jdbcType=CHAR},</if>
@@ -52,7 +52,7 @@
 		</where>
 	</update>	
 	<delete id="delete" parameterType="hashMap">
-		UPDATE PEN_OBJ_TYPE_M SET DEL_YN='Y'
+		UPDATE O_DATAEYE_META.PEN_OBJ_TYPE_M SET DEL_YN='Y'
 		WHERE OBJ_TYPE_ID = #{OBJ_TYPE_ID}
 	</delete>
 </mapper>

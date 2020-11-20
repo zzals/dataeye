@@ -4,36 +4,36 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="META_IMPORT">
 	<delete id="deletePEN_CD_GRP_M">
-		DELETE FROM PEN_CD_GRP_M
+		DELETE FROM O_DATAEYE_META.PEN_CD_GRP_M
 	</delete>
 	<delete id="deletePEN_CD_M">
-		DELETE FROM PEN_CD_M
+		DELETE FROM O_DATAEYE_META.PEN_CD_M
 	</delete>
 	<delete id="deletePEN_OBJ_TYPE_M">
-		DELETE FROM PEN_OBJ_TYPE_M
+		DELETE FROM O_DATAEYE_META.PEN_OBJ_TYPE_M
 	</delete>
 	<delete id="deletePEN_REL_TYPE_M">
-		DELETE FROM PEN_REL_TYPE_M
+		DELETE FROM O_DATAEYE_META.PEN_REL_TYPE_M
 	</delete>
 	<delete id="deletePEN_ATR_M">
-		DELETE FROM PEN_ATR_M
+		DELETE FROM O_DATAEYE_META.PEN_ATR_M
 	</delete>
 	<delete id="deletePEN_OBJ_M">
-		DELETE FROM PEN_OBJ_M
+		DELETE FROM O_DATAEYE_META.PEN_OBJ_M
 		WHERE OBJ_TYPE_ID = #{objTypeId}
 	</delete>
 	<delete id="deletePEN_OBJ_D">
-		DELETE FROM PEN_OBJ_D
+		DELETE FROM O_DATAEYE_META.PEN_OBJ_D
 		WHERE OBJ_TYPE_ID = #{objTypeId}
 	</delete>
 	<delete id="deletePEN_OBJ_R">
-		DELETE FROM PEN_OBJ_R
+		DELETE FROM O_DATAEYE_META.PEN_OBJ_R
 		WHERE OBJ_TYPE_ID = #{objTypeId}
 		   OR REL_OBJ_TYPE_ID = #{objTypeId}
 	</delete>
 	
 	<insert id="insertPEN_CD_GRP_M" parameterType="hashMap">
-		INSERT INTO PEN_CD_GRP_M
+		INSERT INTO O_DATAEYE_META.PEN_CD_GRP_M
         (
             CD_GRP_ID,
 			DEL_YN,
@@ -63,7 +63,7 @@
 		)
 	</insert>	
 	<insert id="insertPEN_CD_M" parameterType="hashMap">
-		INSERT INTO PEN_CD_M
+		INSERT INTO O_DATAEYE_META.PEN_CD_M
         (
             CD_GRP_ID,
 			CD_ID,
@@ -101,7 +101,7 @@
 		)
 	</insert>
 	<insert id="insertPEN_OBJ_TYPE_M" parameterType="hashMap">
-		INSERT INTO PEN_OBJ_TYPE_M
+		INSERT INTO O_DATAEYE_META.PEN_OBJ_TYPE_M
         (
             OBJ_TYPE_ID,
 			DEL_YN,
@@ -143,7 +143,7 @@
 		)
 	</insert>
 	<insert id="insertPEN_OBJ_TYPE_ATR_D" parameterType="hashMap">
-		INSERT INTO PEN_OBJ_TYPE_ATR_D
+		INSERT INTO O_DATAEYE_META.PEN_OBJ_TYPE_ATR_D
         (
             META_TYPE_CD,
 			OBJ_TYPE_ID,
@@ -193,7 +193,7 @@
 		)
 	</insert>
 	<insert id="insertPEN_OBJ_M" parameterType="hashMap">
-		INSERT INTO PEN_OBJ_M
+		INSERT INTO O_DATAEYE_META.PEN_OBJ_M
         (
             OBJ_TYPE_ID,
 			OBJ_ID,
@@ -227,7 +227,7 @@
 		)
 	</insert>
 	<insert id="insertPEN_OBJ_D" parameterType="hashMap">
-		INSERT INTO PEN_OBJ_D
+		INSERT INTO O_DATAEYE_META.PEN_OBJ_D
         (
             OBJ_TYPE_ID,
 			OBJ_ID,
@@ -255,7 +255,7 @@
 		)
 	</insert>
 	<insert id="insertPEN_OBJ_R" parameterType="hashMap">
-		INSERT INTO PEN_OBJ_R
+		INSERT INTO O_DATAEYE_META.PEN_OBJ_R
         (
             OBJ_TYPE_ID,
 			OBJ_ID,

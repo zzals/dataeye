@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PEN_OBJ_BR_EXE_GRP_L">
 	<insert id="insert" parameterType="hashMap">
-		INSERT INTO PEN_OBJ_BR_EXE_GRP_L
+		INSERT INTO O_DATAEYE_META.PEN_OBJ_BR_EXE_GRP_L
         (
             OBJ_TYPE_ID,        OBJ_ID,             BR_EXE_GRP_SEQ,     DEL_YN,             CRET_DT,
             CRETR_ID,           CHG_DT,             CHGR_ID,            EXE_ST_DT,          EXE_ED_DT,
@@ -23,7 +23,7 @@
 		)
 	</insert>
     <update id="update" parameterType="hashMap">
-        UPDATE PEN_OBJ_BR_EXE_GRP_L
+        UPDATE O_DATAEYE_META.PEN_OBJ_BR_EXE_GRP_L
         <set>
             CHG_DT = CURRENT_TIMESTAMP,
             EXE_ED_DT = CURRENT_TIMESTAMP,

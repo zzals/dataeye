@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PEN_APRV_D">
     <insert id="insert" parameterType="kr.co.penta.dataeye.common.entities.meta.PenAprvD">
-        INSERT INTO PEN_APRV_D (
+        INSERT INTO O_DATAEYE_META.PEN_APRV_D (
             APRV_ID, APRV_DETL_ID, DEL_YN, CRET_DT, CRETR_ID, CHG_DT, CHGR_ID, APRV_LINE_ID
             , APRV_PRCS_SORT_NO, APRV_PRCS_NM, APRV_USER_ID, APRV_DESC, APRV_RSLT_CD, APRV_LINE_OBJ_ID
             , APRV_ATR01_VAL, APRV_ATR02_VAL, APRV_ATR03_VAL, APRV_ATR04_VAL, APRV_ATR05_VAL
@@ -34,7 +34,7 @@
     </insert>
 
     <update id="update" parameterType="kr.co.penta.dataeye.common.entities.meta.PenAprvD">
-        UPDATE PEN_APRV_D
+        UPDATE O_DATAEYE_META.PEN_APRV_D
         <set>
             CHG_DT = CURRENT_TIMESTAMP
             , CHGR_ID = #{userId, jdbcType=VARCHAR}
@@ -47,7 +47,7 @@
     </update>
 
     <update id="updateAll" parameterType="kr.co.penta.dataeye.common.entities.meta.PenAprvD">
-        UPDATE PEN_APRV_D
+        UPDATE O_DATAEYE_META.PEN_APRV_D
         <set>
             CHG_DT = CURRENT_TIMESTAMP
             , CHGR_ID = #{userId, jdbcType=VARCHAR}
@@ -57,7 +57,7 @@
     </update>
 
     <update id="updateNext" parameterType="kr.co.penta.dataeye.common.entities.meta.PenAprvD">
-        UPDATE PEN_APRV_D
+        UPDATE O_DATAEYE_META.PEN_APRV_D
         <set>
             CHG_DT = CURRENT_TIMESTAMP
             , CHGR_ID = #{userId, jdbcType=VARCHAR}
@@ -70,7 +70,7 @@
     </update>
 
     <update id="updateNextRty" parameterType="kr.co.penta.dataeye.common.entities.meta.PenAprvD">
-        UPDATE PEN_APRV_D
+        UPDATE O_DATAEYE_META.PEN_APRV_D
         <set>
             CHG_DT = CURRENT_TIMESTAMP
             , CHGR_ID = #{userId, jdbcType=VARCHAR}
@@ -80,7 +80,7 @@
     </update>
 
     <update id="updateAprvDaInfo" parameterType="kr.co.penta.dataeye.common.entities.meta.PenAprvD">
-        UPDATE PEN_APRV_D
+        UPDATE O_DATAEYE_META.PEN_APRV_D
         <set>
             CHG_DT = CURRENT_TIMESTAMP
             , CHGR_ID = #{userId, jdbcType=VARCHAR}
@@ -90,7 +90,7 @@
     </update>
 
     <insert id="approve" parameterType="hashMap">
-        INSERT INTO PEN_OBJ_D (
+        INSERT INTO O_DATAEYE_META.PEN_OBJ_D (
             OBJ_TYPE_ID, OBJ_ID, ATR_ID_SEQ, ATR_VAL_SEQ, DEL_YN
             , CRET_DT, CRETR_ID, CHG_DT, CHGR_ID, OBJ_ATR_VAL
         )
@@ -104,12 +104,12 @@
             , CHG_DT
             , CHGR_ID
             , OBJ_ATR_VAL
-        FROM PEN_OBJ_D_T
+        FROM O_DATAEYE_META.PEN_OBJ_D_T
         WHERE APRV_ID = #{aprvId}
     </insert>
 
     <update id="updateSecDtMvoReject" parameterType="hashMap">
-        UPDATE PEN_APRV_D
+        UPDATE O_DATAEYE_META.PEN_APRV_D
         <set>
             CHG_DT = CURRENT_TIMESTAMP
             , CHGR_ID = #{userId, jdbcType=VARCHAR}
@@ -121,7 +121,7 @@
         WHERE APRV_ID = #{aprvId} AND APRV_RSLT_CD = 'N/A'
     </update>
     <delete id="deleteByAprvId" parameterType="hashMap">
-        DELETE FROM PEN_APRV_D
+        DELETE FROM O_DATAEYE_META.PEN_APRV_D
         WHERE APRV_ID = #{aprvId}
     </delete>
 </mapper>

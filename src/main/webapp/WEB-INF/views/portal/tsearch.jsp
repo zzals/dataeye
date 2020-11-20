@@ -127,7 +127,7 @@ $(document).ready(function() {
 		var objTypeId = $(this).attr("objTypeId");
 		var objId = $(this).attr("objId");
 		if(objTypeId=="010102L") {
-			window.open('/dataeye_ebay/report/reportPrompt?reportId=' + objId,'_new','')
+			window.open('/dataeye/report/reportPrompt?reportId=' + objId,'_new','')
 		} else {
 			DE.ui.open.popup(
 					"view",

@@ -4,7 +4,7 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PEN_OBJ_TYPE_ATR_D">
 	<insert id="insert" parameterType="hashMap">
-		INSERT INTO PEN_OBJ_TYPE_ATR_D (
+		INSERT INTO O_DATAEYE_META.PEN_OBJ_TYPE_ATR_D (
 			META_TYPE_CD,
 			OBJ_TYPE_ID,
 			ATR_ID_SEQ,
@@ -48,7 +48,7 @@
 		)
 	</insert>
 	<delete id="delete" parameterType="hashMap">
-		DELETE FROM PEN_OBJ_TYPE_ATR_D
+		DELETE FROM O_DATAEYE_META.PEN_OBJ_TYPE_ATR_D
 		WHERE META_TYPE_CD = #{META_TYPE_CD}
 		  AND OBJ_TYPE_ID = #{OBJ_TYPE_ID}
 		  <if test='ATR_ID_SEQ != null and !"".equals(ATR_ID_SEQ)'>

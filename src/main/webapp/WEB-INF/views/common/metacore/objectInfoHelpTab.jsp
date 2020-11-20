@@ -256,7 +256,7 @@
 
 				var urlAddr = data["rows"][0]["URL_ADDR"];
 		    	if(htmlFileName!=null&&htmlFileName!="") {
-		    		urlAddr = "/dataeye_ebay/file/pdfView?file=" + htmlFilePath + "/" + htmlFileName + "&fileLocName=" + htmlOrgName;
+		    		urlAddr = "/dataeye/file/pdfView?file=" + htmlFilePath + "/" + htmlFileName + "&fileLocName=" + htmlOrgName;
 			    }
 
 		    	
@@ -273,7 +273,7 @@
 
 
 	function doDownload(file,fileLocName) {		
-		location.href="/dataeye_ebay/file/download?file=" + file + "&fileLocName=" + fileLocName
+		location.href="/dataeye/file/download?file=" + file + "&fileLocName=" + fileLocName
 	}
 
 

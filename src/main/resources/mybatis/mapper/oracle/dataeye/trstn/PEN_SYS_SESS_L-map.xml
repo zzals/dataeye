@@ -4,7 +4,7 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PEN_SYS_SESS_L">
 	<insert id="insert" parameterType="hashmap">
-		INSERT INTO PEN_SYS_SESS_L
+		INSERT INTO O_DATAEYE_META.PEN_SYS_SESS_L
 		(
             SESS_REQ_UUID,      CRET_DT,            CRETR_ID,       APP_ID,     USER_ID,
             SESS_ID,            USER_IP,            SRV_IP,         SRV_PORT,   REQ_DT,

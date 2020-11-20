@@ -4,7 +4,7 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PEN_OBJ_D">
 	<insert id="insert" parameterType="kr.co.penta.dataeye.common.entities.meta.PenObjD">
-		INSERT INTO PEN_OBJ_D
+		INSERT INTO O_DATAEYE_META.PEN_OBJ_D
 		(
 			OBJ_TYPE_ID,     OBJ_ID,	 ATR_ID_SEQ,	   ATR_VAL_SEQ,	   DEL_YN,
 			CRET_DT,	     CRETR_ID,	 
@@ -30,7 +30,7 @@
 	</insert>
 	<delete id="remove" parameterType="hashMap">
 		<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(objTypeId) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(objId)'>
-			DELETE FROM PEN_OBJ_D T101
+			DELETE FROM O_DATAEYE_META.PEN_OBJ_D T101
 			WHERE T101.OBJ_TYPE_ID = #{objTypeId}
 			  AND T101.OBJ_ID = #{objId}
 			<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(atrIdSeq)'>
@@ -41,11 +41,11 @@
 			</if>
 		</if>
         <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(objTypeId) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(pathObjId)'>
-			DELETE FROM PEN_OBJ_D T101
+			DELETE FROM O_DATAEYE_META.PEN_OBJ_D T101
 			WHERE T101.OBJ_TYPE_ID = #{objTypeId}
 			  AND T101.OBJ_ID IN (
 			  		SELECT OBJ_ID
-			  		FROM PEN_OBJ_M
+			  		FROM O_DATAEYE_META.PEN_OBJ_M
 			  		WHERE OBJ_TYPE_ID = #{objTypeId}
 			  		AND PATH_OBJ_ID = #{pathObjId}
 			  )
@@ -61,7 +61,7 @@
 		</if>
 	</delete>
     <delete id="removeObjDAtr" parameterType="hashMap">
-        DELETE FROM PEN_OBJ_D T101
+        DELETE FROM O_DATAEYE_META.PEN_OBJ_D T101
         WHERE T101.OBJ_TYPE_ID = #{objTypeId}
           AND T101.OBJ_ID = #{objId}
           AND T101.ATR_ID_SEQ = #{atrIdSeq}
@@ -70,14 +70,14 @@
         </if>
     </delete>
     <delete id="removeObjDAtrRange" parameterType="hashMap">
-        DELETE FROM PEN_OBJ_D T101
+        DELETE FROM O_DATAEYE_META.PEN_OBJ_D T101
         WHERE T101.OBJ_TYPE_ID = #{objTypeId}
           AND T101.OBJ_ID = #{objId}
           AND T101.ATR_ID_SEQ = #{atrIdSeq}
           AND T101.ATR_VAL_SEQ BETWEEN #{beginAtrValSeq} AND #{endAtrValSeq}
     </delete>
 	<update id="updateDelYn" parameterType="hashMap">
-		UPDATE PEN_OBJ_D
+		UPDATE O_DATAEYE_META.PEN_OBJ_D
 		SET DEL_YN = 'Y',
 			CHG_DT = CURRENT_TIMESTAMP,
 			CHGR_ID = #{sessionInfo.userId, jdbcType=VARCHAR}

@@ -26,7 +26,7 @@
              END AS UI_TYPE_NM
              , T101.PGM_ID
              , T101.CONF_SBST AS CONF_SBST
-        FROM PEN_UI_M T101
+        FROM O_DATAEYE_META.PEN_UI_M T101
         <where>
         	<if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(uiId)'>
                 AND T101.UI_ID = #{uiId}
@@ -63,8 +63,8 @@
                             ELSE '미정의'
                    END AS UI_TYPE_NM
                    , T102.PGM_ID
-        FROM PEN_OBJ_TYPE_UI_D T101
-        INNER JOIN PEN_UI_M T102
+        FROM O_DATAEYE_META.PEN_OBJ_TYPE_UI_D T101
+        INNER JOIN O_DATAEYE_META.PEN_UI_M T102
         ON (
             T101.UI_ID = T102.UI_ID
         )

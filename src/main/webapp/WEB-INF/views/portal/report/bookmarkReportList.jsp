@@ -46,7 +46,10 @@
 		}
 	}
 	function goDetail(reportId) {
-		window.open('/dataeye_ebay/report/reportPrompt?reportId=' + reportId,'report' + reportId,'')
+		//window.open('/dataeye/report/reportPrompt?reportId=' + reportId,'report' + reportId,'')
+		$('#reportDiv').show();
+		$('.content-header, .content').hide();
+		$('#reportFrame').attr('src','../report/reportExec?reportId=' + reportId);
 	}
 
 	function goCate(no) {
@@ -147,9 +150,8 @@
 				        	cardHtml = cardHtml +  "</div>";
 				        	cardHtml = cardHtml +  "<div class=\"cardList_line\"></div>";
 				        	cardHtml = cardHtml +  "<div class=\"cardList_per_Area\">";
-				        	cardHtml = cardHtml +  "	<div class=\"per\">담당자</div>";
-				        	//cardHtml = cardHtml +  "	<div class=\"per_name\">홍길동 <span class=\"phone\">(부서 / 전화번호)</span></div>";
-				        	cardHtml = cardHtml +  "	<div class=\"per_name\">" + strVal(item["OBJ_ATR_VAL_106_NM"]) + " </span></div>";
+				        	cardHtml = cardHtml +  "	<div class=\"per\">담당부서</div>";
+				        	cardHtml = cardHtml +  "	<div class=\"per_name\">" + strVal(item["OBJ_ATR_VAL_107_NM"]) + " </span></div>";
 				        	cardHtml = cardHtml +  "</div>";
 				        	cardHtml = cardHtml +  "</div>";
 				        	
@@ -208,7 +210,7 @@
  		
 		if(cf) {	 		
 			$.ajax({
-				url: '/dataeye_ebay/portal/bookmark/proc',              
+				url: '/dataeye/portal/bookmark/proc',              
 				processData: false,
 				contentType: false,
 				data: formData,
@@ -235,7 +237,7 @@
  		
 		if(cf) {	 		
 			$.ajax({
-				url: '/dataeye_ebay/portal/bookmark/update',              
+				url: '/dataeye/portal/bookmark/update',              
 				processData: false,
 				contentType: false,
 				data: formData,
@@ -251,11 +253,20 @@
 			});
 		}
 	}
+
+	function hideReportDiv(){
+		$('#reportDiv').hide();
+		$('.content-header, .content').show();
+		$('#reportFrame').attr('src','');
+	}
 </script>
 </head>
 
 <body>
-
+<div id="reportDiv" style="display:none;">
+<a href="javascript:hideReportDiv();" style="position: absolute;right: 10px;padding: 20px 0;">닫기</a>
+<iframe src="#" width="100%" height="900px" name="reportFrame" id="reportFrame" frameborder="0"></iframe>
+</div>
 <section class="content-header">
       <h1><i class="glyphicon glyphicon-list-alt"></i> &nbsp;즐겨찾기</h1>
       <ol class="breadcrumb"><li><a href="#"><i class="glyphicon glyphicon-list-alt"></i>&nbsp;즐겨찾기</a></li></ol>

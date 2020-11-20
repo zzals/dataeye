@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PEN_SYS_GRP_R">
 	<insert id="insert" parameterType="hashMap">
-		INSERT INTO PEN_SYS_GRP_R
+		INSERT INTO O_DATAEYE_META.PEN_SYS_GRP_R
         (
             USER_GRP_ID,    REL_USER_GRP_ID,    DEL_YN,     CRET_DT,    CRETR_ID,
             CHG_DT,         CHGR_ID
@@ -16,7 +16,7 @@
 		)
 	</insert>
     <delete id="delete" parameterType="hashMap">
-        DELETE FROM PEN_SYS_GRP_R
+        DELETE FROM O_DATAEYE_META.PEN_SYS_GRP_R
         WHERE USER_GRP_ID = #{userGrpId}
         <foreach collection="relUserGrpIds" item="item" index="index"  open="AND REL_USER_GRP_ID IN (" close=")" separator=",">
             #{item}

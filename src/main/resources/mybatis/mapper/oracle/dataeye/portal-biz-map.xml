@@ -86,7 +86,7 @@
 			                  ,T101.OBJ_NM AS IDX_KEY
 			                  ,'2' AS HIER_LEV_NO  
 			                  ,10 AS ORD
-			            FROM PEN_OBJ_M T101
+			            FROM O_DATAEYE_META.PEN_OBJ_M T101
 			            WHERE T101.OBJ_TYPE_ID = '010304L'
 			              AND T101.DEL_YN = 'N'
 			            UNION ALL
@@ -116,8 +116,8 @@
 			                ,T101.OBJ_NM AS IDX_KEY
 			                  ,'2' AS HIER_LEV_NO  
 			                  ,13 AS ORD
-			            FROM PEN_OBJ_M T101
-			            INNER JOIN PEN_OBJ_D T102 ON (T102.OBJ_TYPE_ID=T101.OBJ_TYPE_ID AND T102.OBJ_ID=T101.OBJ_ID AND T102.ATR_ID_SEQ = 101 AND T102.OBJ_ATR_VAL = 'Y')
+			            FROM O_DATAEYE_META.PEN_OBJ_M T101
+			            INNER JOIN O_DATAEYE_META.PEN_OBJ_D T102 ON (T102.OBJ_TYPE_ID=T101.OBJ_TYPE_ID AND T102.OBJ_ID=T101.OBJ_ID AND T102.ATR_ID_SEQ = 101 AND T102.OBJ_ATR_VAL = 'Y')
 			            WHERE T101.OBJ_TYPE_ID = '010301L'
 			            UNION ALL
 			            SELECT
@@ -141,8 +141,8 @@
 			  T1.OBJ_DESC                                 AS OBJ_DESC ,
 			  T1.CRETR_ID                                 AS CRETR_ID ,
 			  DATAEYE_PKG.getDisplayUserName(T1.CRETR_ID) AS CRETR_NM
-			FROM PEN_OBJ_M T1
-			LEFT OUTER JOIN PEN_OBJ_D T2
+			FROM O_DATAEYE_META.PEN_OBJ_M T1
+			LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_D T2
 			ON (T1.OBJ_TYPE_ID = T2.OBJ_TYPE_ID
 			AND T1.OBJ_ID      = T2.OBJ_ID
 			AND T2.ATR_ID_SEQ  = 101)
@@ -151,14 +151,14 @@
 			    COUNT(*) CNT
 			  FROM
 			    (SELECT OBJ_ATR_VAL
-			    FROM PEN_OBJ_D
+			    FROM O_DATAEYE_META.PEN_OBJ_D
 			    WHERE OBJ_TYPE_ID = '010302L'
 			    AND ATR_ID_SEQ   IN (102,103,104,105,106,107,108,109)
 			    AND ATR_VAL_SEQ   = 101
 			    AND DEL_YN        = 'N'
 			    UNION ALL
 			    SELECT PATH_OBJ_ID AS OBJ_ATR_VAL
-			    FROM PEN_OBJ_M
+			    FROM O_DATAEYE_META.PEN_OBJ_M
 			    WHERE OBJ_TYPE_ID = '010302L'
 			    AND DEL_YN        = 'N'
 			    )
@@ -183,15 +183,15 @@
 		    T4.OBJ_NM                                   AS DMN_NM ,
 		    T2.CRETR_ID                                 AS CRETR_ID ,
 		    DATAEYE_PKG.getDisplayUserName(T2.CRETR_ID) AS CRETR_NM
-		  FROM PEN_OBJ_D T1
-		  INNER JOIN PEN_OBJ_M T2
+		  FROM O_DATAEYE_META.PEN_OBJ_D T1
+		  INNER JOIN O_DATAEYE_META.PEN_OBJ_M T2
 		  ON (T1.OBJ_TYPE_ID = T2.OBJ_TYPE_ID
 		  AND T1.OBJ_ID      = T2.OBJ_ID)
-		  LEFT OUTER JOIN PEN_OBJ_D T3
+		  LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_D T3
 		  ON (T2.OBJ_TYPE_ID = T3.OBJ_TYPE_ID
 		  AND T2.OBJ_ID      = T3.OBJ_ID
 		  AND T3.ATR_ID_SEQ  = 101)
-		  LEFT OUTER JOIN PEN_OBJ_M T4
+		  LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_M T4
 		  ON (T3.OBJ_ATR_VAL   = T4.OBJ_ID)
 		  WHERE T1.OBJ_TYPE_ID = '010302L'
 		  AND T2.DEL_YN        = 'N'
@@ -207,12 +207,12 @@
 		    T4.OBJ_NM                                   AS DMN_NM ,
 		    T1.CRETR_ID                                 AS CRETR_ID ,
 		    DATAEYE_PKG.getDisplayUserName(T1.CRETR_ID) AS CRETR_NM
-		  FROM PEN_OBJ_M T1
-		  LEFT OUTER JOIN PEN_OBJ_D T3
+		  FROM O_DATAEYE_META.PEN_OBJ_M T1
+		  LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_D T3
 		  ON (T1.OBJ_TYPE_ID = T3.OBJ_TYPE_ID
 		  AND T1.OBJ_ID      = T3.OBJ_ID
 		  AND T3.ATR_ID_SEQ  = 101)
-		  LEFT OUTER JOIN PEN_OBJ_M T4
+		  LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_M T4
 		  ON (T3.OBJ_ATR_VAL   = T4.OBJ_ID)
 		  WHERE T1.OBJ_TYPE_ID = #{objId}
 		  AND T1.PATH_OBJ_ID   = '010302L'
@@ -230,8 +230,8 @@
 			  T2.OBJ_DESC                                 AS OBJ_DESC ,
 			  T2.CRETR_ID                                 AS CRETR_ID ,
 			  DATAEYE_PKG.getDisplayUserName(T2.CRETR_ID) AS CRETR_NM
-			FROM PEN_OBJ_D T1
-			INNER JOIN PEN_OBJ_M T2
+			FROM O_DATAEYE_META.PEN_OBJ_D T1
+			INNER JOIN O_DATAEYE_META.PEN_OBJ_M T2
 			ON (T1.OBJ_TYPE_ID   = T2.OBJ_TYPE_ID
 			AND T1.OBJ_ID        = T2.OBJ_ID)
 			WHERE T1.OBJ_TYPE_ID = '010302L'
@@ -301,18 +301,18 @@
 		                        WHEN T105.ATR_ID_SEQ = 103
 		                        THEN T105.OBJ_ATR_VAL
 		                END) AS COL_POINT_LEN
-		        FROM    PEN_OBJ_M T101
-		        LEFT OUTER JOIN PEN_OBJ_M T102
+		        FROM    O_DATAEYE_META.PEN_OBJ_M T101
+		        LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_M T102
 		        ON ( T101.PATH_OBJ_TYPE_ID = T102.OBJ_TYPE_ID
 		            AND T101.PATH_OBJ_ID   = T102.OBJ_ID )
-		        LEFT OUTER JOIN PEN_OBJ_D T103
+		        LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_D T103
 		        ON ( T101.OBJ_TYPE_ID   = T103.OBJ_TYPE_ID
 		            AND T101.OBJ_ID     = T103.OBJ_ID
 		            AND T103.ATR_ID_SEQ = 101 )
-		        LEFT OUTER JOIN PEN_OBJ_M T104
+		        LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_M T104
 		        ON ( T103.OBJ_ATR_VAL    = T104.OBJ_ID
 		            AND T104.OBJ_TYPE_ID = '010303L' )
-		        LEFT OUTER JOIN PEN_OBJ_D T105
+		        LEFT OUTER JOIN O_DATAEYE_META.PEN_OBJ_D T105
 		        ON ( T105.OBJ_TYPE_ID    = T104.OBJ_TYPE_ID
 		            AND T105.OBJ_ID      = T104.OBJ_ID
 		            AND T105.ATR_ID_SEQ IN (101, 102, 103, 111, 112, 113) )
@@ -371,8 +371,8 @@
 			        T2.OBJ_DESC                                 AS OBJ_DESC ,
 			        T2.CRETR_ID                                 AS CRETR_ID ,
 			        DATAEYE_PKG.getDisplayUserName(T2.CRETR_ID) AS CRETR_NM
-			FROM    PEN_OBJ_D T1
-			JOIN PEN_OBJ_M T2
+			FROM    O_DATAEYE_META.PEN_OBJ_D T1
+			JOIN O_DATAEYE_META.PEN_OBJ_M T2
 			ON (T1.OBJ_ATR_VAL     = T2.OBJ_ID
 			    AND T2.OBJ_TYPE_ID = '010301L')
 			LEFT OUTER JOIN
@@ -381,62 +381,62 @@
 			        FROM
 			                (SELECT PATH_OBJ_TYPE_ID AS OBJ_TYPE_ID ,
 			                        PATH_OBJ_ID      AS OBJ_ID
-			                FROM    PEN_OBJ_M
+			                FROM    O_DATAEYE_META.PEN_OBJ_M
 			                WHERE   OBJ_TYPE_ID = '010302L'
 			                    AND DEL_YN      = 'N'
 			                UNION ALL
 			                SELECT '010301L',
 			                        OBJ_ATR_VAL
-			                FROM    PEN_OBJ_D
+			                FROM    O_DATAEYE_META.PEN_OBJ_D
 			                WHERE   OBJ_TYPE_ID = '010302L'
 			                    AND ATR_ID_SEQ  = 102
 			                    AND DEL_YN      = 'N'
 			                UNION ALL
 			                SELECT '010301L',
 			                        OBJ_ATR_VAL
-			                FROM    PEN_OBJ_D
+			                FROM    O_DATAEYE_META.PEN_OBJ_D
 			                WHERE   OBJ_TYPE_ID = '010302L'
 			                    AND ATR_ID_SEQ  = 103
 			                    AND DEL_YN      = 'N'
 			                UNION ALL
 			                SELECT '010301L',
 			                        OBJ_ATR_VAL
-			                FROM    PEN_OBJ_D
+			                FROM    O_DATAEYE_META.PEN_OBJ_D
 			                WHERE   OBJ_TYPE_ID = '010302L'
 			                    AND ATR_ID_SEQ  = 104
 			                    AND DEL_YN      = 'N'
 			                UNION ALL
 			                SELECT '010301L',
 			                        OBJ_ATR_VAL
-			                FROM    PEN_OBJ_D
+			                FROM    O_DATAEYE_META.PEN_OBJ_D
 			                WHERE   OBJ_TYPE_ID = '010302L'
 			                    AND ATR_ID_SEQ  = 105
 			                    AND DEL_YN      = 'N'
 			                UNION ALL
 			                SELECT '010301L',
 			                        OBJ_ATR_VAL
-			                FROM    PEN_OBJ_D
+			                FROM    O_DATAEYE_META.PEN_OBJ_D
 			                WHERE   OBJ_TYPE_ID = '010302L'
 			                    AND ATR_ID_SEQ  = 106
 			                    AND DEL_YN      = 'N'
 			                UNION ALL
 			                SELECT '010301L',
 			                        OBJ_ATR_VAL
-			                FROM    PEN_OBJ_D
+			                FROM    O_DATAEYE_META.PEN_OBJ_D
 			                WHERE   OBJ_TYPE_ID = '010302L'
 			                    AND ATR_ID_SEQ  = 107
 			                    AND DEL_YN      = 'N'
 			                UNION ALL
 			                SELECT '010301L',
 			                        OBJ_ATR_VAL
-			                FROM    PEN_OBJ_D
+			                FROM    O_DATAEYE_META.PEN_OBJ_D
 			                WHERE   OBJ_TYPE_ID = '010302L'
 			                    AND ATR_ID_SEQ  = 108
 			                    AND DEL_YN      = 'N'
 			                UNION ALL
 			                SELECT '010301L',
 			                        OBJ_ATR_VAL
-			                FROM    PEN_OBJ_D
+			                FROM    O_DATAEYE_META.PEN_OBJ_D
 			                WHERE   OBJ_TYPE_ID = '010302L'
 			                    AND ATR_ID_SEQ  = 109
 			                    AND DEL_YN      = 'N'
@@ -459,8 +459,8 @@
 			        T2.OBJ_DESC        AS OBJ_DESC ,
 			        T2.CRETR_ID        AS CRETR_ID ,
 			        TO_CHAR(T4.USER_NM)         AS CRETR_NM
-			FROM    PEN_OBJ_M T1
-			JOIN PEN_OBJ_M T2
+			FROM    O_DATAEYE_META.PEN_OBJ_M T1
+			JOIN O_DATAEYE_META.PEN_OBJ_M T2
 			ON (T1.PATH_OBJ_TYPE_ID = T2.OBJ_TYPE_ID
 			    AND T1.PATH_OBJ_ID  = T2.OBJ_ID)
 			LEFT OUTER JOIN
@@ -469,62 +469,62 @@
 			        FROM
 			                (SELECT PATH_OBJ_TYPE_ID AS OBJ_TYPE_ID ,
 			                        PATH_OBJ_ID      AS OBJ_ID
-			                FROM    PEN_OBJ_M
+			                FROM    O_DATAEYE_META.PEN_OBJ_M
 			                WHERE   OBJ_TYPE_ID = '010302L'
 			                    AND DEL_YN      = 'N'
 			                UNION ALL
 			                SELECT '010301L',
 			                        OBJ_ATR_VAL
-			                FROM    PEN_OBJ_D
+			                FROM    O_DATAEYE_META.PEN_OBJ_D
 			                WHERE   OBJ_TYPE_ID = '010302L'
 			                    AND ATR_ID_SEQ  = 102
 			                    AND DEL_YN      = 'N'
 			                UNION ALL
 			                SELECT '010301L',
 			                        OBJ_ATR_VAL
-			                FROM    PEN_OBJ_D
+			                FROM    O_DATAEYE_META.PEN_OBJ_D
 			                WHERE   OBJ_TYPE_ID = '010302L'
 			                    AND ATR_ID_SEQ  = 103
 			                    AND DEL_YN      = 'N'
 			                UNION ALL
 			                SELECT '010301L',
 			                        OBJ_ATR_VAL
-			                FROM    PEN_OBJ_D
+			                FROM    O_DATAEYE_META.PEN_OBJ_D
 			                WHERE   OBJ_TYPE_ID = '010302L'
 			                    AND ATR_ID_SEQ  = 104
 			                    AND DEL_YN      = 'N'
 			                UNION ALL
 			                SELECT '010301L',
 			                        OBJ_ATR_VAL
-			                FROM    PEN_OBJ_D
+			                FROM    O_DATAEYE_META.PEN_OBJ_D
 			                WHERE   OBJ_TYPE_ID = '010302L'
 			                    AND ATR_ID_SEQ  = 105
 			                    AND DEL_YN      = 'N'
 			                UNION ALL
 			                SELECT '010301L',
 			                        OBJ_ATR_VAL
-			                FROM    PEN_OBJ_D
+			                FROM    O_DATAEYE_META.PEN_OBJ_D
 			                WHERE   OBJ_TYPE_ID = '010302L'
 			                    AND ATR_ID_SEQ  = 106
 			                    AND DEL_YN      = 'N'
 			                UNION ALL
 			                SELECT '010301L',
 			                        OBJ_ATR_VAL
-			                FROM    PEN_OBJ_D
+			                FROM    O_DATAEYE_META.PEN_OBJ_D
 			                WHERE   OBJ_TYPE_ID = '010302L'
 			                    AND ATR_ID_SEQ  = 107
 			                    AND DEL_YN      = 'N'
 			                UNION ALL
 			                SELECT '010301L',
 			                        OBJ_ATR_VAL
-			                FROM    PEN_OBJ_D
+			                FROM    O_DATAEYE_META.PEN_OBJ_D
 			                WHERE   OBJ_TYPE_ID = '010302L'
 			                    AND ATR_ID_SEQ  = 108
 			                    AND DEL_YN      = 'N'
 			                UNION ALL
 			                SELECT '010301L',
 			                        OBJ_ATR_VAL
-			                FROM    PEN_OBJ_D
+			                FROM    O_DATAEYE_META.PEN_OBJ_D
 			                WHERE   OBJ_TYPE_ID = '010302L'
 			                    AND ATR_ID_SEQ  = 109
 			                    AND DEL_YN      = 'N'
@@ -532,7 +532,7 @@
 			        GROUP BY OBJ_ID
 			        ) T3
 			ON (T2.OBJ_ID = T3.OBJ_ID)
-			LEFT OUTER JOIN PEN_USER_M T4
+			LEFT OUTER JOIN O_DATAEYE_META.PEN_USER_M T4
 			ON (T2.CRETR_ID        = T4.USER_ID)
 			WHERE   T1.OBJ_TYPE_ID = '010302L'
 			    AND T1.OBJ_ID      = #{objId}
@@ -546,7 +546,7 @@
           <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isBoolean(wordNmDupChk)'>
             , OBJ_NM AS WORD_NM
           </if> 
-		FROM PEN_OBJ_M
+		FROM O_DATAEYE_META.PEN_OBJ_M
 		WHERE OBJ_TYPE_ID = '010301L'
 		  AND DEL_YN = 'N'
 	</select>
@@ -554,14 +554,14 @@
 		SELECT 
 			OBJ_ID
 			,OBJ_NM
-		FROM PEN_OBJ_M
+		FROM O_DATAEYE_META.PEN_OBJ_M
 		WHERE OBJ_TYPE_ID = '010303L'
 		  AND DEL_YN = 'N'
 	</select>
 	
 	<select id="newObjId" resultType="hashMap">
         SELECT '${objTypeId}_'||TRIM(TO_CHAR(NVL(MAX(SUBSTR(OBJ_ID, 9)),0)+1, '000000009')) AS OBJ_ID 
-        FROM PEN_OBJ_M
+        FROM O_DATAEYE_META.PEN_OBJ_M
         WHERE OBJ_TYPE_ID = #{objTypeId}
         AND OBJ_ID LIKE #{objTypeId}||'_%'
         AND UPPER(SUBSTR(OBJ_ID, 9)) = LOWER(SUBSTR(OBJ_ID, 9))
@@ -569,28 +569,28 @@
 	
 	<select id="dmnNm" resultType="String">
 		SELECT OBJ_NM 
-		FROM PEN_OBJ_M
+		FROM O_DATAEYE_META.PEN_OBJ_M
 		WHERE OBJ_TYPE_ID = '010303L'
 		  AND DEL_YN = 'N'
 	</select>
     <select id="dmnGrpNm" resultType="String">
 		SELECT 
             OBJ_NM 
-		FROM PEN_OBJ_M
+		FROM O_DATAEYE_META.PEN_OBJ_M
 		WHERE OBJ_TYPE_ID = '010304L'
 		  AND DEL_YN = 'N'
 	</select>
 		<select id="dmnDataType" resultType="String">
 		SELECT 
             CD_NM 
-		FROM PEN_CD_M
+		FROM O_DATAEYE_META.PEN_CD_M
 		WHERE CD_GRP_ID = 'NETESSADB DATATYPE'	
 	</select>
 	<select id="dmnGrp" resultType="hashmap">
 		SELECT 
 			OBJ_ID
 			,OBJ_NM 
-		FROM PEN_OBJ_M
+		FROM O_DATAEYE_META.PEN_OBJ_M
 		WHERE OBJ_TYPE_ID = '010304L'
 		  AND DEL_YN = 'N'
 	</select>
@@ -610,7 +610,7 @@
 			, OBJ_DESC AS OBJ_DESC
 			, PATH_OBJ_TYPE_ID AS PATH_OBJ_TYPE_ID
 			, PATH_OBJ_ID AS PATH_OBJ_ID
-		FROM PEN_OBJ_M
+		FROM O_DATAEYE_META.PEN_OBJ_M
 		<where> 
 			OBJ_TYPE_ID = #{objTypeId}
 			<if test='objId != null'>

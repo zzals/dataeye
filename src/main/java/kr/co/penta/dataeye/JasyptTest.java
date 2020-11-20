@@ -12,7 +12,7 @@ public class JasyptTest {
 		encryptor.setAlgorithm("PBEWITHSHA256AND256BITAES-CBC-BC");
 		encryptor.setPassword("ebaykorea");
 		
-		String encrypteText = encryptor.encrypt("O1_dataeye_meta_bidev");
+		String encrypteText = encryptor.encrypt("S1_dataeye_bidev");
 		String plainText = encryptor.decrypt(encrypteText);
 		
 		System.out.println("encrypteText : " + encrypteText);
