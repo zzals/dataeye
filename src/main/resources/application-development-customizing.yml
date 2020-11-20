@@ -1,0 +1,45 @@
+spring:
+  profiles: development
+  product:
+    name: dataeye_dev
+  thymeleaf:
+    cache: false
+  view:
+    tiles-enabled: false
+
+  datasource:
+    customizing-ds:
+      database-type: oracle
+      #url: jdbc:oracle:thin:@bidbp-scan.auct_dom.auction.co.kr:1521/BIDBP
+      #username: S_APP_DATAEYE
+      #password: x6c+1g9AbskekfFfP5fIce5eosVVl0wLEbpjl0LVm/w=
+      url: jdbc:oracle:thin:@192.168.217.120:1521/BIDEVDB
+      username: S_APP_DATAEYE
+      password: NVYlQ3HVBjkd7sOcgJ1L/dTql1WzchDIB63gNqzxdvS7Su9ElXPsTARczb1DHo6E
+      driver-class-name: oracle.jdbc.driver.OracleDriver
+      test-while-idle: true
+      test-on-borrow: true
+      validation-query: SELECT 1 FROM DUAL
+      mybatis:
+        mapper-locations: classpath*:mybatis/mapper/customizing/**/*.xml 
+        type-handlers-package: kr.co.penta.dataeye.spring.mybatis.typehandler.oracle
+        executor-type: batch
+        configuration:
+          map-underscore-to-camel-case: true
+          lazy-loading-enabled: true
+          call-setters-on-nulls: true
+          
+server:
+  port: 9999
+  context-path: /dataeye
+  session:
+    timeout: 3600
+#    cookie:
+#      http-only: true
+#      secure: false
+  tomcat:
+    max-threads: 10
+    uri-encoding: UTF-8
+#management:
+#  port: 9001
+#  address: 127.0.0.1
