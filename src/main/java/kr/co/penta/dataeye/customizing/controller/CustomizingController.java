@@ -1,6 +1,5 @@
 package kr.co.penta.dataeye.customizing.controller;
 
-import java.io.IOException;
 import java.util.Hashtable;
 
 import javax.naming.Context;
