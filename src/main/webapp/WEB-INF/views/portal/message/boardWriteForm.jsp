@@ -22,6 +22,7 @@
 			<div class="col-xs-12">
 				<div class="Grid_Area">
 					<form name="msg_frm" id="msg_frm" method="post">
+						<input type="hidden" name="send_type" value="P" />
 						<table class="Notice_write">
 							<colgroup>
 								<col width="150"/> 
