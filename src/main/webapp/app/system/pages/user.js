@@ -1,20 +1,21 @@
 $(document).ready(function() {
     var colModel = [
-    	{name:'CHK',index:'CHK', label:"선택", width:40, align:"center", sortable:false, formatter: 'customRadio', fixed:true},
+    	//{name:'CHK',index:'CHK', label:"선택", width:40, align:"center", sortable:false, formatter: 'customRadio', fixed:true},
         {index:'USER_ID', name: 'USER_ID', label: '사용자ID', width: 100, align:'left', editable: true, editrules: {required: false}},
         {index:'USER_NM', name: 'USER_NM', label: '사용자명', width: 100, align:'left', editable: true, editrules: {required: false}},
-        {index:'ORG_NM',  name: 'ORG_NM', label: '조직명', width: 130, align:'left', editable: true, editrules: {required: false}},
+        {index:'BUSEO',  name: 'BUSEO', label: '부서', width: 130, align:'left', editable: true, editrules: {required: false}},
+        {index:'AD_ID',  name: 'AD_ID', label: 'AD ID', width: 130, align:'left', editable: true, editrules: {required: false}},
         {index:'EMAIL_ADDR', name: 'EMAIL_ADDR', label: '이메일주소', width: 150, align:'left', editable: true, editrules: {required: false}},
-        {index:'TEL_NO', name: 'TEL_NO', label: '전화번호', width: 110, align:'left', editable: true, editrules: {required: false}},
         {index:'HP_NO', name: 'HP_NO', label: '휴대폰', width: 110, align:'left', editable: true, editrules: {required: false}},
-        {index:'ACCOUNT_NON_EXPIRED', name: 'ACCOUNT_NON_EXPIRED', label: '계정비밀번호사용기간만료여부', width: 100, align:'left', editable: true, editrules: {required: false}},
-		{index:'ACCOUNT_NON_LOCKED', name: 'ACCOUNT_NON_LOCKED', label: '계정비밀번호잠김여부', width: 100, align:'left', editable: true, editrules: {required: false}},
-		{index:'CREDENTIALS_NON_EXPIRED', name: 'CREDENTIALS_NON_EXPIRED', label: '계정인증만료여부', width: 100, align:'left', editable: true, editrules: {required: false}},
-		{index:'ACCOUNT_ENABLED', name: 'ACCOUNT_ENABLED', label: '계정사용승인여부', width: 100, align:'left', editable: true, editrules: {required: false}},
+        {index:'ACCOUNT_NON_EXPIRED', name: 'ACCOUNT_NON_EXPIRED', label: '계정비밀번호사용기간만료여부', width: 100, align:'left', editable: true, editrules: {required: false},  hidden:true},
+		{index:'ACCOUNT_NON_LOCKED', name: 'ACCOUNT_NON_LOCKED', label: '계정비밀번호잠김여부', width: 100, align:'left', editable: true, editrules: {required: false},  hidden:true},
+		{index:'CREDENTIALS_NON_EXPIRED', name: 'CREDENTIALS_NON_EXPIRED', label: '계정인증만료여부', width: 100, align:'left', editable: true, editrules: {required: false},  hidden:true},
+		{index:'ACCOUNT_ENABLED', name: 'ACCOUNT_ENABLED', label: '계정사용승인여부', width: 100, align:'left', editable: true, editrules: {required: false},  hidden:true},
 		{index:'LOGIN_FAIL_CNT', name: 'LOGIN_FAIL_CNT', label: '로그인실패건수', width: 100, align:'left', editable: true, editrules: {required: false}},
-		{index:'PASSWORD_LAST_CHG_DT', name: 'PASSWORD_LAST_CHG_DT', label: '비밀번호최종변경일시', width: 130, align:'left', editable: true, editrules: {required: false}},
+		{index:'PASSWORD_LAST_CHG_DT', name: 'PASSWORD_LAST_CHG_DT', label: '비밀번호최종변경일시', width: 130, align:'left', editable: true, editrules: {required: false},  hidden:true},
 		{index:'LOGIN_LAST_DT', name: 'LOGIN_LAST_DT', label: '최근로그인일시', width: 130, align:'left', editable: true, editrules: {required: false}},
-        {index:'ORG_ID', name:'ORG_ID', label: 'ORG_ID',  hidden:true}
+        {index:'BUSE_CODE', name:'BUSE_CODE', label: '부서 코드',  hidden:true},
+        {index:'DEPT', name:'DEPT', label: 'DEPT',  hidden:true}
     ];
 
 	var opts = {

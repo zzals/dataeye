@@ -15,7 +15,7 @@
 		FROM O_DATAEYE_META.PEN_USER_M
 
    </select>-->
-   <select id="getUser" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+   <!-- <select id="getUser" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
        SELECT F1.USER_ID                  AS USER_ID,
 			  F1.USER_NM                  AS USER_NM,
 		      (SELECT DISTINCT F2.ORG_NM FROM O_DATAEYE_META.PEN_ORG_M F2 WHERE  F2.ORG_ID=F1.ORG_ID)   AS ORG_NM,
@@ -45,7 +45,70 @@
 			</if>
 		</where>
     </select>
-   
+    -->
+    
+    <select id="getUser" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+    	SELECT
+		    SABUN
+		    , USER_ID
+		    , USER_NM
+		    , BUSEO
+		    , BUSE_CODE
+		    , DEPT
+		    , AD_ID
+		    , EMAIL_ADDR
+		    , HP_NO
+		    , LOGIN_FAIL_CNT
+		    , LOGIN_LAST_DT
+		FROM
+		(
+		    SELECT 
+		        T01.SABUN
+		        , T01.ATIAS AS USER_ID
+		        , T01.NAME AS USER_NM
+		        , T01.BUSEO
+		        , T01.BUSE_CODE
+		        , T01.DEPT
+		        , T01.AD_ID
+		        , T01.E_MAIL AS EMAIL_ADDR
+		        , T01.HP_NO
+		        , NVL(T02.LOGIN_FAIL_CNT, 0) AS LOGIN_FAIL_CNT
+		        , T02.LOGIN_LAST_DT
+		    FROM O_META.TB_USER T01
+		    LEFT OUTER JOIN O_DATAEYE_META.PEN_USER_M T02
+		    ON (T01.SABUN = T02.USER_ID)
+			<!-- 삭제 예정 -->
+		    UNION ALL
+		
+		    SELECT 
+		        USER_ID AS SABUN
+		        , USER_ID
+		        , USER_NM
+		        , ORG_ID AS BUSEO
+		        , ORG_ID AS BUSE_CODE
+		        , ORG_ID AS DEPT
+		        , TEL_NO AS AD_ID
+		        , EMAIL_ADDR
+		        , HP_NO
+		        , LOGIN_FAIL_CNT
+		        , LOGIN_LAST_DT 
+		    FROM O_DATAEYE_META.PEN_USER_M WHERE USER_ID NOT IN (SELECT SABUN FROM O_META.TB_USER)
+		    <!-- 삭제 예정 -->
+		) F1
+		<where>
+	           <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(userId)'>
+                   AND F1.USER_ID = #{userId}
+               </if>
+               <if test='@kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
+				<if test="searchKey == 'USER_ID'">
+					AND LOWER(F1.USER_ID) LIKE  LOWER('%'||#{searchValue}||'%')
+				</if>
+				<if test="searchKey == 'USER_NM'">
+					AND LOWER(F1.USER_NM) LIKE  LOWER('%'||#{searchValue}||'%')
+				</if>
+			</if>
+		</where>
+    </select>
     
     <select id="getOrgNm" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
         SELECT ORG_ID, ORG_NM, UP_ORG_ID, ORG_TYPE_CD, SORT_NO 

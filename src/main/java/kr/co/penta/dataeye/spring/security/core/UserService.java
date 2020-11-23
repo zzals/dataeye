@@ -11,4 +11,6 @@ public interface UserService extends UserDetailsService {
 	User loadUserByUsername(final String username) throws UsernameNotFoundException;
 	Collection<GrantedAuthority> getAuthorities(String username);
 	void updateAccountAuth(Map<String, Object> user);
+	int pUserCnt(String sabun);
+	void insertAccountAuth(Map<String, Object> userMap);
 } 

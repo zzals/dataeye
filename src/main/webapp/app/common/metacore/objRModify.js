@@ -1,6 +1,10 @@
 $(document).ready(function() {
 	var parentObj = opener || parent;
 	var reqParam = $("input#reqParam").data();
+	var objNm = '객체명';
+    if(reqParam["objTypeId"] == '010107L'){
+     objNm = '정형리포트';
+    }
     
 	var renderGrid = function($grid, $gridPager) {
 	    var colModel = [
@@ -13,7 +17,7 @@ $(document).ready(function() {
 				editable:true
 			},
 			DE.jqgrid.colModel.objTypeIcon({ label: '유형'}),
-	      	{name:'OBJ_NM',index:'OBJ_NM', label:'객체명', width:250, align:'left', 
+	      	{name:'OBJ_NM',index:'OBJ_NM', label:objNm, width:250, align:'left', 
 		    	formatter: "dynamicLink", 
 		    	formatoptions: {
 		    		onClick: function (rowid, irow, icol, cellvalue, e) {

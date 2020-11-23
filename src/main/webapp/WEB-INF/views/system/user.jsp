@@ -53,12 +53,14 @@
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">사용자 목록</h3>
+                    <%--
                     <div class="navbar-form navbar-right">
                         <button type="button" id="btnInitpwd" class="btn btn-default">비밀번호초기화</button>
 						<button type="button" id="btnInsert" class="btn btn-default">등록</button>
 						<button type="button" id="btnUpdate" class="btn btn-default">수정</button>
 						<button type="button" id="btnRemove" class="btn btn-default">삭제</button>
 					</div>
+					--%>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">

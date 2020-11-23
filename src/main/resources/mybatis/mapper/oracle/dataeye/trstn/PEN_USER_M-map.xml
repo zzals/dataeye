@@ -64,13 +64,23 @@
         <set>
             CHG_DT = CURRENT_TIMESTAMP,
             CHGR_ID = #{chgrId, jdbcType=VARCHAR},
+            <if test="accountNonExpired != null and !accountNonExpired.equals('')">
             ACCOUNT_NON_EXPIRED = #{accountNonExpired},
+            </if>
+            <if test="accountNonLocked != null and !accountNonLocked.equals('')">
             ACCOUNT_NON_LOCKED = #{accountNonLocked},
+            </if>
+            <if test="credentialsNonExpired != null and !credentialsNonExpired.equals('')">
             CREDENTIALS_NON_EXPIRED = #{credentialsNonExpired},
+            </if>
+            <if test="accountEnabled != null and !accountEnabled.equals('')">
             ACCOUNT_ENABLED = #{accountEnabled},
-            LOGIN_FAIL_CNT = #{loginFailCnt}
+            </if>
+            <if test="loginFailCnt != null and !loginFailCnt.equals('')">
+            LOGIN_FAIL_CNT = #{loginFailCnt},
+            </if>
             <if test="isLoginSuccess">
-            	, PASSWORD_LAST_CHG_DT = CURRENT_TIMESTAMP
+			LOGIN_LAST_DT = CURRENT_TIMESTAMP
             </if>
         </set>
         WHERE USER_ID = #{userId}
@@ -138,4 +148,18 @@
         DELETE FROM O_DATAEYE_META.PEN_USER_M
         WHERE USER_ID = #{userId}
     </delete>
+    
+    <insert id="insertAccountAuth" parameterType="hashmap">
+    	INSERT INTO O_DATAEYE_META.PEN_USER_M
+        (
+            USER_ID, DEL_YN, CRET_DT, CRETR_ID, CHG_DT,
+            CHGR_ID, LOGIN_LAST_DT
+		)
+		VALUES
+		(
+			#{userId, jdbcType=VARCHAR}, 'N', CURRENT_TIMESTAMP, #{cretrId, jdbcType=VARCHAR}, CURRENT_TIMESTAMP,
+            #{chgrId, jdbcType=VARCHAR}, CURRENT_TIMESTAMP
+		)
+	</insert>
+    
 </mapper>

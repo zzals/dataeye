@@ -4,12 +4,10 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.websocket.MessageHandler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.ErrorPage;
 import org.springframework.context.MessageSource;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -25,7 +23,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import kr.co.penta.dataeye.common.exception.ServiceRuntimeException;
 import kr.co.penta.dataeye.common.exception.ValidationException;
 import kr.co.penta.dataeye.spring.config.properties.PortalSettings;
-import kr.co.penta.dataeye.spring.web.MessageHolder;
 import kr.co.penta.dataeye.spring.web.http.response.StdResponse;
 
 @ControllerAdvice

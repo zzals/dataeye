@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="user">
-    <select id="getUser" parameterType="String" resultType="kr.co.penta.dataeye.spring.security.core.User">
+    <!-- <select id="getUser" parameterType="String" resultType="kr.co.penta.dataeye.spring.security.core.User">
         SELECT T101.USER_ID    AS "userId"
         , T101.DEL_YN          AS "delYn"
         , T101.CRET_DT         AS "cretDt"
@@ -24,6 +24,59 @@
         FROM O_DATAEYE_META.PEN_USER_M T101
         WHERE T101.USER_ID = #{userId}
     </select>
+     -->
+     
+     <select id="getUser" parameterType="String" resultType="kr.co.penta.dataeye.spring.security.core.User">
+        SELECT
+		    SABUN
+		    , USER_ID
+		    , USER_NM
+		    , BUSEO
+		    , BUSE_CODE
+		    , DEPT
+		    , AD_ID
+		    , EMAIL_ADDR
+		    , HP_NO
+		    , LOGIN_FAIL_CNT
+		    , LOGIN_LAST_DT
+		FROM
+		(
+		    SELECT 
+		        T01.SABUN
+		        , T01.ATIAS AS USER_ID
+		        , T01.NAME AS USER_NM
+		        , T01.BUSEO AS 
+		        , T01.BUSE_CODE
+		        , T01.DEPT
+		        , T01.AD_ID
+		        , T01.E_MAIL AS EMAIL_ADDR
+		        , T01.HP_NO
+		        , NVL(T02.LOGIN_FAIL_CNT, 0) AS LOGIN_FAIL_CNT
+		        , T02.LOGIN_LAST_DT
+		    FROM O_META.TB_USER T01
+		    LEFT OUTER JOIN O_DATAEYE_META.PEN_USER_M T02
+		    ON (T01.SABUN = T02.USER_ID)
+			<!-- 삭제 예정 -->
+		    UNION ALL
+		
+		    SELECT 
+		        USER_ID AS SABUN
+		        , USER_ID
+		        , USER_NM
+		        , ORG_ID AS BUSEO
+		        , ORG_ID AS BUSE_CODE
+		        , ORG_ID AS DEPT
+		        , TEL_NO AD_ID
+		        , EMAIL_ADDR
+		        , HP_NO
+		        , LOGIN_FAIL_CNT
+		        , LOGIN_LAST_DT 
+		    FROM O_DATAEYE_META.PEN_USER_M WHERE USER_ID NOT IN (SELECT SABUN FROM O_META.TB_USER)
+		    <!-- 삭제 예정 -->
+		) F1
+        WHERE F1.AD_ID = #{userId}
+    </select>
+    
 	<select id="findSysUserGrpM" parameterType="String" resultType="kr.co.penta.dataeye.common.entities.meta.PenSysUserGrpM">
 		SELECT T103.*
 		FROM O_DATAEYE_META.PEN_SYS_GRP_USER_R T101
@@ -181,6 +234,10 @@
 		AND T101.DEL_YN = 'N'
     </select>
 
+	<select id="pUserCnt" parameterType="String" resultType="int">
+		SELECT COUNT(*) pUserCnt FROM O_DATAEYE_META.PEN_USER_M WHERE USER_ID = #{sabun}
+	</select>
+    
     <update id="incrementFailCount" parameterType="String">
         UPDATE O_DATAEYE_META.PEN_USER_M T101
         SET T101.LOGIN_FAIL_CNT = T101.LOGIN_FAIL_CNT+1

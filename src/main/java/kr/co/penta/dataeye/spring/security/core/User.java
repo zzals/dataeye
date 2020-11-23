@@ -14,7 +14,8 @@ import kr.co.penta.dataeye.common.util.TimeUtils;
 
 public class User implements UserDetails {
 	private static final long serialVersionUID = -4610715415210352203L;
-    private String userId;
+	private String sabun;
+	private String userId;
     private String userPassword;
     private boolean accountNonExpired;
     private boolean accountNonLocked;
@@ -122,7 +123,15 @@ public class User implements UserDetails {
         this.loginLastDt = loginLastDt;
     }
 
-    public String getUserId() {
+    public String getSabun() {
+		return sabun;
+	}
+
+	public void setSabun(String sabun) {
+		this.sabun = sabun;
+	}
+
+	public String getUserId() {
         return userId;
     }
 

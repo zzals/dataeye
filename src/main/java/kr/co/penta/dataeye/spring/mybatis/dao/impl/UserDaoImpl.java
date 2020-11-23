@@ -61,4 +61,14 @@ public class UserDaoImpl extends DataEyeDaoSupport implements UserDao {
 	public void updateAccountAuth(Map<String, Object> user) {
 		sqlSession.update("PEN_USER_M.updateAccountAuth", user);
 	}
+
+	@Override
+	public int pUserCnt(String sabun) {
+		return sqlSession.selectOne("user.pUserCnt", sabun);
+	}
+
+	@Override
+	public void insertAccountAuth(Map<String, Object> userMap) {
+		sqlSession.update("PEN_USER_M.insertAccountAuth", userMap);	
+	}
 }

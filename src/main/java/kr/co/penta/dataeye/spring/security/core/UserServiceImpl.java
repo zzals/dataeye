@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
           if (null != user) {
                /*List<Map<String, Object>> actionAuth = userDao.getActionAuth(username);
                user.setActionAuth(actionAuth);*/
-               user.setAuthorities(getAuthorities(username));
+               user.setAuthorities(getAuthorities(user.getSabun()));
           }
 
           return user;
@@ -52,5 +52,15 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void updateAccountAuth(Map<String, Object> user) {
 		userDao.updateAccountAuth(user);
+	}
+
+	@Override
+	public int pUserCnt(String sabun) {
+		return userDao.pUserCnt(sabun);
+	}
+
+	@Override
+	public void insertAccountAuth(Map<String, Object> userMap) {
+		userDao.insertAccountAuth(userMap);
 	}
 }

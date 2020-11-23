@@ -72,6 +72,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/externalif/**").permitAll() //login pate test
                 .antMatchers("/admin/**").hasAnyRole("ADMIN")
                 .antMatchers("/system/**").hasAnyRole("SYSTEM")
+                .antMatchers("/ers/**", "/customizing/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

@@ -1,11 +1,15 @@
 $(document).ready(function() {
 	var parentObj = opener || parent;
 	var reqParam = $("input#reqParam").data();
+	var objNm = '객체명';
+    if(reqParam["objTypeId"] == '010107L'){
+     objNm = '정형리포트';
+    }
     
 	var renderGrid = function($grid, $gridPager) {
 	    var colModel = [
 			{name:'OBJ_TYPE_ID',index:'OBJ_TYPE_ID', label:'유형', width:100, align:'left'},
-			{name:'OBJ_NM',index:'OBJ_NM', label:'객체명', width:250, align:'left'},
+			{name:'OBJ_NM',index:'OBJ_NM', label:objNm, width:250, align:'left'},
 			{name:'PATH_OBJ_TYPE_ID',index:'PATH_OBJ_TYPE_ID', label:'경로유형', width:100, align:'left'},
 			{name:'PATH_OBJ_NM',index:'PATH_OBJ_NM', label:'경로객체명', width:250, align:'left'},
 			{name:'REL_TYPE_ID',index:'REL_TYPE_ID', label:'REL_TYPE_ID', hidden:true},

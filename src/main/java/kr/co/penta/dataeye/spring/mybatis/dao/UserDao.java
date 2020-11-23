@@ -17,4 +17,6 @@ public interface UserDao {
 	void setCredentialsExpired(String userId);
 	void setAccountDisabled(String userId);
 	void updateAccountAuth(Map<String, Object> user);
+	int pUserCnt(String sabun);
+	void insertAccountAuth(Map<String, Object> userMap);
 }

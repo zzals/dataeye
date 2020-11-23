@@ -18,11 +18,9 @@ dataeye:
     initpwd: sEv6fwAB1WD9l5hp3vt05Eg1Qsdc472RZLzLsj88cPo=
   
   ldap:
-    url: ldap://192.168.100.73
-    domain: BAT
-    searchBase: DC=bat,DC=penta,DC=co,DC=kr
-    svId: Administrator
-    svPw: e4mNFdhg0RqpAmd1mFSL4+ag9l3CprYkFFtbieNa5cA=
+    url: ldap://192.168.71.52
+    domain: ebaykorea
+    searchBase: DC=ebaykorea,DC=corp
     
   meta-config:
     atr-sqlsbst-inmemory-enable: false  #속성 쿼리 실행 결과 메모리 로딩 여부
