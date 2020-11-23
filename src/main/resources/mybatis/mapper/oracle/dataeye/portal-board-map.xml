@@ -191,12 +191,17 @@
       		select M.* from O_DATAEYE_META.PORTAL_USER_MSG M
       </select>
       
-      <insert id="insertPortalMessage" parameterType="hashmap">    
+	<insert id="insertPortalMessage" parameterType="hashmap">    
 		INSERT INTO O_DATAEYE_META.PORTAL_USER_MSG(
 			MSG_ID, TITLE, CNTNT, SEND_TYPE, WRIT_ID, WRIT_DT, SEND_STTS, SEND_DT, SEND_TARGET, SEND_MOTHOD, INFORM_CNFRM_IS, EDITOR_TYPE)
 		VALUES(
 			#{msg_id}, #{title}, #{cntnt}, #{send_type}, #{writ_id}, sysdate, #{send_stts}, sysdate, #{send_target}, #{send_mothod}, 'N', #{editor_type})
-    </insert>
+	</insert>
+    
+    <select id="getMessageDetail" resultType="kr.co.penta.dataeye.common.entities.CamelMap">
+    	select M.* from O_DATAEYE_META.PORTAL_USER_MSG M
+    	where MSG_ID = #{msg_id} 
+    </select>
     
     <!-- FAQ -->
     <select id="getFaqList" resultType="kr.co.penta.dataeye.common.entities.CamelMap">      

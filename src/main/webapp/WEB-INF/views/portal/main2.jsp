@@ -85,6 +85,9 @@ function openHelp() {
 	<div class="index-alert-area" style="float:right; margin:20px 20px 0 0">
 		<a href="javascript:goPage('page','DATAEYE1_MENU_7ce36c54-5ff1-4b80-a51b-1bc1404fdf14','portal/notice/boardList');" title="알림" style="position:relative;"><span style="font-size:18px; color:#fff;margin-right:5px;"><i class="glyphicon glyphicon-bell"></i></span><span style="position:absolute; background:#ff6600; color:#fff; font-size:8px; left:8px; top:-10px; border-radius:16px; width:16px; height:16px; padding-left:5px;display:none" id="notiCnt">1</span></a>
 		<a href="javascript:openHelp();" title="도움말"><span style="font-size:18px; color:#fff;"><i class="glyphicon glyphicon-question-sign"></i></span></a>
+		<c:if test="${sessionScope[SessionInfoSupport.SESSION_USERINFO_NAME]['admin']}">
+			<a href="<spring:url value="../admin/main"/>" title="Admin"><span style="font-size:18px; color:#fff;"><i class="glyphicon glyphicon-question-sign"></i></span></a>
+   		</c:if>
 	</div>
 	<div class="row">
 		<div class="col-sm-12 col-md-12 intex-title" style="text-align: center; margin-top: 130px;">

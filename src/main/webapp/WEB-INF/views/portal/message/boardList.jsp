@@ -155,7 +155,6 @@
 	}
 	
 	function pageLoad(page){	
-		alert(listDiv);
 		if(page<0 || (listDiv!=0&&page>listDiv))return;	
 		
 		displayPaging(page);
@@ -209,11 +208,11 @@
 		pageLoad(1); 
 	}
 
-	function goDetail(ntc_id) {
+	function goDetail(msg_id) {
  		var post = {
-				"viewId": "portal/notice/boardDetail",
+				"viewId": "portal/message/boardDetail",
 				"menuId": menu_id,
-				"data":"{\"ntc_id\":\"" + ntc_id + "\",\"ntc_type_id\":\"notice\"}"
+				"data": JSON.stringify({"msg_id": msg_id})
 			};
 			$(".content-wrapper").load(DE.contextPath+"/portal/view", post, function(response, status, xhr) {
 				$(document).off("autoResize");

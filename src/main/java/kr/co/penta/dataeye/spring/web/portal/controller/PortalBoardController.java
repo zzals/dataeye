@@ -342,6 +342,7 @@ public class PortalBoardController {
 		   paraMap.put("send_type", (String)request.getParameter("send_type"));
 		   paraMap.put("writ_id", sessionInfo.getUserId());
 		   paraMap.put("send_target", (String)request.getParameter("send_target"));
+		   paraMap.put("send_stts", (String)request.getParameter("send_stts"));
 		   paraMap.put("send_mothod", mothodStr);
 		   paraMap.put("editor_type", (String)request.getParameter("editor_type"));
 		   
