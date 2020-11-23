@@ -37,7 +37,7 @@
   <div class="login-box-body" style="border:1px solid #ccc;">
     <p class="login-box-msg">Sign in to start your session</p>
 
-    <form id="potalLogin" action="login/auth" method="post" onsubmit="return loginDo();">
+    <form id="potalLogin" action="login/auth" method="post">
       <div class="form-group has-feedback">
         <input type="text" name="de_username" id="de_username" class="form-control" value="" placeholder="User Id">
         <span class="glyphicon glyphicon-user form-control-feedback"></span>
@@ -61,16 +61,6 @@
         <!-- /.col -->
       </div>
     </form>
-    <form id="mstrLogin" action="http://192.168.100.73:8080/MicroStrategy/_custom/jsp/sso.jsp" method="post">
-    <input type="hidden" name="uid" id="uid" value="admin" />
-    <input type="hidden" name="returnUrl" id="returnUrl" value="http://192.168.100.73:8080/MicroStrategy/servlet/mstrWeb?evt=3186&src=mstrWeb.3186&subscriptionID=7D955EB04774CEE23C7D1796900219F8&Server=WIN-4FNG27AEFGQ&Project=ebay&Port=0&share=1" />
-    <input type="hidden" name="promptsAnswerXML" id="promptsAnswerXML" value="%3Crsl%3E%3Cpa%20pt%3D%27%27%20pin%3D%270%27%20did%3D%2758167E1F4095014D4C48A2AE9EC8FAE9%27%20tp%3D%2710%27%3E201401%3C%2Fpa%3E%3Cpa%20pt%3D%27%27%20pin%3D%270%27%20did%3D%273EFE762D4760A232336F59837DCD1313%27%20tp%3D%2710%27%3E%3Cmi%3E%3Ces%3E%3Cat%20did%3D%276FF6148E455DE5AB9CEAFC83B9BC2A1F%27%20tp%3D%2712%27%2F%3E%3Ce%20emt%3D%271%27%20ei%3D%276FF6148E455DE5AB9CEAFC83B9BC2A1F%3A1%27%20art%3D%271%27%20disp_n%3D%27%EB%B6%81%EB%8F%99%EB%B6%80%27%2F%3E%3Ce%20emt%3D%271%27%20ei%3D%276FF6148E455DE5AB9CEAFC83B9BC2A1F%3A2%27%20art%3D%271%27%20disp_n%3D%27%EB%8F%99%EB%B6%80%20%EB%8C%80%EC%84%9C%EC%96%91%20%EC%97%B0%EC%95%88%27%2F%3E%3C%2Fes%3E%3C%2Fmi%3E%3C%2Fpa%3E%3C%2Frsl%3E" />
-    </form>
-    <!-- <form id="mstrLogin" action="http://192.168.100.73:8080/MicroStrategyLibrary/api/auth/login" method="post">
-    <input type="hidden" name="username" id="uid" />
-    <input type="hidden" name="password" id="pwd" />
-    <input type="hidden" name="loginMode" id="loginMode" value="16"/>
-    </form> -->
     <!-- <a href="#">I forgot my password</a><br>
     <a href="register.html" class="text-center">Register a new membership</a> -->
 
@@ -110,16 +100,24 @@
 			return;
  	 	}
 
-  		$('#uid').val($('#de_username').val());
-  		$('#pwd').val($('#de_pwd').val());
-
-  		if($('#uid').val() != '' && $('#pwd').val() != ''){
-	  		$('#mstrLogin').attr('target','ifrm').submit();
-		}
-
-  		setTimeout(function() {
-	  		$('#potalLogin').submit();
-		}, 2000);
+ 		var formData = new FormData();
+ 		formData.append("de_username",$('#de_username').val());
+ 		formData.append("de_pwd",$('#de_pwd').val()); 	
+ 		
+ 		$.ajax({
+			url: '/dataeye/customizing/ldap/user',              
+			processData: false,
+			contentType: false,
+			data: formData,
+			type: 'POST',
+			success: function(result){
+				if(result == 'success'){
+					$('#potalLogin').submit();
+				} else if(result == 'fail'){
+					alert('아이디와 비밀번호가 일치하지 않습니다.확인 후 다시 시도해 주십시오.');
+				}
+			}
+		});
 
  	}
 </script>
