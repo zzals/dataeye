@@ -65,7 +65,8 @@ $(document).ready(function() {
       	{ index:'CHG_DT', name: 'CHG_DT', label: '수정일시', width: 150, align:'center'},
       	{ index:'CHGR_ID', name: 'CHGR_ID', label: '수정자', width: 100, align:'center'},
         { index:'OBJ_ID', name: 'OBJ_ID', label: 'OBJ_ID', width: 100, hidden:true},
-        { index:'PATH_OBJ_ID', name: 'PATH_OBJ_ID', label: 'PATH_OBJ_ID', width: 100, hidden:true}
+        { index:'PATH_OBJ_ID', name: 'PATH_OBJ_ID', label: 'PATH_OBJ_ID', width: 100, hidden:true},
+        { index:'FT_CNT', name: 'FT_CNT', label: 'FT_CNT', width: 100, hidden:true},
     ];
 	
 	var opts = {
@@ -155,46 +156,56 @@ $(document).ready(function() {
 	$("button#btnDelete, button#btnRemove").on("click", function(e) {
 		var data = $grid.getGridParam("data");
 		var checkedData = [];
+		var ft_cnt = true;
 		$.each(data, function(index, value){
 			if (value["CHK"] === true.toString()) {
+				if(value["OBJ_TYPE_ID"] && value["FT_CNT"] > 0){
+					alert("'" + value["OBJ_NM"] + "' 필터 객체를 사용하고 있는 리포트가 존재 합니다.");
+					ft_cnt = false;
+					return false;
+				}
 				checkedData.push(value);
 			}
 		});
-        if (checkedData.length == 0) {
-        	DE.box.alert("선택된 객체가 없습니다.");
-            return;
-        }
-        
-        var _url = "";
-		if ("btnDelete" === $(e.currentTarget).prop("id")) {
-			_url = "admin/obj?oper=delete";
-		} else {
-			_url = "admin/obj?oper=remove";
-		}
 		
-        var removeAction = function() {
-			var opts = {
-				url : _url,
-				data : checkedData
-			};	
-			var callback = {
-				success : function(response) {
-					DE.box.alert(response["message"], function(){
-						DE.jqgrid.reload($grid);
-					});
-				},
-				error : function(response) {
-					DE.box.alert(response["responseJSON"]["message"]);
-				}
+		if(ft_cnt){
+	        if (checkedData.length == 0) {
+	        	DE.box.alert("선택된 객체가 없습니다.");
+	            return;
+	        }
+        
+        
+	        var _url = "";
+			if ("btnDelete" === $(e.currentTarget).prop("id")) {
+				_url = "admin/obj?oper=delete";
+			} else {
+				_url = "admin/obj?oper=remove";
+			}
+			
+	        var removeAction = function() {
+				var opts = {
+					url : _url,
+					data : checkedData
+				};	
+				var callback = {
+					success : function(response) {
+						DE.box.alert(response["message"], function(){
+							DE.jqgrid.reload($grid);
+						});
+					},
+					error : function(response) {
+						DE.box.alert(response["responseJSON"]["message"]);
+					}
+				};
+				debugger;
+				DE.ajax.call(opts, callback.success, callback.error);
 			};
-			debugger;
-			DE.ajax.call(opts, callback.success, callback.error);
-		};
-        DE.box.confirm(DE.i18n.prop("common.message.remove.confirm"), function (b) {
-        	if (b === true) {
-        		removeAction();
-        	}
-        });
+	        DE.box.confirm(DE.i18n.prop("common.message.remove.confirm"), function (b) {
+	        	if (b === true) {
+	        		removeAction();
+	        	}
+	        });
+        }
 	});
 	
 	var init = function() {

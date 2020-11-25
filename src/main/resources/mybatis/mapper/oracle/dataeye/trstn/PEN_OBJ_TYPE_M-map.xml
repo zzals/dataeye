@@ -13,7 +13,8 @@
 			CHG_DT,
 			CHGR_ID,
 			OBJ_TYPE_NM,
-			OBJ_TYPE_DESC,		
+			OBJ_TYPE_DESC,
+			SORT_NO,		
 			UP_OBJ_TYPE_ID,
 			HIER_LEV_NO,
 			LST_LEV_YN,
@@ -28,6 +29,7 @@
             #{sessionInfo.userId, jdbcType=VARCHAR},
             #{OBJ_TYPE_NM, jdbcType=VARCHAR},
             #{OBJ_TYPE_DESC, jdbcType=VARCHAR},
+            #{SORT_NO, jdbcType=NUMERIC},
             #{UP_OBJ_TYPE_ID, jdbcType=VARCHAR},
             #{HIER_LEV_NO, jdbcType=VARCHAR},
             #{LST_LEV_YN, jdbcType=VARCHAR},
@@ -42,6 +44,7 @@
             <if test="CHGR_ID != null">CHGR_ID=#{sessionInfo.userId, jdbcType=VARCHAR},</if>
             <if test="OBJ_TYPE_NM != null">OBJ_TYPE_NM=#{OBJ_TYPE_NM, jdbcType=VARCHAR},</if>
             <if test="OBJ_TYPE_DESC != null">OBJ_TYPE_DESC=#{OBJ_TYPE_DESC, jdbcType=VARCHAR},</if>
+            <if test="SORT_NO != null">SORT_NO=#{SORT_NO, jdbcType=NUMERIC},</if>
             <if test="UP_OBJ_TYPE_ID != null">UP_OBJ_TYPE_ID=#{UP_OBJ_TYPE_ID, jdbcType=VARCHAR},</if>
             <if test="HIER_LEV_NO != null">HIER_LEV_NO=#{HIER_LEV_NO, jdbcType=NUMERIC},</if>
             <if test="LST_LEV_YN != null">LST_LEV_YN=#{LST_LEV_YN, jdbcType=VARCHAR},</if>

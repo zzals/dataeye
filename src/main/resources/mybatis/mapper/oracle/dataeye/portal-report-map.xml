@@ -71,6 +71,9 @@
 			 WHERE 1=1
 			   AND M01.OBJ_TYPE_ID = '010102L'
 			   AND M01.DEL_YN = 'N'
+			<if test=' @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(rGubun)'>
+				AND D102.OBJ_ATR_VAL = ${rGubun}
+			</if>
 		   	<if test='"_all".equals(searchKey) and @kr.co.penta.dataeye.spring.mybatis.Conditions@isNotEmpty(searchValue)'>
             	AND (
 	            	   UPPER(M01.OBJ_NM) LIKE '%'||UPPER(#{searchValue})||'%'

@@ -38,7 +38,7 @@
         { index:'OBJ_ID', name: 'OBJ_ID', label: 'OBJ_ID', hidden:true},
         { index:'PATH_OBJ_TYPE_ID', name: 'PATH_OBJ_TYPE_ID', label: 'PATH_OBJ_TYPE_ID', hidden:true},
         { index:'PATH_OBJ_ID', name: 'PATH_OBJ_ID', label: 'PATH_OBJ_ID', hidden:true},
-        { index:'DD108_OBJ_TYPE_ID', name: 'DD108_OBJ_TYPE_ID', label: 'PATH_OBJ_ID', hidden:true}
+        { index:'D108_ATR_VAL', name: 'D108_ATR_VAL', label: 'D108_ATR_VAL', hidden:true}
         
         
     ];
@@ -94,9 +94,9 @@
 	function iconFormat  (cellvalue, options, rowObject){
 		
 		var img = ""
-		if(rowObject["DD108_OBJ_TYPE_ID"] == "020600L"){
+		if(rowObject["D108_ATR_VAL"] == "TBLU"){
 			 img = "<span class=\"effect2\"><img src=\"/dataeye/assets/images/tableau_icon.gif\" width=\"18px\"></span>"			
-		} else {
+		} else if(rowObject["D108_ATR_VAL"] == "MSTR"){
 			 img = "<span class=\"effect2\"><img src=\"/dataeye/assets/images/mstr_icon.gif\" width=\"18px\" class=\"effect\"></span>"			
 		}
 		return img;
@@ -119,7 +119,8 @@
 			"queryId":"portal.report.reportList",
 			"searchKey":"",
 			"searchValue":"",
-			"cateIds":cateIds
+			"cateIds":cateIds,
+			"rGubun":"01"
 		};
 		DE.jqgrid.reload($("#jqGrid"), postData);
 	};

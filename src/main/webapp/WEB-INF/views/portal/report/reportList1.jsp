@@ -96,7 +96,7 @@
 				
 			}
 		 }				
-
+		 
 		if(!check){
 			$(".carList_tab_Area span").eq(0).addClass("active");			
 		}
@@ -112,7 +112,7 @@
 			$("#cardType").show();
 
 			if(!cardLoad) {
-				var param = {"_search":false,"nd":1566802058509,"rows":10,"page":1,"sidx":"","sord":"asc","queryId":"portal.report.reportList","searchKey":"_all","searchValue":"","cateIds":cateIds}
+				var param = {"_search":false,"nd":1566802058509,"rows":10,"page":1,"sidx":"","sord":"asc","queryId":"portal.report.reportList","searchKey":"_all","searchValue":"","cateIds":cateIds, "rGubun":"01"}
 				$.ajax({ 
 				    url:'jqgrid/list', //request 보낼 서버의 경로
 				    type:'post', // 메소드(get, post, put 등)
@@ -148,10 +148,9 @@
 						    }
 				        	
 
-				        	if(item["DD108_OBJ_TYPE_ID"]=="020600L") {
-				        		/*cardHtml = cardHtml +  "<div class=\"cardList_IMG effect\"><img src=\"../assets/images/cognos.png\"></div>";*/
+				        	if(item["D108_ATR_VAL"]=="TBLU") {
 				        		cardHtml = cardHtml +  "<div class=\"cardList_IMG effect\"><img src=\"../assets/images/tableau.png\"></div>";  
-					        } else {
+					        } else if(item["D108_ATR_VAL"]=="MSTR"){
 					        	cardHtml = cardHtml +  "<div class=\"cardList_IMG effect\"><img src=\"../assets/images/mstr02.png\"></div>";
 						    }
 				        	cardHtml = cardHtml +  "<div class=\"cardList_Contents_Area\">";
@@ -362,6 +361,6 @@
 	$("input#reqParam").data("viewId", '${viewId}');
 	$("input#reqParam").data("menuId", '${menuId}'); 
 	</script>	
-	<script src="<spring:url value="/app/portal/pages/report/reportList.js"/>"></script>
+	<script src="<spring:url value="/app/portal/pages/report/reportList1.js"/>"></script>
 </body>
 </html>
