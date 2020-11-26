@@ -160,7 +160,7 @@ $(document).ready(function() {
 		$.each(data, function(index, value){
 			if (value["CHK"] === true.toString()) {
 				if(value["OBJ_TYPE_ID"] && value["FT_CNT"] > 0){
-					alert("'" + value["OBJ_NM"] + "' 필터 객체를 사용하고 있는 리포트가 존재 합니다.");
+					alert("'" + value["OBJ_NM"] + "' 필터 객체를 사용하고 있는 리포트가 존재 하여\n삭제가 불가 합니다.");
 					ft_cnt = false;
 					return false;
 				}

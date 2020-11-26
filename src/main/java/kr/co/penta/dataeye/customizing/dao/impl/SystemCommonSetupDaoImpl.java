@@ -3,10 +3,10 @@ package kr.co.penta.dataeye.customizing.dao.impl;
 import org.springframework.stereotype.Repository;
 
 import kr.co.penta.dataeye.customizing.dao.SystemCommonSetupDao;
-import kr.co.penta.dataeye.spring.mybatis.dao.support.CustomizingDaoSupport;
+import kr.co.penta.dataeye.spring.mybatis.dao.support.DataEyeDaoSupport;
 
 @Repository
-public class SystemCommonSetupDaoImpl extends CustomizingDaoSupport implements SystemCommonSetupDao {
+public class SystemCommonSetupDaoImpl extends DataEyeDaoSupport implements SystemCommonSetupDao {
 
 	@Override
 	public int selectSessionTimeOut() {

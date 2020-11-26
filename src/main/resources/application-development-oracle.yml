@@ -20,7 +20,7 @@ spring:
       test-on-borrow: true
       validation-query: SELECT 1 FROM DUAL
       mybatis:
-        mapper-locations: classpath*:mybatis/mapper/oracle/dataeye/**/*.xml 
+        mapper-locations: classpath*:mybatis/mapper/oracle/**/*.xml 
         type-handlers-package: kr.co.penta.dataeye.spring.mybatis.typehandler.oracle
         executor-type: batch
         configuration:

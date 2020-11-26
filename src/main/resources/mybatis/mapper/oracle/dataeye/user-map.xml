@@ -24,6 +24,58 @@
         FROM O_DATAEYE_META.PEN_USER_M T101
         WHERE T101.USER_ID = #{userId}
     </select>
+    
+    <select id="getUser" parameterType="String" resultType="kr.co.penta.dataeye.spring.security.core.User">
+        SELECT
+		    SABUN
+		    , USER_ID
+		    , USER_NM
+		    , BUSEO
+		    , BUSE_CODE
+		    , DEPT
+		    , AD_ID
+		    , EMAIL_ADDR
+		    , HP_NO
+		    , LOGIN_FAIL_CNT
+		    , LOGIN_LAST_DT
+		FROM
+		(
+		    SELECT 
+		        T01.SABUN
+		        , T01.ALIAS AS USER_ID
+		        , T01.NAME AS USER_NM
+		        , T01.BUSEO AS 
+		        , T01.BUSE_CODE
+		        , T01.DEPT
+		        , T01.AD_ID
+		        , T01.E_MAIL AS EMAIL_ADDR
+		        , T01.HP_NO
+		        , NVL(T02.LOGIN_FAIL_CNT, 0) AS LOGIN_FAIL_CNT
+		        , T02.LOGIN_LAST_DT
+		    FROM O_META.TB_USER T01
+		    LEFT OUTER JOIN O_DATAEYE_META.PEN_USER_M T02
+		    ON (T01.SABUN = T02.USER_ID)
+			
+			/* 삭제 예정*/
+		    UNION ALL
+		
+		    SELECT 
+		        USER_ID AS SABUN
+		        , USER_ID
+		        , USER_NM
+		        , ORG_ID AS BUSEO
+		        , ORG_ID AS BUSE_CODE
+		        , ORG_ID AS DEPT
+		        , TEL_NO AD_ID
+		        , EMAIL_ADDR
+		        , HP_NO
+		        , LOGIN_FAIL_CNT
+		        , LOGIN_LAST_DT 
+		    FROM O_DATAEYE_META.PEN_USER_M WHERE USER_ID NOT IN (SELECT SABUN FROM O_META.TB_USER) /*삭제 예정*/
+		    
+		) F1
+        WHERE F1.AD_ID = #{userId}
+    </select>
      -->
      
      <select id="getUser" parameterType="String" resultType="kr.co.penta.dataeye.spring.security.core.User">
@@ -41,7 +93,7 @@
 		    , LOGIN_LAST_DT
 		FROM
 		(
-		    SELECT 
+		    <!-- SELECT 
 		        T01.SABUN
 		        , T01.ATIAS AS USER_ID
 		        , T01.NAME AS USER_NM
@@ -55,9 +107,9 @@
 		        , T02.LOGIN_LAST_DT
 		    FROM O_META.TB_USER T01
 		    LEFT OUTER JOIN O_DATAEYE_META.PEN_USER_M T02
-		    ON (T01.SABUN = T02.USER_ID)
+		    ON (T01.SABUN = T02.USER_ID) -->
 			<!-- 삭제 예정 -->
-		    UNION ALL
+		    <!--UNION ALL -->
 		
 		    SELECT 
 		        USER_ID AS SABUN
@@ -71,7 +123,7 @@
 		        , HP_NO
 		        , LOGIN_FAIL_CNT
 		        , LOGIN_LAST_DT 
-		    FROM O_DATAEYE_META.PEN_USER_M WHERE USER_ID NOT IN (SELECT SABUN FROM O_META.TB_USER)
+		    FROM O_DATAEYE_META.PEN_USER_M -- WHERE USER_ID NOT IN (SELECT SABUN FROM O_META.TB_USER)
 		    <!-- 삭제 예정 -->
 		) F1
         WHERE F1.AD_ID = #{userId}
